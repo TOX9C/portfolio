@@ -1,131 +1,31 @@
 /**
- * TOXIC Portfolio - Terminal Theme
- * Interactive effects and animations
+ * TOXIC Portfolio - Clean Animations
+ * Scroll reveal, smooth transitions only
  */
 
 (() => {
   'use strict';
 
   // ==========================================
-  // Matrix Rain Background
+  // SECTION REVEAL ON SCROLL
   // ==========================================
-  const canvas = document.getElementById('matrix-bg');
-  const ctx = canvas.getContext('2d');
-
-  function initCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-
-  initCanvas();
-  window.addEventListener('resize', initCanvas);
-
-  const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-  const fontSize = 14;
-  const columns = () => Math.floor(canvas.width / fontSize);
-  const drops = [];
-
-  function initDrops() {
-    const colCount = columns();
-    drops.length = 0;
-    for (let i = 0; i < colCount; i++) {
-      drops[i] = Math.random() * -100;
-    }
-  }
-
-  initDrops();
-
-  function drawMatrix() {
-    ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.font = `${fontSize}px 'JetBrains Mono', monospace`;
-    const colCount = columns();
-
-    for (let i = 0; i < colCount; i++) {
-      const char = chars[Math.floor(Math.random() * chars.length)];
-      const x = i * fontSize;
-      const y = drops[i] * fontSize;
-
-      // Head of the drop - brighter
-      ctx.fillStyle = i % 3 === 0 ? '#00ff41' : '#00cc33';
-      ctx.fillText(char, x, y);
-
-      // Trail - dimmer
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      }
-
-      drops[i]++;
-    }
-  }
-
-  let matrixInterval;
-  function startMatrix() {
-    if (matrixInterval) clearInterval(matrixInterval);
-    matrixInterval = setInterval(drawMatrix, 50);
-  }
-
-  startMatrix();
-
-  // Resize handler
-  window.addEventListener('resize', () => {
-    initCanvas();
-    initDrops();
-  });
-
-  // ==========================================
-  // Typewriter Effect
-  // ==========================================
-  function typewriterEffect(element, text, speed = 80) {
-    let i = 0;
-    element.textContent = '';
-
-    function type() {
-      if (i < text.length) {
-        element.textContent += text.charAt(i);
-        i++;
-        setTimeout(type, speed);
-      }
-    }
-
-    type();
-  }
-
-  // Observe typewriter elements
-  const typeObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !entry.target.dataset.typed) {
-        entry.target.dataset.typed = 'true';
-        const text = entry.target.dataset.text;
-        if (text) {
-          typewriterEffect(entry.target, text, 60);
-        }
-      }
-    });
-  }, { threshold: 0.5 });
-
-  document.querySelectorAll('.typewrite, .typewrite-cmd').forEach(el => {
-    typeObserver.observe(el);
-  });
-
-  // ==========================================
-  // Scroll Reveal
-  // ==========================================
-  const revealObserver = new IntersectionObserver((entries) => {
+  const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('active');
+        entry.target.classList.add('visible');
       }
     });
-  }, { threshold: 0.1 });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -50px 0px'
+  });
 
-  document.querySelectorAll('.reveal').forEach(el => {
-    revealObserver.observe(el);
+  document.querySelectorAll('.section').forEach(section => {
+    sectionObserver.observe(section);
   });
 
   // ==========================================
-  // Smooth Scroll for Nav Links
+  // SMOOTH SCROLL FOR NAV LINKS
   // ==========================================
   document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', (e) => {
@@ -139,24 +39,22 @@
   });
 
   // ==========================================
-  // Dynamic Prompt Path on Scroll
+  // DYNAMIC PROMPT PATH ON SCROLL
   // ==========================================
   const sections = document.querySelectorAll('.section');
+  const brandPath = document.querySelector('.brand-path');
+
+  const pathMap = {
+    'hero': '~',
+    'projects': '~/projects',
+    'skills': '~',
+    'contact': '~'
+  };
 
   const pathObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const brandPath = document.querySelector('.brand-path');
-        if (brandPath) {
-          const id = entry.target.id;
-          const paths = {
-            'hero': '~',
-            'projects': '~/projects',
-            'skills': '~',
-            'contact': '~'
-          };
-          brandPath.textContent = paths[id] || '~';
-        }
+      if (entry.isIntersecting && brandPath) {
+        brandPath.textContent = pathMap[entry.target.id] || '~';
       }
     });
   }, { threshold: 0.5 });
@@ -166,15 +64,35 @@
   });
 
   // ==========================================
-  // Console ASCII Art
+  // NAV LINK ACTIVE STATE
   // ==========================================
-  console.log(`
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(section => {
+    navObserver.observe(section);
+  });
+
+  // ==========================================
+  // CONSOLE ASCII
+  // ==========================================
+  console.log(`%c
   ╔═══════════════════════════════════════╗
   ║                                       ║
   ║    TOXIC - Systems Developer          ║
   ║    github.com/TOX9C                   ║
   ║                                       ║
   ╚═══════════════════════════════════════╝
-  `);
+  `, 'color: #00ff41');
 
 })();
