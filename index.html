@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOXIC | Systems Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="crt-overlay">
+        <div class="scanlines"></div>
+        <div class="glow"></div>
+        <div class="vignette"></div>
+    </div>
+
+    <canvas id="matrix-bg"></canvas>
+
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="window-controls">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+            </div>
+            <div class="terminal-title">toxic@dev: ~</div>
+            <div class="terminal-status">
+                <span class="status-indicator online"></span>
+                <span class="status-text">online</span>
+            </div>
+        </div>
+
+        <nav class="nav-bar">
+            <div class="nav-brand">
+                <span class="brand-label">root@toxic</span>
+                <span class="brand-separator">:</span>
+                <span class="brand-path">~</span>
+                <span class="brand-cursor">$</span>
+            </div>
+            <div class="nav-links">
+                <a href="#hero" class="nav-link">
+                    <span class="cmd-prefix">$</span>
+                    <span class="cmd-name">whoami</span>
+                </a>
+                <a href="#projects" class="nav-link">
+                    <span class="cmd-prefix">$</span>
+                    <span class="cmd-name">ls projects</span>
+                </a>
+                <a href="#skills" class="nav-link">
+                    <span class="cmd-prefix">$</span>
+                    <span class="cmd-name">skills</span>
+                </a>
+                <a href="#contact" class="nav-link">
+                    <span class="cmd-prefix">$</span>
+                    <span class="cmd-name">contact</span>
+                </a>
+            </div>
+        </nav>
+
+        <section id="hero" class="section hero">
+            <div class="hero-content">
+                <div class="hero-prompt">
+                    <span class="prompt-user">toxic</span><span class="prompt-sep">@</span><span class="prompt-host">dev</span><span class="prompt-sep">:</span><span class="prompt-path">~</span><span class="prompt-cursor">$</span>
+                </div>
+                <h1 class="hero-title typewrite" data-text="whoami"></h1>
+                <div class="hero-output">
+                    <div class="output-line">
+                        <span class="field-name">name</span>
+                        <span class="field-sep">:</span>
+                        <span class="field-value string">"TOXIC"</span>
+                    </div>
+                    <div class="output-line">
+                        <span class="field-name">role</span>
+                        <span class="field-sep">:</span>
+                        <span class="field-value string">"Full-Stack Developer"</span>
+                    </div>
+                    <div class="output-line">
+                        <span class="field-name">location</span>
+                        <span class="field-sep">:</span>
+                        <span class="field-value string">"UTC+3"</span>
+                    </div>
+                    <div class="output-line">
+                        <span class="field-name">status</span>
+                        <span class="field-sep">:</span>
+                        <span class="field-value status">"Available for hire"</span>
+                    </div>
+                    <div class="output-line">
+                        <span class="field-name">stack</span>
+                        <span class="field-sep">:</span>
+                        <span class="field-value array">[ <span class="array-item">"JavaScript"</span>, <span class="array-item">"TypeScript"</span>, <span class="array-item">"Node.js"</span>, <span class="array-item">"React"</span> ]</span>
+                    </div>
+                </div>
+                <div class="hero-next-cmd">
+                    <span class="prompt">$</span>
+                    <span class="typewrite-cmd" data-text="cd projects/"></span>
+                    <span class="cursor blink"></span>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="section projects">
+            <div class="section-header">
+                <div class="section-prompt">
+                    <span class="prompt-user">toxic</span><span class="prompt-sep">@</span><span class="prompt-host">dev</span><span class="prompt-sep">:</span><span class="prompt-path">~/projects</span><span class="prompt-cursor">$</span>
+                </div>
+                <h2 class="section-title typewrite" data-text="git log --oneline --all"></h2>
+            </div>
+            <div class="projects-list">
+                <div class="project-card" data-lang="js">
+                    <div class="project-hash">a1b2c3d</div>
+                    <div class="project-info">
+                        <div class="project-branch">
+                            <span class="branch-icon">&lt;&gt;</span>
+                                    <span class="branch-name">main</span>
+                                </div>
+                                <h3 class="project-name">social-media</h3>
+                                <p class="project-desc">Full-stack social media platform with real-time interactions</p>
+                                <div class="project-meta">
+                                    <span class="lang-badge js">JavaScript</span>
+                                    <span class="project-stars">&star; 0</span>
+                                </div>
+                            </div>
+                            <div class="project-actions">
+                                <a href="https://github.com/TOX9C/social-media" target="_blank" class="repo-link">
+                                    <span class="link-icon">&lt;&gt;</span>
+                                    <span>view source</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-lang="js">
+                            <div class="project-hash">e4f5g6h</div>
+                            <div class="project-info">
+                                <div class="project-branch">
+                                    <span class="branch-icon">&lt;&gt;</span>
+                                    <span class="branch-name">main</span>
+                                </div>
+                                <h3 class="project-name">cashPilot</h3>
+                                <p class="project-desc">Personal finance management application with data visualization</p>
+                                <div class="project-meta">
+                                    <span class="lang-badge js">JavaScript</span>
+                                    <span class="project-stars">&star; 0</span>
+                                </div>
+                            </div>
+                            <div class="project-actions">
+                                <a href="https://github.com/TOX9C/cashPilot" target="_blank" class="repo-link">
+                                    <span class="link-icon">&lt;&gt;</span>
+                                    <span>view source</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="project-card" data-lang="ts">
+                            <div class="project-hash">i7j8k9l</div>
+                            <div class="project-info">
+                                <div class="project-branch">
+                                    <span class="branch-icon">&lt;&gt;</span>
+                                    <span class="branch-name">main</span>
+                                </div>
+                                <h3 class="project-name">ecommerce</h3>
+                                <p class="project-desc">Modern e-commerce platform built with TypeScript</p>
+                                <div class="project-meta">
+                                    <span class="lang-badge ts">TypeScript</span>
+                                    <span class="project-stars">&star; 1</span>
+                                </div>
+                            </div>
+                            <div class="project-actions">
+                                <a href="https://github.com/TOX9C/ecommerce" target="_blank" class="repo-link">
+                                    <span class="link-icon">&lt;&gt;</span>
+                                    <span>view source</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+        <section id="skills" class="section skills">
+            <div class="section-header">
+                <div class="section-prompt">
+                    <span class="prompt-user">toxic</span><span class="prompt-sep">@</span><span class="prompt-host">dev</span><span class="prompt-sep">:</span><span class="prompt-path">~</span><span class="prompt-cursor">$</span>
+                </div>
+                <h2 class="section-title typewrite" data-text="npm list --depth=0"></h2>
+            </div>
+            <div class="skills-tree">
+                <div class="skill-category">
+                    <h3 class="category-title">
+                        <span class="folder-icon">&#128193;</span>
+                        <span>frontend/</span>
+                    </h3>
+                    <div class="skill-items">
+                        <div class="skill-item">
+                            <span class="skill-pkg">react</span>
+                            <span class="skill-ver">^18.2.0</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-pkg">typescript</span>
+                            <span class="skill-ver">^5.0.0</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-pkg">tailwindcss</span>
+                            <span class="skill-ver">^3.3.0</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-pkg">next</span>
+                            <span class="skill-ver">^14.0.0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3 class="category-title">
+                        <span class="folder-icon">&#128193;</span>
+                        <span>backend/</span>
+                    </h3>
+                    <div class="skill-items">
+                        <div class="skill-item">
+                            <span class="skill-pkg">node</span>
+                            <span class="skill-ver">^20.0.0</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-pkg">express</span>
+                            <span class="skill-ver">^4.18.0</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-pkg">mongodb</span>
+                            <span class="skill-ver">^7.0.0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3 class="category-title">
+                        <span class="folder-icon">&#128193;</span>
+                        <span>tools/</span>
+                    </h3>
+                    <div class="skill-items">
+                        <div class="skill-item">
+                            <span class="skill-pkg">git</span>
+                            <span class="skill-ver">latest</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-pkg">docker</span>
+                            <span class="skill-ver">^24.0.0</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-pkg">vscode</span>
+                            <span class="skill-ver">insiders</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section contact">
+            <div class="section-header">
+                <div class="section-prompt">
+                    <span class="prompt-user">toxic</span><span class="prompt-sep">@</span><span class="prompt-host">dev</span><span class="prompt-sep">:</span><span class="prompt-path">~</span><span class="prompt-cursor">$</span>
+                </div>
+                <h2 class="section-title typewrite" data-text="curl -X POST api/contact"></h2>
+            </div>
+            <div class="contact-response">
+                <div class="response-status">
+                    <span class="status-code">200</span>
+                    <span class="status-text">OK</span>
+                </div>
+                <div class="response-body">
+                    <div class="contact-item">
+                        <span class="contact-key">&quot;github&quot;</span>
+                        <span class="contact-sep">:</span>
+                        <a href="https://github.com/TOX9C" target="_blank" class="contact-value link">
+                            <span class="contact-string">&quot;github.com/TOX9C&quot;</span>
+                        </a>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-key">&quot;email&quot;</span>
+                        <span class="contact-sep">:</span>
+                        <span class="contact-value">
+                            <span class="contact-string">&quot;hello@toxic.dev&quot;</span>
+                        </span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-key">&quot;location&quot;</span>
+                        <span class="contact-sep">:</span>
+                        <span class="contact-value">
+                            <span class="contact-string">&quot;UTC+3&quot;</span>
+                        </span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-key">&quot;availability&quot;</span>
+                        <span class="contact-sep">:</span>
+                        <span class="contact-value">
+                            <span class="contact-string">&quot;Open to opportunities&quot;</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="terminal-footer">
+            <div class="footer-prompt">
+                <span class="prompt-user">toxic</span><span class="prompt-sep">@</span><span class="prompt-host">dev</span><span class="prompt-sep">:</span><span class="prompt-path">~</span><span class="prompt-cursor">$</span>
+                <span class="footer-text">exit</span>
+            </div>
+            <div class="footer-copy">
+                <span class="copy-symbol">&copy;</span>
+                <span>2026 TOXIC. All systems operational.</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
