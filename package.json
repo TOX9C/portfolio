@@ -1,0 +1,10 @@
+{
+  "name": "portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Abdurrahman (TOX9C) portfolio",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

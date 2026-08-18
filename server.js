@@ -2,12 +2,13 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
 
 const server = http.createServer((req, res) => {
   const urlPath = new URL(req.url, `http://localhost:${PORT}`).pathname;
   let filePath = urlPath === '/' ? '/index.html' : urlPath;
+  if (filePath.endsWith('/')) filePath += 'index.html';
   filePath = path.join(ROOT, filePath);
 
   fs.readFile(filePath, (err, data) => {
@@ -33,4 +34,13 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Portfolio server running at http://localhost:${PORT}`);
+});
+
+// Fail loudly instead of silently when the port is already taken
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use. Try: PORT=${Number(PORT) + 1} node server.js`);
+    process.exit(1);
+  }
+  throw err;
 });

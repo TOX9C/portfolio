@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Layout 2 · Split</title>
+<meta name="description" content="Abdurrahman (TOX9C) — layout prototype: sidebar app."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0d0d10;
+  --surface:#15151a;
+  --surface-2:#1c1c22;
+  --border:#26262e;
+  --text:#eceaf0;
+  --text-2:#8e8b99;
+  --accent:#d4622b;
+  --accent-soft:rgba(212,98,43,.12);
+  --font-display:'Space Grotesk',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--font-display);font-size:15.5px;line-height:1.7;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+a{color:inherit}img{max-width:100%;display:block}ul{list-style:none}
+button,input{font-family:inherit;color:inherit}
+strong{color:var(--text)}
+::selection{background:var(--accent);color:#fff}
+
+/* ══════════ APP GRID ══════════ */
+.app{display:grid;grid-template-columns:300px 1fr;min-height:100dvh}
+
+/* SIDEBAR */
+.sidebar{
+  position:sticky;top:0;height:100dvh;
+  display:flex;flex-direction:column;
+  border-right:1px solid var(--border);
+  background:var(--bg);
+  padding:2rem 1.8rem;
+  overflow-y:auto;
+}
+.sb-logo{font-family:var(--font-mono);font-weight:700;font-size:.92rem;margin-bottom:2.2rem}
+.sb-logo b{color:var(--accent)}
+.sb-name{font-weight:700;font-size:1.55rem;line-height:1.1;letter-spacing:-.01em}
+.sb-role{font-family:var(--font-mono);font-size:.62rem;color:var(--text-2);letter-spacing:.08em;margin-top:.5rem}
+.sb-status{
+  display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;
+  font-family:var(--font-mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-2);
+  border:1px solid var(--border);padding:.35rem .7rem;width:fit-content;
+}
+.sb-status i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+.sb-nav{margin-top:2.5rem;display:flex;flex-direction:column;gap:.2rem}
+.sb-nav a{
+  display:flex;align-items:center;gap:.8rem;
+  text-decoration:none;color:var(--text-2);
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.6rem .7rem;border-left:2px solid transparent;transition:color .2s,border-color .2s,background .2s;
+}
+.sb-nav a .idx{color:var(--border-strong);font-size:.6rem}
+.sb-nav a:hover{color:var(--text)}
+.sb-nav a.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-soft)}
+
+.sb-spotify{margin-top:auto;padding-top:2rem}
+.sb-spotify .sp-label{font-family:var(--font-mono);font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2);margin-bottom:.7rem}
+.spotify-widget{border:1px solid var(--border);background:var(--surface)}
+.spot-player{display:flex;align-items:center;gap:.7rem;padding:.7rem .8rem}
+.spot-album{position:relative;width:44px;height:44px;flex-shrink:0;overflow:hidden;background:var(--surface-2)}
+.spot-album img{width:100%;height:100%;object-fit:cover}
+.spot-album img[src=""],.spot-album img:not([src]){display:none}
+.spot-meta{min-width:0;flex:1;display:flex;flex-direction:column;gap:.15rem}
+.spot-status{font-family:var(--font-mono);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:.35rem}
+.spot-status::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite}
+.spot-track-name{font-size:.74rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spot-artist-name{font-size:.62rem;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spot-progress-bar{height:2px;background:var(--border);margin:.5rem .8rem .6rem;overflow:hidden}
+.spot-progress-fill{height:100%;width:0%;background:var(--accent);transition:width .3s ease-out}
+.spot-link{position:absolute;opacity:0;pointer-events:none}
+
+.sb-foot{margin-top:1.6rem;border-top:1px solid var(--border);padding-top:1.1rem}
+.sb-foot a{
+  display:block;text-decoration:none;font-family:var(--font-mono);font-size:.62rem;
+  color:var(--text-2);letter-spacing:.06em;padding:.25rem 0;transition:color .2s;
+}
+.sb-foot a:hover{color:var(--accent)}
+.sb-foot .hint{margin-top:.7rem;font-size:.56rem;color:var(--text-2);opacity:.55}
+.sb-foot kbd{display:inline-block;padding:.08rem .35rem;border:1px solid var(--border);font-family:var(--font-mono);font-size:.56rem}
+
+/* MAIN */
+.main{min-width:0}
+.hero-band{
+  padding:4.5rem 4vw 3rem;border-bottom:1px solid var(--border);
+  position:relative;
+}
+.hero-band h1{
+  font-weight:700;font-size:clamp(2.4rem,6vw,4.6rem);line-height:.95;letter-spacing:-.03em;max-width:14ch;
+}
+.hero-band h1 .dim{color:var(--text-2)}
+.hero-band h1 .acc{color:var(--accent)}
+.hero-band p{max-width:44ch;font-size:.9rem;color:var(--text-2);line-height:1.85;margin-top:1.6rem}
+.hero-band p strong{color:var(--text)}
+.hero-cta{display:flex;gap:.8rem;margin-top:1.8rem;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.9rem 1.5rem;text-decoration:none;white-space:nowrap;font-weight:700;
+  border:1px solid var(--border);transition:transform .2s var(--ease),background .2s,color .2s,border-color .2s;
+}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn-fill{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-fill:hover{background:#e0743f}
+.btn-ghost{background:transparent;color:var(--text)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+main section{padding:4rem 4vw;border-bottom:1px solid var(--border)}
+.sec-head{display:flex;align-items:baseline;gap:1.2rem;margin-bottom:2.2rem}
+.sec-head .m{font-family:var(--font-mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
+.sec-head h2{font-weight:700;font-size:clamp(1.6rem,3.4vw,2.4rem);letter-spacing:-.02em}
+
+/* about compact */
+.about-cols{display:grid;grid-template-columns:1fr 1fr;gap:3vw}
+.about-text p{font-size:.88rem;color:var(--text-2);line-height:1.85;margin-bottom:.9rem}
+.about-text p:last-child{margin-bottom:0}
+.about-text strong{color:var(--text)}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem;align-content:flex-start}
+.fact{
+  border:1px solid var(--border);background:var(--surface);padding:.8rem 1rem;min-width:120px;
+}
+.fact .n{font-weight:700;font-size:1.5rem;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums}
+.fact .l{font-family:var(--font-mono);font-size:.54rem;color:var(--text-2);letter-spacing:.1em;text-transform:uppercase;margin-top:.3rem}
+
+/* work bento */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:1px;background:var(--border)}
+.tile{
+  background:var(--bg);padding:1.7rem 1.6rem;
+  display:flex;flex-direction:column;min-height:200px;
+  text-decoration:none;position:relative;
+  transition:background .25s;
+}
+.tile:hover{background:var(--surface)}
+.tile .num{font-family:var(--font-mono);font-size:.64rem;color:var(--text-2)}
+.tile:hover .num{color:var(--accent)}
+.tile .name{font-weight:700;font-size:1.35rem;line-height:1.05;letter-spacing:-.01em;margin-top:auto;padding-top:1.5rem}
+.tile .tags{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.6rem}
+.tile .tags span{font-family:var(--font-mono);font-size:.54rem;padding:.2rem .5rem;border:1px solid var(--border);color:var(--text-2);letter-spacing:.05em;text-transform:uppercase}
+.tile .arrow{position:absolute;top:1.3rem;right:1.3rem;font-size:1.05rem;color:var(--text-2);transition:color .2s,transform .3s var(--ease)}
+.tile:hover .arrow{color:var(--accent);transform:translate(3px,-3px)}
+.tile .meta{font-family:var(--font-mono);font-size:.58rem;color:var(--text-2);margin-top:.6rem}
+.tile.t-feature{grid-column:span 7;min-height:300px}
+.tile.t-feature .name{font-size:clamp(1.7rem,3vw,2.4rem)}
+.tile.t-wide{grid-column:span 5;min-height:300px}
+.tile.t-small{grid-column:span 4;min-height:190px}
+.tile.t-feature::before,.tile.t-wide::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);
+  transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease);
+}
+.tile.t-feature:hover::before,.tile.t-wide:hover::before{transform:scaleX(1)}
+
+/* infra strip */
+.infra-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+.infra-card{background:var(--bg);padding:1.5rem;transition:background .25s}
+.infra-card:hover{background:var(--surface)}
+.infra-status{display:flex;align-items:center;gap:.5rem;margin-bottom:.9rem}
+.infra-status span{font-family:var(--font-mono);font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.infra-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite}
+.infra-name{font-weight:700;font-size:1.15rem;margin-bottom:.35rem}
+.infra-desc{font-size:.76rem;color:var(--text-2);line-height:1.7}
+
+/* contact */
+.contact-panel{
+  border:1px solid var(--border);background:var(--surface);padding:3.5rem 2.5rem;text-align:center;
+}
+.contact-title{font-weight:700;font-size:clamp(2rem,5vw,3.6rem);line-height:.98;letter-spacing:-.02em;margin-bottom:1.2rem}
+.contact-title .acc{color:var(--accent)}
+.contact-sub{font-size:.85rem;color:var(--text-2);max-width:40ch;margin:0 auto 2rem;line-height:1.85}
+.contact-links{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+
+footer{
+  padding:1.6rem 4vw;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
+  font-family:var(--font-mono);font-size:.6rem;color:var(--text-2);letter-spacing:.06em;
+}
+footer a{color:var(--text-2);text-decoration:none}
+footer a:hover{color:var(--accent)}
+
+/* palette */
+.palette-overlay{
+  position:fixed;inset:0;z-index:9000;background:rgba(10,10,13,.78);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:flex-start;justify-content:center;padding-top:18vh;
+  opacity:0;pointer-events:none;transition:opacity .25s var(--ease);
+}
+.palette-overlay.open{opacity:1;pointer-events:auto}
+.palette{width:min(560px,90vw);background:var(--surface);border:1px solid var(--border);box-shadow:0 24px 80px rgba(0,0,0,.6);transform:translateY(-12px) scale(.98);transition:transform .3s var(--ease)}
+.palette-overlay.open .palette{transform:translateY(0) scale(1)}
+.palette-input-row{display:flex;align-items:center;padding:.85rem 1.2rem;border-bottom:1px solid var(--border);gap:.6rem}
+.palette-icon{color:var(--accent);font-family:var(--font-mono);font-weight:700}
+#palette-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:var(--font-mono);font-size:.82rem;caret-color:var(--accent)}
+#palette-input::placeholder{color:var(--text-2);opacity:.5}
+.palette-output{max-height:320px;overflow-y:auto;padding:.5rem 0}
+.palette-output:empty{display:none}
+.palette-hint{padding:.6rem 1.2rem;font-size:.6rem;color:var(--text-2);opacity:.55;border-top:1px solid var(--border);font-family:var(--font-mono)}
+.pal-line{padding:.15rem 1.2rem;font-size:.76rem;line-height:1.65;color:var(--text-2);white-space:pre-wrap;word-break:break-word;font-family:var(--font-mono)}
+.pal-line.cmd{color:var(--accent)}
+.pal-line.hi{color:var(--text)}
+.pal-line.dim{color:var(--text-2);opacity:.55}
+.pal-line.ok{color:#7dcc7d}
+.pal-line.err{color:#cc6b6b}
+
+/* reveal */
+.rev{opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.rev.in{opacity:1;transform:none}
+.rev-hero{opacity:0;transform:translateY(16px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.rev-hero.in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .rev,.rev-hero{opacity:1;transform:none}
+}
+@media (max-width:960px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border);padding:1.4rem 6vw;flex-direction:row;align-items:center;gap:1.2rem;flex-wrap:wrap;overflow:visible}
+  .sb-logo{margin-bottom:0}
+  .sb-name{display:none}
+  .sb-role{display:none}
+  .sb-nav{margin-top:0;flex-direction:row;gap:.2rem;order:3;width:100%}
+  .sb-nav a{padding:.4rem .6rem;border-left:none;border-bottom:2px solid transparent}
+  .sb-nav a.active{border-left-color:transparent;border-bottom-color:var(--accent)}
+  .sb-spotify{display:none}
+  .sb-foot{display:none}
+  .about-cols{grid-template-columns:1fr;gap:2rem}
+  .tile.t-feature,.tile.t-wide{grid-column:span 12}
+  .tile.t-small{grid-column:span 6}
+  .infra-strip{grid-template-columns:1fr}
+  .hero-band h1{font-size:clamp(2.2rem,9vw,3.4rem)}
+}
+@media (max-width:560px){
+  .tile.t-small{grid-column:span 12}
+  .hero-cta{width:100%}
+  .hero-cta .btn{flex:1;justify-content:center}
+  .contact-links{flex-direction:column;align-items:center}
+  .contact-links .btn{width:100%;justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a class="sb-logo" href="#" style="text-decoration:none;color:inherit">tox9c<b>_</b></a>
+    <div class="sb-name">Abdurrahman</div>
+    <div class="sb-role">Full-stack / AI / Security / Infra</div>
+    <div class="sb-status"><i></i>Available</div>
+    <nav class="sb-nav">
+      <a href="#about" class="active"><span class="idx">01</span>About</a>
+      <a href="#work"><span class="idx">02</span>Work</a>
+      <a href="#infra"><span class="idx">03</span>Infra</a>
+      <a href="#contact"><span class="idx">04</span>Contact</a>
+    </nav>
+    <div class="sb-spotify">
+      <div class="sp-label">Now playing</div>
+      <div class="spotify-widget">
+        <div class="spot-player">
+          <div class="spot-album"><img id="spot-img" src="" alt="Album art" loading="lazy"/></div>
+          <div class="spot-meta">
+            <div class="spot-status" id="spot-status">Spotify</div>
+            <div class="spot-track-name" id="spot-track">Loading...</div>
+            <div class="spot-artist-name" id="spot-artist">...</div>
+          </div>
+          <a id="spot-link" href="#" target="_blank" rel="noopener" class="spot-link">open</a>
+        </div>
+        <div class="spot-progress-bar"><div class="spot-progress-fill" id="spot-progress-fill"></div></div>
+        <iframe id="spotify-embed" src="" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media" style="display:none;"></iframe>
+      </div>
+    </div>
+    <div class="sb-foot">
+      <a href="mailto:hello@tox9c.dev">hello@tox9c.dev</a>
+      <a href="https://github.com/TOX9C" target="_blank" rel="noopener">github.com/TOX9C</a>
+      <a href="https://x.com/tox9c" target="_blank" rel="noopener">x.com/tox9c</a>
+      <div class="hint">Press <kbd>/</kbd> for commands</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="hero-band">
+      <h1 class="rev-hero">Builds systems<br>that <span class="acc">think.</span></h1>
+      <p class="rev-hero">I'm <strong>Abdurrahman (tox9c)</strong> — a third-year engineering student at NTU in Iraq, building at the intersection of AI, full-stack, and self-hosted infrastructure.</p>
+      <div class="hero-cta rev-hero">
+        <a href="#work" class="btn btn-fill">See my work</a>
+        <a href="#contact" class="btn btn-ghost">Contact</a>
+      </div>
+    </div>
+
+    <section id="about">
+      <div class="sec-head"><span class="m">About</span><h2>Who I am</h2></div>
+      <div class="about-cols">
+        <div class="about-text rev">
+          <p>What drives me is building things that think, move fast, and actually work. I've trained <strong>machine learning models</strong> (58.77% match-prediction accuracy, beating bookmaker baselines), built a <strong>ransomware detector</strong> from scratch, and shipped a <strong>multi-agent IDE</strong> written in Rust.</p>
+          <p>I worked part-time in IT at <strong>TAQA</strong>, one of the largest companies in Iraq, and outside of code I run a home server with Jellyfin, Pi-hole, and Tailscale. Why rent infrastructure when you can build your own?</p>
+          <p>Stack: <strong>Next.js, React, TypeScript, Node.js, Express, PostgreSQL, Prisma, Python, XGBoost, Rust, Tauri, Docker, Tailscale.</strong></p>
+        </div>
+        <div class="facts rev">
+          <div class="fact"><div class="n" data-count="7" data-suffix="+">0+</div><div class="l">Projects shipped</div></div>
+          <div class="fact"><div class="n" data-text="3rd">--</div><div class="l">Year / Engineering</div></div>
+          <div class="fact"><div class="n" data-count="58.77" data-suffix="%" data-decimal="true">0%</div><div class="l">Model accuracy</div></div>
+          <div class="fact"><div class="n" data-count="24" data-suffix="/7">0/7</div><div class="l">Homelab uptime</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="work">
+      <div class="sec-head"><span class="m">Work</span><h2>Selected projects</h2></div>
+      <div class="bento">
+        <a href="https://github.com/TOX9C/athenas-core" class="tile t-feature rev" target="_blank" rel="noopener">
+          <span class="num">01 / FEATURED</span>
+          <span class="arrow">&nearr;</span>
+          <div class="name">Athenas Core</div>
+          <div class="meta">Agentic IDE · Rust · Tauri 2 · Dioxus · MCP</div>
+          <div class="tags"><span>Multi-agent</span><span>78 IPC cmds</span><span>85+ components</span></div>
+        </a>
+        <a href="https://github.com/TOX9C/OsSecurity" class="tile t-wide rev" target="_blank" rel="noopener">
+          <span class="num">02 / FEATURED</span>
+          <span class="arrow">&nearr;</span>
+          <div class="name">OsSecurity</div>
+          <div class="meta">Ransomware detector · Python · OS-level</div>
+          <div class="tags"><span>Real-time</span><span>Threat analysis</span></div>
+        </a>
+        <a href="https://github.com/TOX9C/football-predictor" class="tile t-small rev" target="_blank" rel="noopener">
+          <span class="num">03</span>
+          <span class="arrow">&nearr;</span>
+          <div class="name">Football Predictor</div>
+          <div class="tags"><span>XGBoost</span><span>58.77%</span></div>
+        </a>
+        <a href="https://github.com/TOX9C/ecommerce" class="tile t-small rev" target="_blank" rel="noopener">
+          <span class="num">04</span>
+          <span class="arrow">&nearr;</span>
+          <div class="name">E-Commerce</div>
+          <div class="tags"><span>Next.js</span><span>Prisma</span></div>
+        </a>
+        <a href="https://github.com/TOX9C/social-media" class="tile t-small rev" target="_blank" rel="noopener">
+          <span class="num">05</span>
+          <span class="arrow">&nearr;</span>
+          <div class="name">Social Media</div>
+          <div class="tags"><span>Socket.io</span><span>Real-time</span></div>
+        </a>
+        <a href="https://github.com/TOX9C/cashPilot" class="tile t-small rev" target="_blank" rel="noopener">
+          <span class="num">06</span>
+          <span class="arrow">&nearr;</span>
+          <div class="name">CashPilot</div>
+          <div class="tags"><span>Finance</span><span>Prisma</span></div>
+        </a>
+        <a href="https://github.com/TOX9C/price-tracker" class="tile t-small rev" target="_blank" rel="noopener">
+          <span class="num">07</span>
+          <span class="arrow">&nearr;</span>
+          <div class="name">PriceHawk</div>
+          <div class="tags"><span>Next.js</span><span>Vercel</span></div>
+        </a>
+      </div>
+    </section>
+
+    <section id="infra">
+      <div class="sec-head"><span class="m">Infra</span><h2>The homelab</h2></div>
+      <div class="infra-strip rev">
+        <div class="infra-card">
+          <div class="infra-status"><span class="infra-dot"></span><span>Online</span></div>
+          <div class="infra-name">Jellyfin</div>
+          <div class="infra-desc">Self-hosted media server. No subscriptions, no tracking.</div>
+        </div>
+        <div class="infra-card">
+          <div class="infra-status"><span class="infra-dot"></span><span>Online</span></div>
+          <div class="infra-name">Pi-hole</div>
+          <div class="infra-desc">Network-wide DNS ad blocker. Every device runs cleaner.</div>
+        </div>
+        <div class="infra-card">
+          <div class="infra-status"><span class="infra-dot"></span><span>Online</span></div>
+          <div class="infra-name">Tailscale</div>
+          <div class="infra-desc">Mesh VPN. My homelab, reachable from anywhere.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="contact-panel rev">
+        <h2 class="contact-title">Let's build <span class="acc">something.</span></h2>
+        <p class="contact-sub">Open to internships, junior roles, and projects at the intersection of AI, full-stack, and security.</p>
+        <div class="contact-links">
+          <a href="mailto:hello@tox9c.dev" class="btn btn-fill">Email me</a>
+          <a href="https://github.com/TOX9C" class="btn btn-ghost" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://x.com/tox9c" class="btn btn-ghost" target="_blank" rel="noopener">X</a>
+          <a href="https://discord.com" class="btn btn-ghost" target="_blank" rel="noopener">Discord</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>&copy; 2026 Abdurrahman · <a href="https://github.com/TOX9C" target="_blank" rel="noopener">github.com/TOX9C</a></span>
+      <span>Press <kbd>/</kbd> for commands</span>
+    </footer>
+  </main>
+</div>
+
+<!-- COMMAND PALETTE -->
+<div class="palette-overlay" id="palette-overlay">
+  <div class="palette" id="palette">
+    <div class="palette-input-row">
+      <span class="palette-icon">&gt;</span>
+      <input type="text" id="palette-input" placeholder="Type a command..." autocomplete="off" spellcheck="false"/>
+    </div>
+    <div class="palette-output" id="palette-output"></div>
+    <div class="palette-hint">esc to close · try: whoami, projects, skills, neofetch</div>
+  </div>
+</div>
+
+<script>
+/* hero entrance */
+(function(){
+  document.querySelectorAll('.rev-hero').forEach((el,i)=>{
+    el.style.transitionDelay=(i*110)+'ms';
+    setTimeout(()=>el.classList.add('in'),80);
+  });
+})();
+
+/* scroll reveal */
+const revealIO=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');revealIO.unobserve(e.target);}});
+},{threshold:.12,rootMargin:'0px 0px -60px 0px'});
+document.querySelectorAll('.rev').forEach(el=>revealIO.observe(el));
+
+/* scrollspy */
+const sections=['about','work','infra','contact'];
+const spyIO=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('.sb-nav a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id));
+    }
+  });
+},{rootMargin:'-40% 0px -55% 0px'});
+sections.forEach(id=>{const el=document.getElementById(id);if(el)spyIO.observe(el);});
+
+/* count-up */
+function easeOutExpo(t){return t===1?1:1-Math.pow(2,-10*t);}
+function countUp(el,target,suffix,isDecimal){
+  const dur=1400,start=performance.now();
+  (function frame(now){
+    const p=Math.min((now-start)/dur,1);
+    const val=easeOutExpo(p)*target;
+    el.textContent=(isDecimal?val.toFixed(2):Math.round(val))+suffix;
+    if(p<1)requestAnimationFrame(frame);
+  })(performance.now());
+}
+function scrambleText(el,text){
+  const chars='!<>-_\\/[]{}=+*^?#@$%&~';
+  const queue=[];
+  for(let i=0;i<text.length;i++){
+    const st=Math.floor(Math.random()*14);
+    queue.push({to:text[i],start:st,end:st+Math.floor(Math.random()*10)+4});
+  }
+  let f=0;
+  (function update(){
+    let out='',done=0;
+    for(let i=0;i<queue.length;i++){
+      const {to,start,end}=queue[i];
+      if(f>=end){done++;out+=to;}
+      else if(f>=start){out+=chars[Math.floor(Math.random()*chars.length)];}
+      else{out+=' ';}
+    }
+    el.textContent=out;
+    if(done<queue.length){f++;requestAnimationFrame(update);}
+  })();
+}
+const statsIO=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const el=e.target,cnt=el.dataset.count,suf=el.dataset.suffix||'',txt=el.dataset.text,dec=el.dataset.decimal==='true';
+    if(cnt)countUp(el,parseFloat(cnt),suf,dec);
+    else if(txt)scrambleText(el,txt);
+    statsIO.unobserve(el);
+  });
+},{threshold:.5});
+document.querySelectorAll('.fact .n').forEach(el=>statsIO.observe(el));
+
+/* spotify simulation */
+let currentTrackDuration=0,currentElapsed=0;
+const TRACKS=[
+  {id:'52NGJPcLUzQq5w7uv4e5gf',title:'Private Landing (feat. Justin Bieber & Future)',artist:'Don Toliver',duration:283,albumArt:'https://cdn-images.dzcdn.net/images/cover/faef1bc1eccb096f308f3ed15e571eb1/500x500-000000-80-0-0.jpg'},
+  {id:'7y6RcmZyMDZ49yVupz7JdO',title:'STOP TRYING TO BE GOD',artist:'Travis Scott',duration:197,albumArt:'https://cdn-images.dzcdn.net/images/cover/7df7ac6028591a5622f24cf32a555510/500x500-000000-80-0-0.jpg'},
+  {id:'7lAK3oHbfEnvUQWosrMMpR',title:'Timeless',artist:'The Weeknd',duration:280,albumArt:'https://cdn-images.dzcdn.net/images/cover/e4b16c1afe136140bba34368357e8f05/500x500-000000-80-0-0.jpg'},
+  {id:'1Es7AUAhQvapIcoh3qMKDL',title:'YOSEMITE',artist:'Travis Scott',duration:183,albumArt:'https://cdn-images.dzcdn.net/images/cover/7df7ac6028591a5622f24cf32a555510/500x500-000000-80-0-0.jpg'},
+  {id:'1xYpVRspgaLxdJLOTQkTjg',title:'DUMBO',artist:'Travis Scott',duration:169,albumArt:'https://cdn-images.dzcdn.net/images/cover/2a622e01fb9b1c4717c63ae3caca9826/500x500-000000-80-0-0.jpg'},
+  {id:'6eT7xZZlB2mwyzJ2sUKG6w',title:'Motley Crew',artist:'Post Malone',duration:199,albumArt:'https://cdn-images.dzcdn.net/images/cover/a953ed6a6051697af19506edcd847585/500x500-000000-80-0-0.jpg'},
+  {id:'6wsqVwoiVH2kde4k4KKAFU',title:'White Iverson',artist:'Post Malone',duration:215,albumArt:'https://cdn-images.dzcdn.net/images/cover/efd66ec02dc81074e5b3e7825db4c380/500x500-000000-80-0-0.jpg'},
+  {id:'40uMIn2zJLAQhNXghRjBed',title:'I KNOW ?',artist:'Travis Scott',duration:182,albumArt:'https://cdn-images.dzcdn.net/images/cover/6c91e64b7157f1332a4f6b0de9e4c714/500x500-000000-80-0-0.jpg'},
+  {id:'6wyhUr4Xw8z5uSy0AhoZfU',title:"I'M ON ONE",artist:'Future',duration:266,albumArt:'https://cdn-images.dzcdn.net/images/cover/d1bd3da6698dd5eafc5b4514317039c4/500x500-000000-80-0-0.jpg'},
+  {id:'6ZoZ4KGIDD23DohdVk0Ybw',title:'Whisper My Name',artist:'Drake',duration:267,albumArt:'https://cdn-images.dzcdn.net/images/cover/cccf5e9af10b6aae96f5cdd5a27c2aff/500x500-000000-80-0-0.jpg'},
+  {id:'7EiZI6JVHllARrX9PUvAdX',title:'Low Life',artist:'Future',duration:221,albumArt:'https://cdn-images.dzcdn.net/images/cover/d67a9d21359a1704127c45dde2c8c57c/500x500-000000-80-0-0.jpg'},
+  {id:'7KGHenqXZofXNm5MKDbT3J',title:'Plot Twist',artist:'Drake',duration:295,albumArt:'https://cdn-images.dzcdn.net/images/cover/cccf5e9af10b6aae96f5cdd5a27c2aff/500x500-000000-80-0-0.jpg'},
+  {id:'3cLCA9LSb6UiOeNvTZoaav',title:'Wants and Needs',artist:'Drake',duration:274,albumArt:'https://cdn-images.dzcdn.net/images/cover/14fddd3675b7aeeab18d58b1d46acf92/500x500-000000-80-0-0.jpg'},
+];
+const TOTAL_DURATION=TRACKS.reduce((s,t)=>s+t.duration,0);
+function getCurrentTrack(){
+  const totalElapsed=Math.floor(Date.now()/1000)%TOTAL_DURATION;
+  let cumulative=0,currentTrack=TRACKS[0],trackStart=0;
+  for(const track of TRACKS){
+    if(totalElapsed<cumulative+track.duration){currentTrack=track;trackStart=cumulative;break;}
+    cumulative+=track.duration;
+  }
+  return {...currentTrack,isPlaying:true,elapsed:totalElapsed-trackStart};
+}
+function formatTime(s){const m=Math.floor(s/60),ss=Math.floor(s%60);return m+':'+(ss<10?'0':'')+ss;}
+function updateProgress(){
+  if(currentTrackDuration<=0)return;
+  currentElapsed=(currentElapsed+1)%(currentTrackDuration+1);
+  const bar=document.getElementById('spot-progress-fill');
+  if(bar)bar.style.width=(currentElapsed/currentTrackDuration*100)+'%';
+}
+let currentTrackId=null;
+function updateSpotify(){
+  const data=getCurrentTrack();
+  const img=document.getElementById('spot-img'),tr=document.getElementById('spot-track'),
+        ar=document.getElementById('spot-artist'),st=document.getElementById('spot-status'),
+        link=document.getElementById('spot-link');
+  if(data.id!==currentTrackId){
+    currentTrackId=data.id;currentTrackDuration=data.duration||180;currentElapsed=data.elapsed||0;
+    if(img&&data.albumArt){img.src=data.albumArt;img.style.display='block';}else if(img){img.style.display='none';}
+    if(tr)tr.textContent=data.title;
+    if(ar)ar.textContent=data.artist;
+    if(st)st.textContent=data.isPlaying?'Spotify / now playing':'Spotify / paused';
+    if(link)link.href='https://open.spotify.com/track/'+data.id;
+    const embed=document.getElementById('spotify-embed');
+    if(embed)embed.src='https://open.spotify.com/embed/track/'+data.id+'?theme=0';
+  }
+}
+updateSpotify();
+setInterval(updateSpotify,30000);
+setInterval(updateProgress,1000);
+
+/* command palette */
+const overlay=document.getElementById('palette-overlay'),palInput=document.getElementById('palette-input'),palOutput=document.getElementById('palette-output');
+let paletteOpen=false;
+function openPalette(){if(paletteOpen)return;paletteOpen=true;overlay.classList.add('open');palInput.value='';palOutput.innerHTML='';setTimeout(()=>palInput.focus(),50);}
+function closePalette(){if(!paletteOpen)return;paletteOpen=false;overlay.classList.remove('open');palInput.blur();}
+function palPrint(text,cls){const d=document.createElement('div');d.className='pal-line'+(cls?' '+cls:'');d.textContent=text;palOutput.appendChild(d);palOutput.scrollTop=palOutput.scrollHeight;}
+function palPrintH(html,cls){const d=document.createElement('div');d.className='pal-line'+(cls?' '+cls:'');d.innerHTML=html;palOutput.appendChild(d);palOutput.scrollTop=palOutput.scrollHeight;}
+const COMMANDS={
+  help(){
+    palPrint('');palPrint('Commands:','hi');
+    [['whoami','About Abdurrahman'],['projects','All projects'],['skills','Tech stack'],['homelab','Infrastructure status'],['spotify','Now playing'],['neofetch','System info'],['contact','Contact info'],['clear','Clear output']]
+      .forEach(([c,d])=>palPrintH('  <span style="color:var(--accent);display:inline-block;min-width:160px">'+c+'</span><span style="color:var(--text-2)">'+d+'</span>'));
+    palPrint('');
+  },
+  whoami(){
+    palPrint('');palPrint('Abdurrahman (tox9c)','hi');
+    palPrint('3rd-year Engineering / Cybersecurity & Cloud Computing');
+    palPrint('NTU, Iraq / part-time IT at TAQA');
+    palPrint('Builds apps, trains models, runs a homelab.');palPrint('');
+  },
+  projects(){
+    palPrint('');
+    ['01 Athenas Core  Agentic multi-agent IDE (Rust/Tauri)','02 OsSecurity  Real-time ransomware detector','03 Football Predictor  ML model, 58.77% accuracy','04 E-Commerce  Full-stack store (Next.js, Prisma)','05 Social Media  Real-time platform (Socket.io)','06 CashPilot  Personal finance tracker','07 PriceHawk  Price tracking tool'].forEach(l=>palPrint(l));
+    palPrint('');
+  },
+  skills(){
+    palPrint('');
+    [['Frontend','Next.js / React / TypeScript / Tailwind'],['Backend ','Node.js / Express / PostgreSQL / Prisma'],['AI / ML ','Python / XGBoost / Data analysis'],['Systems ','Rust / Tauri / OS security'],['Infra   ','Tailscale / Pi-hole / Jellyfin / Docker']]
+      .forEach(([k,v])=>palPrintH('  <span style="color:var(--text-2)">'+k+' :: </span>'+v));
+    palPrint('');
+  },
+  homelab(){
+    palPrint('');palPrint('Services:','hi');palPrint('');
+    ['Jellyfin   ONLINE  Self-hosted media server','Pi-hole    ONLINE  DNS ad blocker (network-wide)','Tailscale  ONLINE  Mesh VPN / access from anywhere'].forEach(l=>palPrint('  '+l,'ok'));
+    palPrint('');palPrint('All running 24/7 on own hardware.','dim');palPrint('');
+  },
+  spotify(){
+    palPrint('');palPrint('Now playing:','hi');
+    palPrint('  '+document.getElementById('spot-track').textContent);
+    palPrint('  '+document.getElementById('spot-artist').textContent,'dim');palPrint('');
+  },
+  contact(){
+    palPrint('');palPrint('Contact:','hi');
+    palPrint('  Email  > hello@tox9c.dev');
+    palPrint('  GitHub > github.com/TOX9C');
+    palPrint('  X      > x.com/tox9c');palPrint('');
+  },
+  neofetch(){
+    palPrint('');
+    palPrintH('  <span style="color:var(--accent)"> ████████╗ ██████╗ ██╗  ██╗   </span> <span style="color:var(--text)">tox9c</span><span style="color:var(--text-2)">@split</span>');
+    palPrintH('  <span style="color:var(--accent)">    ██╔══╝██╔═══██╗╚██╗██╔╝   </span> <span style="color:var(--text-2)">────────────────</span>');
+    palPrintH('  <span style="color:var(--accent)">    ██║   ██║   ██║ ╚███╔╝    </span> OS: splitOS v1.0');
+    palPrintH('  <span style="color:var(--accent)">    ██║   ██║   ██║ ██╔██╗    </span> Stack: Next.js / Rust / Python');
+    palPrintH('  <span style="color:var(--accent)">    ██║   ╚██████╔╝██╔╝ ██╗   </span> Homelab: Jellyfin / Pi-hole / Tailscale');
+    palPrintH('  <span style="color:var(--accent)">    ╚═╝    ╚═════╝ ╚═╝  ╚═╝   </span> AI: 58.77% match prediction');
+    palPrintH('                                Status: <span style="color:var(--accent)">Available for hire</span>');
+    palPrint('');
+  },
+  clear(){palOutput.innerHTML='';}
+};
+function runCommand(raw){
+  const low=raw.toLowerCase().trim();
+  if(!low)return;
+  palPrint('> '+raw,'cmd');
+  if(COMMANDS[low])COMMANDS[low]();
+  else if(low==='sudo rm -rf /'){palPrint('');palPrint('nice try.','err');palPrint('');}
+  else{palPrint("command not found: "+raw+" / try 'help'",'err');palPrint('');}
+}
+palInput.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){const val=palInput.value.trim();if(val)runCommand(val);palInput.value='';}
+  if(e.key==='Escape')closePalette();
+});
+overlay.addEventListener('click',e=>{if(e.target===overlay)closePalette();});
+document.addEventListener('keydown',e=>{
+  if(paletteOpen&&e.key==='Escape'){closePalette();return;}
+  if(e.key==='/'&&!paletteOpen){
+    const tag=document.activeElement?.tagName;
+    if(tag==='INPUT'||tag==='TEXTAREA')return;
+    e.preventDefault();openPalette();return;
+  }
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();paletteOpen?closePalette():openPalette();}
+});
+</script>
+</body>
+</html>

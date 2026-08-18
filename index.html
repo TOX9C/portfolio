@@ -1,393 +1,623 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Abdurrahman — Developer</title>
-<meta name="description" content="Abdurrahman (TOX9C) — Full-stack developer, AI engineer, and cybersecurity student. Building systems that think."/>
-<meta property="og:title" content="Abdurrahman — Developer"/>
-<meta property="og:description" content="Full-stack developer, AI engineer, and cybersecurity student. Building systems that think."/>
-<meta property="og:type" content="website"/>
-<meta property="og:url" content="https://tox9c.dev"/>
-<meta name="theme-color" content="#0a0d13"/>
+<title>Abdurrahman (TOX9C) / builds systems that think</title>
+<meta name="description" content="Third-year B.Eng student in Cybersecurity &amp; Cloud Computing at NTU, Iraq. Full-stack, AI, security, and self-hosted infrastructure."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f1eee7;
+  --surface:#f8f6f0;
+  --surface-2:#e9e5da;
+  --border:#141414;
+  --text:#141414;
+  --text-2:#5c5850;
+  --accent:#e63312;
+  --accent-soft:rgba(230,51,18,.08);
+  --paper-line:rgba(20,20,20,.03);
+  --btn-bg:#141414;
+  --btn-text:#f1eee7;
+  --font-display:'Anton',sans-serif;
+  --font-body:'Archivo',sans-serif;
+  --font-mono:'Space Mono',monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+:root[data-theme="dark"]{
+  --bg:#161513;
+  --surface:#1d1c19;
+  --surface-2:#24221e;
+  --border:#d8d2c4;
+  --text:#efece3;
+  --text-2:#a19b8d;
+  --accent:#ff5a35;
+  --accent-soft:rgba(255,90,53,.1);
+  --paper-line:rgba(255,255,255,.03);
+  --btn-bg:#efece3;
+  --btn-text:#161513;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background-color:var(--bg);color:var(--text);
+  background-image:repeating-linear-gradient(0deg,transparent 0 3px,var(--paper-line) 3px 4px);
+  font-family:var(--font-body);font-size:15.5px;line-height:1.7;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  transition:background-color .3s,color .3s;
+}
+a{color:inherit}img{max-width:100%;display:block}ul{list-style:none}
+button,input{font-family:inherit;color:inherit}
+strong{color:var(--text)}
+::selection{background:var(--accent);color:var(--bg)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* nav */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:800;height:64px;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 4vw;
+  border-bottom:1px solid transparent;
+  transition:background .3s,border-color .3s,backdrop-filter .3s;
+}
+nav.scrolled{background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--border)}
+.nav-logo{font-family:var(--font-display);font-size:1.05rem;letter-spacing:.02em;text-decoration:none;color:var(--text);text-transform:uppercase;white-space:nowrap}
+.nav-logo sup{color:var(--accent);font-size:.55em}
+.nav-right{display:flex;gap:1.6rem;align-items:center}
+.nav-links{display:flex;gap:1.5rem;align-items:center}
+.nav-links a{text-decoration:none;color:var(--text-2);font-family:var(--font-mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--accent)}
+.nav-clock{font-family:var(--font-mono);font-size:.6rem;color:var(--text-2);letter-spacing:.08em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.nav-status{display:flex;align-items:center;gap:.45rem;font-family:var(--font-mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2);white-space:nowrap}
+.nav-status i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite}
+.nav-theme{
+  background:none;border:1px solid var(--border);color:var(--text-2);cursor:pointer;
+  font-family:var(--font-mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.38rem .75rem;transition:border-color .2s,color .2s;
+}
+.nav-theme:hover{border-color:var(--accent);color:var(--accent)}
+
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:.55rem;
+  font-family:var(--font-mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.95rem 1.55rem;text-decoration:none;white-space:nowrap;
+  border:1px solid var(--border);transition:transform .2s var(--ease),background .2s,color .2s;
+}
+.btn:active{transform:translateY(2px)}
+.btn-fill{background:var(--btn-bg);color:var(--btn-text);font-weight:700}
+.btn-fill:hover{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.btn-ghost{background:transparent;color:var(--text)}
+.btn-ghost:hover{background:var(--text);color:var(--bg)}
+
+/* HERO */
+#hero{
+  min-height:100dvh;display:flex;align-items:center;
+  padding:6.5rem 4vw 3rem;position:relative;
+}
+.hero-inner{max-width:1280px;margin:0 auto;width:100%;display:grid;grid-template-columns:1.15fr .85fr;gap:4rem;align-items:center}
+.hero-meta{
+  display:flex;justify-content:space-between;align-items:center;gap:1.5rem;flex-wrap:wrap;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:.6rem .1rem;margin-bottom:2.2rem;
+  font-family:var(--font-mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-2);
+}
+.hero-meta b{color:var(--accent);font-weight:700}
+.hero-h1{
+  font-family:var(--font-display);font-weight:400;text-transform:uppercase;
+  line-height:.93;letter-spacing:.005em;font-size:clamp(3rem,8.5vw,6.8rem);
+}
+.hero-h1 .dim{color:var(--text-2)}
+.hero-h1 .acc{color:var(--accent)}
+.hero-h1 .row{display:block;overflow:hidden}
+.hero-sub{max-width:52ch;font-size:.95rem;color:var(--text-2);line-height:1.85;margin-top:1.7rem}
+.hero-sub strong{color:var(--text)}
+.hero-cta{display:flex;gap:.8rem;margin-top:2.2rem;flex-wrap:wrap}
+
+/* hero poster */
+.poster-frame{border:1px solid var(--border);background:var(--surface)}
+.pf-shot{position:relative;overflow:hidden}
+.pf-shot img{width:100%;aspect-ratio:16/10.5;object-fit:cover;display:block;background:var(--surface-2)}
+.pf-cap{
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  padding:.7rem 1rem;border-top:1px solid var(--border);
+  font-family:var(--font-mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2);
+}
+.pf-cap b{color:var(--text);font-weight:400}
+.pf-link{color:var(--text-2);text-decoration:none;transition:color .2s}
+.pf-link:hover{color:var(--accent)}
+
+/* profile strip */
+#profile{border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.profile-grid{max-width:1280px;margin:0 auto;padding:1.4rem 4vw;display:grid;grid-template-columns:repeat(4,1fr)}
+.pcell{padding:0 1.4rem;border-right:1px solid var(--border)}
+.pcell:first-child{padding-left:0}
+.pcell:last-child{border-right:none;padding-right:0}
+.pcell .k{font-family:var(--font-mono);font-size:.54rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-2);margin-bottom:.35rem}
+.pcell .v{font-weight:600;font-size:.92rem;line-height:1.5}
+.pcell .v b{color:var(--accent);font-weight:700}
+
+/* section shell */
+.section{background:var(--bg);transition:background-color .3s}
+.section-inner{max-width:1280px;margin:0 auto;padding:7rem 4vw}
+
+/* WORK: poster stack */
+#work{border-top:1px solid var(--border)}
+.work-head{display:flex;justify-content:space-between;align-items:baseline;gap:2rem;flex-wrap:wrap;margin-bottom:3rem}
+.work-head h2{font-family:var(--font-display);font-weight:400;text-transform:uppercase;font-size:clamp(2rem,4.5vw,3.4rem);letter-spacing:.01em}
+.work-head h2 b{color:var(--accent)}
+.work-head p{font-family:var(--font-mono);font-size:.6rem;color:var(--text-2);letter-spacing:.1em;text-transform:uppercase;line-height:1.9;text-align:right}
+.stack-cards{position:relative}
+.stack-card{
+  position:sticky;top:0;height:100dvh;
+  display:flex;align-items:center;
+  padding:5.5rem 4vw 2rem;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  overflow:hidden;
+  transition:background-color .3s;
+}
+.stack-card .inner{max-width:1280px;margin:0 auto;width:100%;display:flex;flex-direction:column;height:100%}
+.poster-top{
+  display:flex;justify-content:space-between;align-items:center;gap:1.5rem;flex-wrap:wrap;
+  border-top:1px solid var(--border);
+  padding:.6rem 0;margin-bottom:1.5rem;
+  font-family:var(--font-mono);font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;color:var(--text-2);
+}
+.poster-top .no{font-size:.95rem;color:var(--accent);font-weight:700}
+.poster-body{display:grid;grid-template-columns:1.05fr .95fr;gap:3rem;align-items:center;flex:1;min-height:0}
+.pc-shot{border:1px solid var(--border);background:var(--surface);overflow:hidden;position:relative}
+.pc-shot img{width:100%;aspect-ratio:16/10.5;object-fit:cover;display:block;background:var(--surface-2);transition:transform .6s var(--ease)}
+.pc-shot:hover img{transform:scale(1.015)}
+.pc-shot-cap{
+  display:flex;justify-content:space-between;gap:1rem;padding:.55rem .9rem;border-top:1px solid var(--border);
+  font-family:var(--font-mono);font-size:.52rem;letter-spacing:.11em;text-transform:uppercase;color:var(--text-2);
+}
+.pc-content{max-width:52ch}
+.pc-tag{font-family:var(--font-mono);font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.pc-tag::before{content:'';width:2rem;height:2px;background:var(--accent)}
+.pc-name{font-family:var(--font-display);font-weight:400;text-transform:uppercase;font-size:clamp(2.2rem,5vw,3.8rem);line-height:.95;letter-spacing:.005em}
+.pc-role{font-family:var(--font-mono);font-size:.66rem;color:var(--text-2);margin-top:.9rem;letter-spacing:.05em}
+.pc-desc{font-size:.92rem;color:var(--text-2);line-height:1.85;margin-top:1.2rem}
+.pc-desc strong{color:var(--text)}
+.pc-tags{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:1.3rem}
+.pc-tags span{font-family:var(--font-mono);font-size:.56rem;padding:.3rem .7rem;border:1px solid var(--border);color:var(--text-2);letter-spacing:.06em;text-transform:uppercase}
+.pc-links{display:flex;gap:1.4rem;margin-top:1.6rem;flex-wrap:wrap}
+.pc-links a{
+  font-family:var(--font-mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text);text-decoration:none;border-bottom:2px solid var(--accent);padding-bottom:.25rem;
+  transition:color .2s;
+}
+.pc-links a:hover{color:var(--accent)}
+.poster-foot{
+  display:flex;justify-content:space-between;align-items:center;gap:1.5rem;flex-wrap:wrap;
+  border-top:1px solid var(--border);
+  padding:.6rem 0;margin-top:auto;
+  font-family:var(--font-mono);font-size:.54rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2);
+}
+.poster-foot b{color:var(--text);font-weight:400}
+
+/* rest card: 2x2 mini grid */
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;padding-bottom:1rem}
+.mini{border:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;text-decoration:none;transition:transform .25s var(--ease),box-shadow .25s}
+.mini:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--accent)}
+.mini .m-shot{overflow:hidden}
+.mini .m-shot img{width:100%;aspect-ratio:16/9.5;object-fit:cover;display:block;background:var(--surface-2);border-bottom:1px solid var(--border)}
+.mini .m-body{padding:.85rem 1rem .95rem;flex:1;display:flex;flex-direction:column}
+.mini .m-name{font-family:var(--font-display);font-weight:400;text-transform:uppercase;font-size:1.05rem;letter-spacing:.01em;line-height:1.1}
+.mini .m-desc{font-size:.74rem;color:var(--text-2);line-height:1.6;margin-top:.4rem;flex:1}
+.mini .m-tech{font-family:var(--font-mono);font-size:.52rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-top:.6rem}
+.mini .m-go{font-family:var(--font-mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2);margin-top:.7rem;text-align:right;transition:color .2s}
+.mini:hover .m-go{color:var(--accent)}
+
+/* ABOUT */
+#about{border-top:1px solid var(--border)}
+.about-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:4rem;align-items:start}
+.about-head{font-family:var(--font-display);font-weight:400;text-transform:uppercase;font-size:clamp(2rem,4.5vw,3.4rem);letter-spacing:.01em;margin-bottom:2.2rem}
+.about-head b{color:var(--accent)}
+.about-text p{font-size:.93rem;color:var(--text-2);line-height:1.95;margin-bottom:1.15rem}
+.about-text p:last-child{margin-bottom:0}
+.about-text strong{color:var(--text)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--border);margin-bottom:2rem}
+.stat{padding:1.25rem 1.1rem;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-num{font-family:var(--font-display);font-weight:400;font-size:2rem;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums}
+.stat-label{font-family:var(--font-mono);font-size:.54rem;color:var(--text-2);letter-spacing:.1em;text-transform:uppercase;margin-top:.5rem;line-height:1.6}
+.stack-line{font-family:var(--font-mono);font-size:.62rem;color:var(--text-2);line-height:2.35;letter-spacing:.04em;margin-bottom:1.6rem}
+.stack-line b{color:var(--text);font-weight:700}
+
+/* spotify */
+.spotify-widget{border:1px solid var(--border);background:var(--surface);overflow:hidden}
+.spot-player{display:flex;align-items:center;gap:.9rem;padding:.85rem 1rem}
+.spot-album{position:relative;width:56px;height:56px;flex-shrink:0;overflow:hidden;background:var(--surface-2)}
+.spot-album img{width:100%;height:100%;object-fit:cover}
+.spot-album img[src=""],.spot-album img:not([src]){display:none}
+.spot-meta{min-width:0;flex:1;display:flex;flex-direction:column;gap:.2rem}
+.spot-status{font-family:var(--font-mono);font-size:.54rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:.4rem}
+.spot-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite}
+.spot-track-name{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spot-artist-name{font-size:.68rem;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spot-progress-wrap{display:flex;flex-direction:column;gap:.25rem;min-width:90px}
+.spot-progress-time{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.54rem;color:var(--text-2);font-variant-numeric:tabular-nums}
+.spot-progress-bar{height:3px;background:var(--surface-2);overflow:hidden}
+.spot-progress-fill{height:100%;width:0%;background:var(--accent);transition:width .3s ease-out}
+.spot-link{flex-shrink:0;color:var(--text-2);opacity:.55;transition:opacity .2s,color .2s;display:flex;align-items:center}
+.spot-link:hover{opacity:1;color:var(--accent)}
+.spot-link svg{width:18px;height:18px}
+
+/* INFRA */
+#infra{border-top:1px solid var(--border)}
+.infra-ticker{border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;padding:.85rem 0;margin-bottom:4.5rem}
+.ticker-track{display:flex;width:max-content;animation:ticker 32s linear infinite}
+.ticker-track span{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-2);padding:0 1.6rem;white-space:nowrap}
+.ticker-track span b{color:var(--accent);font-weight:700}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.infra-row{
+  display:grid;grid-template-columns:6.5rem 1.1fr 2.2fr;gap:2rem;align-items:baseline;
+  padding:1.3rem .2rem;border-bottom:1px solid var(--border);
+}
+.infra-row:first-of-type{border-top:1px solid var(--border)}
+.infra-row .st{font-family:var(--font-mono);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.infra-row .n{font-family:var(--font-display);font-weight:400;text-transform:uppercase;font-size:1.2rem;letter-spacing:.01em}
+.infra-row .d{font-size:.8rem;color:var(--text-2);line-height:1.7}
+
+/* CONTACT */
+#contact{min-height:80dvh;display:flex;align-items:center;border-top:1px solid var(--border)}
+.contact-inner{max-width:1280px;margin:0 auto;width:100%;padding:7rem 4vw;display:grid;grid-template-columns:1.15fr .85fr;gap:4rem;align-items:start}
+.contact-title{font-family:var(--font-display);font-weight:400;text-transform:uppercase;font-size:clamp(2.4rem,6vw,4.6rem);line-height:.95;letter-spacing:.005em}
+.contact-title b{color:var(--accent)}
+.contact-sub{font-size:.9rem;color:var(--text-2);max-width:40ch;margin-top:1.4rem;line-height:1.85}
+.contact-links{border-top:1px solid var(--border)}
+.contact-link{
+  display:flex;justify-content:space-between;align-items:center;gap:1.5rem;
+  padding:1.05rem .2rem;border-bottom:1px solid var(--border);text-decoration:none;
+  transition:padding-left .3s var(--ease);
+}
+.contact-link:hover{padding-left:.7rem}
+.contact-link .k{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-2)}
+.contact-link .v{font-weight:600;font-size:.98rem;text-align:right;word-break:break-all}
+.contact-link .a{font-size:1rem;color:var(--text-2);transition:color .2s,transform .3s var(--ease)}
+.contact-link:hover .a{color:var(--accent);transform:translate(3px,-3px)}
+
+footer{
+  border-top:1px solid var(--border);background:var(--bg);
+  padding:1.4rem 4vw;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
+  font-family:var(--font-mono);font-size:.56rem;color:var(--text-2);letter-spacing:.08em;
+}
+footer a{color:var(--text-2);text-decoration:none}
+footer a:hover{color:var(--accent)}
+.footer-clock{font-variant-numeric:tabular-nums}
+.footer-hint{opacity:.55}
+.footer-hint kbd{display:inline-block;padding:.08rem .4rem;border:1px solid var(--border);font-family:var(--font-mono);font-size:.54rem;background:var(--surface)}
+
+/* palette */
+.palette-overlay{
+  position:fixed;inset:0;z-index:9000;background:rgba(20,20,20,.5);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:flex-start;justify-content:center;padding-top:16vh;
+  opacity:0;pointer-events:none;transition:opacity .25s var(--ease);
+}
+.palette-overlay.open{opacity:1;pointer-events:auto}
+.palette{width:min(560px,90vw);background:var(--surface);border:1px solid var(--border);box-shadow:0 24px 80px rgba(0,0,0,.25);transform:translateY(-12px) scale(.98);transition:transform .3s var(--ease)}
+.palette-overlay.open .palette{transform:translateY(0) scale(1)}
+.palette-input-row{display:flex;align-items:center;padding:.85rem 1.2rem;border-bottom:1px solid var(--border);gap:.6rem}
+.palette-icon{color:var(--accent);font-family:var(--font-mono);font-weight:700}
+#palette-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:var(--font-mono);font-size:.82rem;caret-color:var(--accent)}
+#palette-input::placeholder{color:var(--text-2);opacity:.5}
+.palette-output{max-height:320px;overflow-y:auto;padding:.5rem 0}
+.palette-output:empty{display:none}
+.palette-hint{padding:.6rem 1.2rem;font-size:.56rem;color:var(--text-2);opacity:.55;border-top:1px solid var(--border);font-family:var(--font-mono)}
+.pal-line{padding:.15rem 1.2rem;font-size:.74rem;line-height:1.65;color:var(--text-2);white-space:pre-wrap;word-break:break-word;font-family:var(--font-mono)}
+.pal-line.cmd{color:var(--accent)}
+.pal-line.hi{color:var(--text)}
+.pal-line.dim{color:var(--text-2);opacity:.55}
+.pal-line.ok{color:var(--accent)}
+.pal-line.err{color:#cc6b6b}
+
+/* reveal */
+.rev{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.rev.in{opacity:1;transform:none}
+.rev-hero{opacity:0;transform:translateY(18px);transition:opacity .65s var(--ease),transform .65s var(--ease)}
+.rev-hero.in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .rev,.rev-hero{opacity:1;transform:none}
+  .ticker-track{animation:none}
+}
+@media (max-width:960px){
+  .hero-inner{grid-template-columns:1fr;gap:2.6rem}
+  .poster-frame{max-width:560px}
+  .profile-grid{grid-template-columns:1fr 1fr;gap:1.2rem 0}
+  .pcell{padding:1rem 1.2rem;border-bottom:1px solid var(--border)}
+  .pcell:nth-child(2){border-right:none}
+  .pcell:nth-child(3),.pcell:nth-child(4){border-bottom:none}
+  .stack-card{padding:5rem 6vw 2rem;height:auto;min-height:100dvh}
+  .poster-body{grid-template-columns:1fr;gap:1.6rem}
+  .pc-shot img{aspect-ratio:16/9.5}
+  .about-grid{grid-template-columns:1fr;gap:3rem}
+  .contact-inner{grid-template-columns:1fr;gap:2.5rem}
+  .infra-row{grid-template-columns:5.5rem 1fr;gap:1rem}
+  .infra-row .d{grid-column:2}
+  .nav-links{display:none}
+  .nav-clock{display:none}
+}
+@media (max-width:560px){
+  .mini-grid{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .stats-row .stat:nth-child(2){border-right:none}
+  .stats-row .stat:nth-child(3){border-top:1px solid var(--border)}
+  .stats-row .stat:nth-child(4){border-top:1px solid var(--border)}
+  .hero-cta{width:100%}
+  .hero-cta .btn{flex:1;justify-content:center}
+  .contact-links .v{font-size:.86rem}
+  .footer-hint{display:none}
+}
+</style>
 </head>
 <body>
 
-<!-- TOPOGRAPHIC BACKGROUND -->
-<div class="topo-bg" aria-hidden="true">
-  <svg class="topo-svg" viewBox="0 0 1440 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M-20 180 Q 200 120, 400 190 T 800 160 T 1200 200 T 1460 170" />
-    <path d="M-20 240 Q 180 180, 380 250 T 760 220 T 1180 260 T 1460 230" />
-    <path d="M-20 310 Q 220 260, 440 320 T 820 290 T 1220 330 T 1460 300" />
-    <path d="M-20 390 Q 160 340, 360 400 T 740 370 T 1160 410 T 1460 380" />
-    <path d="M-20 460 Q 240 410, 460 470 T 860 440 T 1260 480 T 1460 450" />
-    <path d="M-20 540 Q 190 490, 390 550 T 780 520 T 1200 560 T 1460 530" />
-    <path d="M-20 620 Q 210 570, 430 630 T 840 600 T 1240 640 T 1460 610" />
-    <path d="M-20 700 Q 170 650, 370 710 T 750 680 T 1170 720 T 1460 690" />
-    <path d="M-20 770 Q 230 730, 450 780 T 870 750 T 1280 790 T 1460 760" />
-    <path d="M-20 850 Q 200 800, 420 860 T 830 830 T 1230 870 T 1460 840" />
-    <path d="M-20 130 Q 300 80, 520 140 T 900 110 T 1300 150 T 1460 120" />
-    <path d="M-20 500 Q 280 450, 500 510 T 900 480 T 1300 520 T 1460 490" />
-    <path d="M-20 350 Q 250 300, 470 360 T 880 330 T 1280 370 T 1460 340" />
-    <path d="M-20 660 Q 260 610, 480 670 T 890 640 T 1290 680 T 1460 650" />
-  </svg>
-</div>
-
-<!-- NAV -->
 <nav id="nav">
-  <a class="nav-logo" href="#">Abdurrahman</a>
-  <ul class="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#work">Work</a></li>
-    <li><a href="#infra">Infrastructure</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
+  <a class="nav-logo" href="#hero">TOX9C<sup>&reg;</sup></a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#infra">Infra</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <span class="nav-clock" id="nav-clock" title="Baghdad, Iraq (UTC+3)">--:--:--</span>
+    <div class="nav-status"><i></i><span>Open to internships</span></div>
+    <button class="nav-theme" id="theme-toggle" aria-label="Toggle theme">dark</button>
+  </div>
 </nav>
 
 <!-- HERO -->
-<section id="hero">
-  <div class="hero-coords" aria-hidden="true">33.3&deg;N, 44.4&deg;E</div>
-  <div class="hero-content">
-    <p class="hero-tag">Cybersecurity &middot; AI &middot; Full-stack &middot; Homelab</p>
-    <h1 class="hero-h1">
-      <span class="hero-line hero-line-1 rev-hero">Abdurrahman</span>
-      <span class="hero-line hero-line-2 rev-hero">builds systems</span>
-      <span class="hero-line hero-line-3 rev-hero">that think.</span>
-    </h1>
-    <div class="hero-bot">
-      <p class="hero-desc rev-hero">I'm <strong>tox9c</strong> — a developer driven by AI, full-stack engineering, and an obsession with running my own infrastructure. I ship real things.</p>
+<header id="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-meta rev-hero"><span>Portfolio <b>Vol.02</b> / 2026</span><span>Iraq / UTC+3</span><span>AI + Security + Full-stack</span></div>
+      <h1 class="hero-h1">
+        <span class="row rev-hero">Abdurrahman</span>
+        <span class="row dim rev-hero">Builds systems</span>
+        <span class="row rev-hero">that <span class="acc">think.</span></span>
+      </h1>
+      <p class="hero-sub rev-hero">I'm a <strong>third-year B.Eng student</strong> in Cybersecurity and Cloud Computing at <strong>NTU, Iraq</strong>, and a part-time IT at <strong>TAQA</strong>. I build full-stack apps, train ML models, and ship security tools.</p>
       <div class="hero-cta rev-hero">
-        <a href="#work" class="btn btn-fill">See my work</a>
-        <a href="#contact" class="btn btn-ghost">Get in touch</a>
+        <a href="#work" class="btn btn-fill">See the work</a>
+        <a href="#contact" class="btn btn-ghost">Contact</a>
       </div>
+    </div>
+    <div class="poster-frame rev-hero">
+      <div class="pf-shot">
+        <img src="assets/projects/athenas-workspace.png" alt="Athenas Core workspace screenshot" loading="eager"/>
+      </div>
+      <div class="pf-cap"><span><b>Athenas Core</b> / Agentic IDE</span><a class="pf-link" href="https://github.com/TOX9C/athenas-core" target="_blank" rel="noopener">github &nearr;</a></div>
+    </div>
+  </div>
+</header>
+
+<!-- PROFILE STRIP -->
+<section id="profile" aria-label="profile facts">
+  <div class="profile-grid">
+    <div class="pcell rev"><div class="k">Based in</div><div class="v">Iraq <b>/</b> UTC+3</div></div>
+    <div class="pcell rev"><div class="k">Studying</div><div class="v">B.Eng Cybersecurity &amp; Cloud Computing <b>/</b> 3rd year, NTU</div></div>
+    <div class="pcell rev"><div class="k">Experience</div><div class="v">Part-time IT at <b>TAQA</b></div></div>
+    <div class="pcell rev"><div class="k">Status</div><div class="v">Open to <b>internships</b> &amp; <b>junior roles</b></div></div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work" class="section">
+  <div class="section-inner">
+    <div class="work-head rev">
+      <h2>Work <b>/ 07</b></h2>
+      <p>seven systems, real screenshots.<br/>scroll. the posters stack.</p>
+    </div>
+    <div class="stack-cards">
+
+      <div class="stack-card">
+        <div class="inner">
+          <div class="poster-top"><span class="no">01</span><span>Featured / Agentic IDE</span><span>Rust / Tauri 2 / Dioxus / MCP</span></div>
+          <div class="poster-body">
+            <div class="pc-shot">
+              <img src="assets/projects/athenas-workspace.png" alt="Athenas Core workspace" loading="lazy"/>
+              <div class="pc-shot-cap"><span>Workspace view</span><span>agents analysing code</span></div>
+            </div>
+            <div class="pc-content">
+              <p class="pc-tag">Agentic IDE</p>
+              <h3 class="pc-name">Athenas Core</h3>
+              <p class="pc-role">Rust / Tauri 2 / Dioxus / MCP</p>
+              <p class="pc-desc">A desktop IDE where <strong>parallel AI agents</strong> analyse, review, and reason about code in dedicated workspaces. 78 IPC commands, 85+ components, multi-provider LLM support.</p>
+              <div class="pc-tags"><span>Multi-agent</span><span>Rust</span><span>Tauri 2</span><span>Dioxus</span><span>MCP</span></div>
+              <div class="pc-links"><a href="https://github.com/TOX9C/athenas-core" target="_blank" rel="noopener">GitHub &nearr;</a></div>
+            </div>
+          </div>
+          <div class="poster-foot"><span><b>Athenas Core</b></span><span>TOX9C &copy; 2026</span><span>Plate 01 / 07</span></div>
+        </div>
+      </div>
+
+      <div class="stack-card">
+        <div class="inner">
+          <div class="poster-top"><span class="no">02</span><span>Featured / Full-stack</span><span>Next.js / TypeScript / PostgreSQL / Prisma</span></div>
+          <div class="poster-body">
+            <div class="pc-shot">
+              <img src="assets/projects/ecommerce-landing.jpg" alt="E-commerce platform landing page" loading="lazy"/>
+              <div class="pc-shot-cap"><span>Storefront</span><span>live on Vercel</span></div>
+            </div>
+            <div class="pc-content">
+              <p class="pc-tag">E-Commerce Platform</p>
+              <h3 class="pc-name">E-Commerce</h3>
+              <p class="pc-role">Next.js 16 / TypeScript / PostgreSQL / Prisma</p>
+              <p class="pc-desc">A full store: <strong>product catalog, cart, checkout, order management</strong>, and an admin dashboard. Deployed live.</p>
+              <div class="pc-tags"><span>Next.js</span><span>TypeScript</span><span>PostgreSQL</span><span>Prisma</span></div>
+              <div class="pc-links"><a href="https://github.com/TOX9C/ecommerce" target="_blank" rel="noopener">GitHub &nearr;</a><a href="https://ecommerce-ten-flame-39.vercel.app/" target="_blank" rel="noopener">Live demo &nearr;</a></div>
+            </div>
+          </div>
+          <div class="poster-foot"><span><b>E-Commerce</b></span><span>TOX9C &copy; 2026</span><span>Plate 02 / 07</span></div>
+        </div>
+      </div>
+
+      <div class="stack-card">
+        <div class="inner">
+          <div class="poster-top"><span class="no">03</span><span>Featured / Real-time</span><span>React 19 / Socket.io / Express / Prisma</span></div>
+          <div class="poster-body">
+            <div class="pc-shot">
+              <img src="assets/projects/social-home.png" alt="Social media platform home feed" loading="lazy"/>
+              <div class="pc-shot-cap"><span>Home feed</span><span>posts, profiles, DMs</span></div>
+            </div>
+            <div class="pc-content">
+              <p class="pc-tag">Social Media Platform</p>
+              <h3 class="pc-name">Social</h3>
+              <p class="pc-role">React 19 / Socket.io / Express / Prisma</p>
+              <p class="pc-desc">A <strong>real-time social platform</strong>: posts and feeds, profiles, notifications, and direct messages over WebSockets.</p>
+              <div class="pc-tags"><span>React 19</span><span>Socket.io</span><span>Express</span><span>Prisma</span></div>
+              <div class="pc-links"><a href="https://github.com/TOX9C/social-media" target="_blank" rel="noopener">GitHub &nearr;</a></div>
+            </div>
+          </div>
+          <div class="poster-foot"><span><b>Social Media</b></span><span>TOX9C &copy; 2026</span><span>Plate 03 / 07</span></div>
+        </div>
+      </div>
+
+      <div class="stack-card">
+        <div class="inner">
+          <div class="poster-top"><span class="no">04</span><span>Archive / Four more</span><span>finance + price tracking + security + ML</span></div>
+          <div class="poster-body" style="grid-template-columns:1fr;align-items:start">
+            <div class="pc-content" style="max-width:none;width:100%">
+              <p class="pc-tag">Archive</p>
+              <h3 class="pc-name" style="font-size:clamp(1.7rem,3.6vw,2.6rem)">And four more.</h3>
+              <div class="mini-grid" style="margin-top:1.6rem">
+                <a class="mini" href="https://github.com/TOX9C/cashPilot" target="_blank" rel="noopener">
+                  <div class="m-shot"><img src="assets/projects/cashpilot-dashboard.jpg" alt="CashPilot dashboard" loading="lazy"/></div>
+                  <div class="m-body">
+                    <div class="m-name">CashPilot</div>
+                    <div class="m-desc">Personal finance: accounts, transactions, budgets, and goals.</div>
+                    <div class="m-tech">React 19 / Express 5 / Prisma / PostgreSQL</div>
+                    <div class="m-go">GitHub &nearr;</div>
+                  </div>
+                </a>
+                <a class="mini" href="https://github.com/TOX9C/price-tracker" target="_blank" rel="noopener">
+                  <div class="m-shot"><img src="assets/projects/pricehawk-dashboard.png" alt="PriceHawk dashboard" loading="lazy"/></div>
+                  <div class="m-body">
+                    <div class="m-name">PriceHawk</div>
+                    <div class="m-desc">Price tracking with history charts, alerts, and a browser extension.</div>
+                    <div class="m-tech">TypeScript / Next.js / Recharts / Vercel</div>
+                    <div class="m-go">GitHub &nearr;</div>
+                  </div>
+                </a>
+                <a class="mini" href="https://github.com/TOX9C/OsSecurity" target="_blank" rel="noopener">
+                  <div class="m-shot"><img src="assets/projects/ossecurity-terminal.png" alt="OsSecurity terminal" loading="lazy"/></div>
+                  <div class="m-body">
+                    <div class="m-name">OsSecurity</div>
+                    <div class="m-desc">Ransomware detector built from scratch. Monitors OS-level file behaviour and flags encryption patterns.</div>
+                    <div class="m-tech">Python / OS-level / real-time</div>
+                    <div class="m-go">GitHub &nearr;</div>
+                  </div>
+                </a>
+                <a class="mini" href="https://github.com/TOX9C/football-predictor" target="_blank" rel="noopener">
+                  <div class="m-shot"><img src="assets/projects/football-predictor-ui.png" alt="Football Predictor UI" loading="lazy"/></div>
+                  <div class="m-body">
+                    <div class="m-name">Football Predictor</div>
+                    <div class="m-desc">Match outcome prediction at 58.77% accuracy, beating bookmaker baselines. Live ELO rankings.</div>
+                    <div class="m-tech">Python / XGBoost / ELO / web UI</div>
+                    <div class="m-go">GitHub &nearr;</div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="poster-foot"><span><b>Archive</b></span><span>TOX9C &copy; 2026</span><span>Plates 04-07</span></div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
 <!-- ABOUT -->
-<section id="about">
-  <div class="section-label">About</div>
-  <h2 class="section-title rev">Developer. AI enthusiast.<br>Infrastructure builder.</h2>
-  <div class="about-grid">
-    <div class="about-left rev">
-      <blockquote class="pull-quote">
-        <p>The overlap between AI, security, and full-stack is where I live.</p>
-      </blockquote>
-      <div class="about-text">
-        <p>I'm a <strong>third-year Engineering student</strong> studying Cybersecurity and Cloud Computing at NTU in Iraq — but what really drives me is building things that think, move fast, and actually work.</p>
-        <p>I've trained <strong>machine learning models</strong> to predict football match outcomes at 58.77% accuracy (beating bookmaker baselines), built a <strong>ransomware detector</strong> from scratch, and shipped a <strong>multi-agent IDE</strong> written in Rust. I also worked part-time in IT at <strong>TAQA</strong>, one of the largest companies in Iraq.</p>
-        <p>Outside of code, I run a home server with Jellyfin, Pi-hole, and Tailscale — because why rent infrastructure when you can build your own?</p>
+<section id="about" class="section">
+  <div class="section-inner">
+    <h2 class="about-head rev">About <b>me</b></h2>
+    <div class="about-grid">
+      <div class="about-text rev">
+        <p>I'm <strong>Abdurrahman</strong>, a third-year B.Eng student in <strong>Cybersecurity and Cloud Computing</strong> at <strong>NTU, Iraq</strong>. I build things that think, move fast, and actually work.</p>
+        <p>I've trained <strong>machine learning models</strong>, built a <strong>ransomware detector</strong> from scratch, and shipped a <strong>multi-agent IDE</strong> written in Rust. I also work part-time in IT at <strong>TAQA</strong>, one of the largest companies in Iraq.</p>
+        <p>Outside of code I run a home server with Jellyfin, Pi-hole, and Tailscale. Why rent infrastructure when you can build your own?</p>
       </div>
-    </div>
-    <div class="about-right">
-      <div class="stats rev">
-        <div class="stat">
-          <div class="stat-num" data-count="7" data-suffix="+">0+</div>
-          <div class="stat-label">Projects shipped</div>
+      <div class="rev">
+        <div class="stats-row">
+          <div class="stat"><div class="stat-num" data-count="7" data-suffix="+">0+</div><div class="stat-label">Projects shipped</div></div>
+          <div class="stat"><div class="stat-num" data-text="3rd">--</div><div class="stat-label">Year / Eng</div></div>
+          <div class="stat"><div class="stat-num" data-count="58.77" data-suffix="%" data-decimal="true">0%</div><div class="stat-label">Model accuracy</div></div>
+          <div class="stat"><div class="stat-num" data-count="24" data-suffix="/7">0/7</div><div class="stat-label">Homelab uptime</div></div>
         </div>
-        <div class="stat">
-          <div class="stat-num" data-text="3rd">--</div>
-          <div class="stat-label">Year &middot; Engineering</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num" data-count="58.77" data-suffix="%" data-decimal="true">0%</div>
-          <div class="stat-label">ML model accuracy</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num" data-count="24" data-suffix="/7">0/7</div>
-          <div class="stat-label">Homelab uptime</div>
-        </div>
-      </div>
-
-      <div class="stack-group rev">
-        <div class="stack-section">
-          <div class="stack-title">Frontend</div>
-          <div class="pills">
-            <span class="pill">Next.js</span><span class="pill">React</span><span class="pill">TypeScript</span><span class="pill">Tailwind CSS</span>
-          </div>
-        </div>
-        <div class="stack-section">
-          <div class="stack-title">Backend</div>
-          <div class="pills">
-            <span class="pill">Node.js</span><span class="pill">Express</span><span class="pill">PostgreSQL</span><span class="pill">Prisma</span>
-          </div>
-        </div>
-        <div class="stack-section">
-          <div class="stack-title">AI / Systems</div>
-          <div class="pills">
-            <span class="pill">Python</span><span class="pill">XGBoost</span><span class="pill">Rust</span><span class="pill">Tauri</span>
-          </div>
-        </div>
-        <div class="stack-section">
-          <div class="stack-title">Infra</div>
-          <div class="pills">
-            <span class="pill">Docker</span><span class="pill">Tailscale</span><span class="pill">Pi-hole</span><span class="pill">Jellyfin</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="spotify-widget rev" id="spotify-widget">
-        <div class="spot-player">
-          <div class="spot-album" id="spot-album">
-            <img id="spot-img" src="" alt="Album art" loading="lazy"/>
-            <div class="spot-album-overlay" id="spot-play-overlay">
-              <button class="spot-play-btn" id="spot-play-btn" aria-label="Play">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </button>
+        <p class="stack-line"><b>Frontend</b> Next.js / React / TypeScript / Tailwind<br><b>Backend</b> Node.js / Express / PostgreSQL / Prisma<br><b>AI / Systems</b> Python / XGBoost / Rust / Tauri<br><b>Infra</b> Docker / Tailscale / Pi-hole / Jellyfin</p>
+        <div class="spotify-widget" id="spotify-widget">
+          <div class="spot-player">
+            <div class="spot-album"><img id="spot-img" src="" alt="Album art" loading="lazy"/></div>
+            <div class="spot-meta">
+              <div class="spot-status" id="spot-status">Spotify</div>
+              <div class="spot-track-name" id="spot-track">Loading...</div>
+              <div class="spot-artist-name" id="spot-artist">...</div>
             </div>
-          </div>
-          <div class="spot-meta">
-            <div class="spot-status" id="spot-status">Spotify</div>
-            <div class="spot-track-name" id="spot-track">Loading...</div>
-            <div class="spot-artist-name" id="spot-artist">...</div>
-          </div>
-          <div class="spot-progress-wrap">
-            <div class="spot-progress-time">
-              <span id="spot-current">0:00</span>
-              <span id="spot-total">0:00</span>
+            <div class="spot-progress-wrap">
+              <div class="spot-progress-time"><span id="spot-current">0:00</span><span id="spot-total">0:00</span></div>
+              <div class="spot-progress-bar"><div class="spot-progress-fill" id="spot-progress-fill"></div></div>
             </div>
-            <div class="spot-progress-bar">
-              <div class="spot-progress-fill" id="spot-progress-fill"></div>
-            </div>
+            <a id="spot-link" href="#" target="_blank" rel="noopener" class="spot-link" title="Open in Spotify">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.48-2.159-10.56-1.179-.399.12-.78-.12-.9-.479-.12-.4.119-.78.479-.9 4.56-1.08 8.64-.6 11.76 1.32.42.18.54.659.24 1.02zm1.44-3.12c-.3.42-.84.6-1.26.3-3.239-1.919-7.439-2.519-11.22-1.38-.48.139-1.02-.119-1.14-.599-.12-.48.119-1.02.599-1.14 4.44-1.26 9.12-.6 12.84 1.62.36.18.48.84.18 1.2zm.12-3.48C14.399 8.1 8.399 7.98 4.84 9.14c-.36.12-.78-.12-.9-.479-.12-.36.119-.78.599-.9C9.12 6.36 15.6 6.6 19.56 9.02c.42.18.6.6.42 1.02-.18.42-.6.6-1.02.42z"/></svg>
+            </a>
           </div>
-          <a id="spot-link" href="#" target="_blank" rel="noopener" class="spot-link" title="Open in Spotify">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.48-2.159-10.56-1.179-.399.12-.78-.12-.9-.479-.12-.4.119-.78.479-.9 4.56-1.08 8.64-.6 11.76 1.32.42.18.54.659.24 1.02zm1.44-3.12c-.3.42-.84.6-1.26.3-3.239-1.919-7.439-2.519-11.22-1.38-.48.139-1.02-.119-1.14-.599-.12-.48.119-1.02.599-1.14 4.44-1.26 9.12-.6 12.84 1.62.36.18.48.84.18 1.2zm.12-3.48C14.399 8.1 8.399 7.98 4.84 9.14c-.36.12-.78-.12-.9-.479-.12-.36.119-.78.599-.9C9.12 6.36 15.6 6.6 19.56 9.02c.42.18.6.6.42 1.02-.18.42-.6.6-1.02.42z"/></svg>
-          </a>
+          <iframe id="spotify-embed" src="" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media" style="display:none;"></iframe>
         </div>
-        <!-- Spotify embed for audio -->
-        <iframe id="spotify-embed" src="" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media" style="display:none;"></iframe>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FEATURED WORK -->
-<section id="work">
-  <div class="section-label">Flagship work</div>
-  <h2 class="section-title rev">Projects I'm most proud of.</h2>
-
-  <!-- Athenas Core -->
-  <div class="featured-card rev">
-    <div class="fc-content">
-      <span class="fc-num">01</span>
-      <div class="fc-badge">Agentic IDE</div>
-      <h3 class="fc-name">Athenas Core</h3>
-      <p class="fc-desc">A cross-platform desktop IDE where parallel AI agents analyse, review, and reason about code in dedicated workspaces. Built with Rust, Tauri 2, and Dioxus — 78 IPC commands, 85+ components, multi-provider LLM support. Think Cursor, but you control the agents.</p>
-      <div class="fc-tags">
-        <span class="tag">Rust</span><span class="tag">Tauri 2</span><span class="tag">Dioxus</span><span class="tag">Multi-agent</span><span class="tag">MCP</span>
-      </div>
-      <a href="https://github.com/TOX9C/athenas-core" class="fc-link" target="_blank" rel="noopener">View on GitHub <span class="fc-arrow">&rarr;</span></a>
-    </div>
-    <div class="fc-visual">
-      <div class="blueprint">
-        <div class="bp-chrome">
-          <div class="bp-dots"><span></span><span></span><span></span></div>
-          <div class="bp-url">localhost:1420</div>
-        </div>
-        <svg class="bp-svg" viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
-          <!-- IDE Layout: sidebar + editor + terminal -->
-          <rect x="8" y="8" width="80" height="244" rx="3"/>
-          <rect x="96" y="8" width="296" height="28" rx="3"/>
-          <rect x="96" y="42" width="296" height="160" rx="3"/>
-          <rect x="96" y="208" width="296" height="44" rx="3"/>
-          <!-- sidebar items -->
-          <line x1="16" y1="24" x2="72" y2="24"/>
-          <line x1="16" y1="40" x2="64" y2="40"/>
-          <line x1="16" y1="56" x2="68" y2="56"/>
-          <line x1="16" y1="72" x2="58" y2="72"/>
-          <line x1="16" y1="88" x2="72" y2="88"/>
-          <line x1="16" y1="104" x2="60" y2="104"/>
-          <line x1="16" y1="120" x2="66" y2="120"/>
-          <!-- editor lines -->
-          <line x1="108" y1="60" x2="280" y2="60"/>
-          <line x1="108" y1="78" x2="340" y2="78"/>
-          <line x1="108" y1="96" x2="260" y2="96"/>
-          <line x1="120" y1="114" x2="310" y2="114"/>
-          <line x1="120" y1="132" x2="290" y2="132"/>
-          <line x1="108" y1="150" x2="320" y2="150"/>
-          <line x1="108" y1="168" x2="240" y2="168"/>
-          <line x1="108" y1="186" x2="300" y2="186"/>
-          <!-- terminal lines -->
-          <line x1="108" y1="222" x2="220" y2="222"/>
-          <line x1="108" y1="236" x2="280" y2="236"/>
-          <!-- toolbar dots -->
-          <circle cx="110" cy="22" r="4"/>
-          <circle cx="126" cy="22" r="4"/>
-          <circle cx="142" cy="22" r="4"/>
-          <!-- agent indicators -->
-          <circle cx="370" cy="56" r="6"/>
-          <circle cx="370" cy="76" r="6"/>
-          <circle cx="370" cy="96" r="6"/>
-        </svg>
-      </div>
+<!-- INFRA -->
+<section id="infra" class="section">
+  <div class="infra-ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span><b>Jellyfin</b> online / <b>Pi-hole</b> online / <b>Tailscale</b> online / 24/7 self-hosted / zero subscriptions /</span>
+      <span><b>Jellyfin</b> online / <b>Pi-hole</b> online / <b>Tailscale</b> online / 24/7 self-hosted / zero subscriptions /</span>
     </div>
   </div>
-
-  <!-- OsSecurity -->
-  <div class="featured-card featured-card--reversed rev">
-    <div class="fc-content">
-      <span class="fc-num">02</span>
-      <div class="fc-badge">Security Tool</div>
-      <h3 class="fc-name">OsSecurity</h3>
-      <p class="fc-desc">A real-time ransomware detection system that monitors OS-level file behaviour — identifying malicious encryption patterns before they spread. Combines systems-level knowledge with threat analysis, built from scratch in Python.</p>
-      <div class="fc-tags">
-        <span class="tag">Python</span><span class="tag">Ransomware detection</span><span class="tag">OS-level</span><span class="tag">Real-time</span>
-      </div>
-      <a href="https://github.com/TOX9C/OsSecurity" class="fc-link" target="_blank" rel="noopener">View on GitHub <span class="fc-arrow">&rarr;</span></a>
-    </div>
-    <div class="fc-visual">
-      <div class="blueprint">
-        <div class="bp-chrome">
-          <div class="bp-dots"><span></span><span></span><span></span></div>
-          <div class="bp-url">ossecurity v1.0</div>
-        </div>
-        <svg class="bp-svg" viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
-          <!-- Security dashboard: alert panel + file tree + status -->
-          <rect x="8" y="8" width="120" height="244" rx="3"/>
-          <rect x="136" y="8" width="256" height="60" rx="3"/>
-          <rect x="136" y="76" width="256" height="176" rx="3"/>
-          <!-- status indicators top -->
-          <circle cx="160" cy="26" r="8"/>
-          <circle cx="196" cy="26" r="8"/>
-          <circle cx="232" cy="26" r="8"/>
-          <line x1="160" y1="46" x2="220" y2="46"/>
-          <line x1="248" y1="26" x2="320" y2="26"/>
-          <line x1="248" y1="46" x2="370" y2="46"/>
-          <!-- file tree -->
-          <line x1="18" y1="24" x2="60" y2="24"/>
-          <line x1="28" y1="44" x2="100" y2="44"/>
-          <line x1="28" y1="60" x2="90" y2="60"/>
-          <line x1="28" y1="76" x2="108" y2="76"/>
-          <line x1="38" y1="92" x2="96" y2="92"/>
-          <line x1="38" y1="108" x2="88" y2="108"/>
-          <line x1="28" y1="128" x2="100" y2="128"/>
-          <line x1="28" y1="144" x2="80" y2="144"/>
-          <line x1="18" y1="168" x2="70" y2="168"/>
-          <line x1="28" y1="188" x2="108" y2="188"/>
-          <!-- main panel: alert blocks -->
-          <rect x="148" y="88" width="232" height="36" rx="2"/>
-          <rect x="148" y="132" width="232" height="36" rx="2"/>
-          <rect x="148" y="176" width="232" height="36" rx="2"/>
-          <rect x="148" y="220" width="232" height="24" rx="2"/>
-          <!-- alert text lines -->
-          <line x1="158" y1="100" x2="280" y2="100"/>
-          <line x1="158" y1="114" x2="240" y2="114"/>
-          <line x1="158" y1="144" x2="300" y2="144"/>
-          <line x1="158" y1="158" x2="260" y2="158"/>
-          <line x1="158" y1="188" x2="270" y2="188"/>
-          <line x1="158" y1="202" x2="310" y2="202"/>
-          <!-- alert status dots -->
-          <circle cx="368" cy="106" r="5"/>
-          <circle cx="368" cy="150" r="5"/>
-          <circle cx="368" cy="194" r="5"/>
-        </svg>
-      </div>
+  <div class="section-inner" style="padding-top:0">
+    <h2 class="about-head rev">The homelab</h2>
+    <div class="rev">
+      <div class="infra-row"><span class="st">Online</span><span class="n">Jellyfin</span><span class="d">Self-hosted media server. All my content, streamed anywhere. No subscriptions, no tracking.</span></div>
+      <div class="infra-row"><span class="st">Online</span><span class="n">Pi-hole</span><span class="d">Network-wide DNS ad blocker. Every device on my network runs cleaner because of it.</span></div>
+      <div class="infra-row"><span class="st">Online</span><span class="n">Tailscale</span><span class="d">Mesh VPN so I can reach my homelab securely from anywhere in the world.</span></div>
     </div>
   </div>
-</section>
-
-<!-- PROJECT ARCHIVE -->
-<section id="archive">
-  <div class="section-label">Other work</div>
-  <div class="archive-list">
-    <a href="https://github.com/TOX9C/ecommerce" class="archive-row rev" target="_blank" rel="noopener">
-      <span class="ar-num">03</span>
-      <div class="ar-info">
-        <div class="ar-name">E-Commerce Platform</div>
-        <div class="ar-desc">Full-stack store with admin dashboard, dual auth, cart &amp; order management. Skeletal loading, smart navigation.</div>
-        <div class="ar-tags"><span class="tag">Next.js 16</span><span class="tag">TypeScript</span><span class="tag">PostgreSQL</span><span class="tag">Prisma</span></div>
-      </div>
-      <span class="ar-live">Live</span>
-      <span class="ar-arrow">&nearr;</span>
-    </a>
-    <a href="https://github.com/TOX9C/football-predictor" class="archive-row rev" target="_blank" rel="noopener">
-      <span class="ar-num">04</span>
-      <div class="ar-info">
-        <div class="ar-name">Football Match Predictor</div>
-        <div class="ar-desc">ML model achieving 58.77% accuracy — beats bookmaker baselines. Live ELO rankings, value betting detection, web UI.</div>
-        <div class="ar-tags"><span class="tag">Python</span><span class="tag">XGBoost</span><span class="tag">Machine Learning</span></div>
-      </div>
-      <span class="ar-arrow">&nearr;</span>
-    </a>
-    <a href="https://github.com/TOX9C/social-media" class="archive-row rev" target="_blank" rel="noopener">
-      <span class="ar-num">05</span>
-      <div class="ar-info">
-        <div class="ar-name">Social Media Platform</div>
-        <div class="ar-desc">Real-time messaging via Socket.io, follow system with approvals, notifications, feeds, and profiles.</div>
-        <div class="ar-tags"><span class="tag">React 19</span><span class="tag">Socket.io</span><span class="tag">Express</span><span class="tag">Prisma</span></div>
-      </div>
-      <span class="ar-live">Live</span>
-      <span class="ar-arrow">&nearr;</span>
-    </a>
-    <a href="https://github.com/TOX9C/cashPilot" class="archive-row rev" target="_blank" rel="noopener">
-      <span class="ar-num">06</span>
-      <div class="ar-info">
-        <div class="ar-name">CashPilot</div>
-        <div class="ar-desc">Personal finance tracker with multi-currency support, budgeting, spending insights, and savings goals.</div>
-        <div class="ar-tags"><span class="tag">React 19</span><span class="tag">Express 5</span><span class="tag">Prisma</span><span class="tag">PostgreSQL</span></div>
-      </div>
-      <span class="ar-arrow">&nearr;</span>
-    </a>
-    <a href="https://github.com/TOX9C/price-tracker" class="archive-row rev" target="_blank" rel="noopener">
-      <span class="ar-num">07</span>
-      <div class="ar-info">
-        <div class="ar-name">PriceHawk</div>
-        <div class="ar-desc">Price tracking and comparison tool. Monitor products, get alerts on price drops.</div>
-        <div class="ar-tags"><span class="tag">TypeScript</span><span class="tag">Next.js</span><span class="tag">Vercel</span></div>
-      </div>
-      <span class="ar-live">Live</span>
-      <span class="ar-arrow">&nearr;</span>
-    </a>
-  </div>
-</section>
-
-<!-- INFRASTRUCTURE -->
-<section id="infra">
-  <div class="section-label">Infrastructure</div>
-  <h2 class="section-title rev">My homelab.</h2>
-  <div class="infra-grid rev">
-    <div class="infra-card">
-      <div class="infra-status"><div class="infra-dot"></div><span>Online</span></div>
-      <div class="infra-name">Jellyfin</div>
-      <div class="infra-desc">Self-hosted media server. All my content, streamed anywhere — no subscriptions, no tracking.</div>
-    </div>
-    <div class="infra-card">
-      <div class="infra-status"><div class="infra-dot"></div><span>Online</span></div>
-      <div class="infra-name">Pi-hole</div>
-      <div class="infra-desc">Network-wide DNS ad blocker. Every device on my network runs cleaner because of it.</div>
-    </div>
-    <div class="infra-card">
-      <div class="infra-status"><div class="infra-dot"></div><span>Online</span></div>
-      <div class="infra-name">Tailscale</div>
-      <div class="infra-desc">Mesh VPN so I can reach my homelab securely from anywhere in the world.</div>
-    </div>
-  </div>
-  <p class="infra-footer rev">Running 24/7 on my own hardware. Yes, I named the server something I can't share here.</p>
 </section>
 
 <!-- CONTACT -->
 <section id="contact">
-  <div class="section-label" style="justify-content:center;">Contact</div>
-  <h2 class="contact-title rev">Let's build<br><span>something.</span></h2>
-  <p class="contact-sub rev">Open to internships, junior roles, and projects at the intersection of AI, full-stack, and security.</p>
-  <div class="contact-links rev">
-    <a href="mailto:hello@tox9c.dev" class="btn btn-ghost">&#9993; Email</a>
-    <a href="https://github.com/TOX9C" class="btn btn-ghost" target="_blank" rel="noopener">GitHub</a>
-    <a href="https://x.com/tox9c" class="btn btn-ghost" target="_blank" rel="noopener">X</a>
-    <a href="https://discord.com" class="btn btn-ghost" target="_blank" rel="noopener">Discord</a>
+  <div class="contact-inner">
+    <div>
+      <h2 class="contact-title rev">Let's build <b>something.</b></h2>
+      <p class="contact-sub rev">Open to internships, junior roles, and projects at the intersection of AI, full-stack, and security. Based in Iraq, working worldwide.</p>
+    </div>
+    <div class="contact-links rev">
+      <a class="contact-link" href="https://github.com/TOX9C" target="_blank" rel="noopener">
+        <span class="k">GitHub</span><span class="v">github.com/TOX9C</span><span class="a">&nearr;</span>
+      </a>
+      <a class="contact-link" href="https://x.com/tox9c" target="_blank" rel="noopener">
+        <span class="k">X</span><span class="v">x.com/tox9c</span><span class="a">&nearr;</span>
+      </a>
+    </div>
   </div>
 </section>
 
 <footer>
-  <span>&copy; 2026 Abdurrahman &middot; <a href="https://github.com/TOX9C" target="_blank" rel="noopener">github.com/TOX9C</a></span>
-  <div class="footer-right">
-    <div class="footer-status"><div class="infra-dot"></div>Available for opportunities</div>
-    <span class="footer-hint">Press <kbd>/</kbd> for commands</span>
-  </div>
+  <span>&copy; 2026 Abdurrahman / <a href="https://github.com/TOX9C" target="_blank" rel="noopener">github.com/TOX9C</a></span>
+  <span class="footer-clock">Baghdad, Iraq <span id="footer-clock">--:--:--</span> UTC+3</span>
+  <span class="footer-hint">Press <kbd>/</kbd> for commands</span>
 </footer>
 
 <!-- COMMAND PALETTE -->
@@ -398,10 +628,248 @@
       <input type="text" id="palette-input" placeholder="Type a command..." autocomplete="off" spellcheck="false"/>
     </div>
     <div class="palette-output" id="palette-output"></div>
-    <div class="palette-hint">esc to close &middot; try: whoami, projects, skills, neofetch</div>
+    <div class="palette-hint">esc to close / try: whoami, projects, skills, neofetch</div>
   </div>
 </div>
 
-<script src="main.js"></script>
+<script>
+(function(){
+'use strict';
+const root=document.documentElement;
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- theme ---------- */
+const themeBtn=document.getElementById('theme-toggle');
+function applyTheme(t){
+  root.setAttribute('data-theme',t);
+  if(themeBtn)themeBtn.textContent=t==='light'?'dark':'light';
+  try{localStorage.setItem('tox9c-theme',t);}catch(e){}
+}
+let saved=null;
+try{saved=localStorage.getItem('tox9c-theme');}catch(e){}
+applyTheme(saved||(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'));
+if(themeBtn)themeBtn.addEventListener('click',()=>applyTheme(root.getAttribute('data-theme')==='light'?'dark':'light'));
+
+/* ---------- Baghdad clock ---------- */
+function baghdadTime(){
+  try{
+    const fmt=new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,timeZone:'Asia/Baghdad'});
+    return fmt.format(new Date());
+  }catch(e){
+    const d=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Baghdad'}));
+    return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+  }
+}
+const navClock=document.getElementById('nav-clock'),footerClock=document.getElementById('footer-clock');
+function tickClock(){
+  const t=baghdadTime();
+  if(navClock)navClock.textContent=t;
+  if(footerClock)footerClock.textContent=t;
+}
+tickClock();
+setInterval(tickClock,1000);
+
+/* ---------- nav sentinel (no scroll listener) ---------- */
+const nav=document.getElementById('nav');
+const sentinel=document.createElement('div');
+sentinel.style.cssText='position:absolute;top:0;left:0;width:1px;height:64px;pointer-events:none';
+document.body.prepend(sentinel);
+new IntersectionObserver(e=>nav.classList.toggle('scrolled',!e[0].isIntersecting),{threshold:0}).observe(sentinel);
+
+/* ---------- hero entrance ---------- */
+document.querySelectorAll('.rev-hero').forEach((el,i)=>{
+  el.style.transitionDelay=(i*90)+'ms';
+  setTimeout(()=>el.classList.add('in'),60);
+});
+
+/* ---------- reveal ---------- */
+const revealIO=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');revealIO.unobserve(e.target);}});
+},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.rev').forEach(el=>revealIO.observe(el));
+
+/* ---------- count-up ---------- */
+function easeOutExpo(t){return t===1?1:1-Math.pow(2,-10*t);}
+function countUp(el,target,suffix,isDecimal){
+  const dur=1400,start=performance.now();
+  (function frame(now){
+    const p=Math.min((now-start)/dur,1);
+    const val=easeOutExpo(p)*target;
+    el.textContent=(isDecimal?val.toFixed(2):Math.round(val))+suffix;
+    if(p<1)requestAnimationFrame(frame);
+  })(performance.now());
+}
+function scrambleText(el,text){
+  if(reduceMotion){el.textContent=text;return;}
+  const chars='!<>-_\\/[]{}=+*^?#@$%&~';
+  const queue=[];
+  for(let i=0;i<text.length;i++){
+    const st=Math.floor(Math.random()*14);
+    queue.push({to:text[i],start:st,end:st+Math.floor(Math.random()*10)+4});
+  }
+  let f=0;
+  (function update(){
+    let out='',done=0;
+    for(let i=0;i<queue.length;i++){
+      const {to,start,end}=queue[i];
+      if(f>=end){done++;out+=to;}
+      else if(f>=start){out+=chars[Math.floor(Math.random()*chars.length)];}
+      else{out+=' ';}
+    }
+    el.textContent=out;
+    if(done<queue.length){f++;requestAnimationFrame(update);}
+  })();
+}
+const statsIO=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const el=e.target,cnt=el.dataset.count,suf=el.dataset.suffix||'',txt=el.dataset.text,dec=el.dataset.decimal==='true';
+    if(cnt)countUp(el,parseFloat(cnt),suf,dec);
+    else if(txt)scrambleText(el,txt);
+    statsIO.unobserve(el);
+  });
+},{threshold:.5});
+document.querySelectorAll('.stat-num').forEach(el=>statsIO.observe(el));
+
+/* ---------- spotify simulation ---------- */
+let currentTrackDuration=0,currentElapsed=0;
+const TRACKS=[
+  {id:'52NGJPcLUzQq5w7uv4e5gf',title:'Private Landing (feat. Justin Bieber & Future)',artist:'Don Toliver',duration:283,albumArt:'https://cdn-images.dzcdn.net/images/cover/faef1bc1eccb096f308f3ed15e571eb1/500x500-000000-80-0-0.jpg'},
+  {id:'7y6RcmZyMDZ49yVupz7JdO',title:'STOP TRYING TO BE GOD',artist:'Travis Scott',duration:197,albumArt:'https://cdn-images.dzcdn.net/images/cover/7df7ac6028591a5622f24cf32a555510/500x500-000000-80-0-0.jpg'},
+  {id:'7lAK3oHbfEnvUQWosrMMpR',title:'Timeless',artist:'The Weeknd',duration:280,albumArt:'https://cdn-images.dzcdn.net/images/cover/e4b16c1afe136140bba34368357e8f05/500x500-000000-80-0-0.jpg'},
+  {id:'1Es7AUAhQvapIcoh3qMKDL',title:'YOSEMITE',artist:'Travis Scott',duration:183,albumArt:'https://cdn-images.dzcdn.net/images/cover/7df7ac6028591a5622f24cf32a555510/500x500-000000-80-0-0.jpg'},
+  {id:'1xYpVRspgaLxdJLOTQkTjg',title:'DUMBO',artist:'Travis Scott',duration:169,albumArt:'https://cdn-images.dzcdn.net/images/cover/2a622e01fb9b1c4717c63ae3caca9826/500x500-000000-80-0-0.jpg'},
+  {id:'6eT7xZZlB2mwyzJ2sUKG6w',title:'Motley Crew',artist:'Post Malone',duration:199,albumArt:'https://cdn-images.dzcdn.net/images/cover/a953ed6a6051697af19506edcd847585/500x500-000000-80-0-0.jpg'},
+  {id:'6wsqVwoiVH2kde4k4KKAFU',title:'White Iverson',artist:'Post Malone',duration:215,albumArt:'https://cdn-images.dzcdn.net/images/cover/efd66ec02dc81074e5b3e7825db4c380/500x500-000000-80-0-0.jpg'},
+  {id:'40uMIn2zJLAQhNXghRjBed',title:'I KNOW ?',artist:'Travis Scott',duration:182,albumArt:'https://cdn-images.dzcdn.net/images/cover/6c91e64b7157f1332a4f6b0de9e4c714/500x500-000000-80-0-0.jpg'},
+  {id:'6wyhUr4Xw8z5uSy0AhoZfU',title:"I'M ON ONE",artist:'Future',duration:266,albumArt:'https://cdn-images.dzcdn.net/images/cover/d1bd3da6698dd5eafc5b4514317039c4/500x500-000000-80-0-0.jpg'},
+  {id:'6ZoZ4KGIDD23DohdVk0Ybw',title:'Whisper My Name',artist:'Drake',duration:267,albumArt:'https://cdn-images.dzcdn.net/images/cover/cccf5e9af10b6aae96f5cdd5a27c2aff/500x500-000000-80-0-0.jpg'},
+  {id:'7EiZI6JVHllARrX9PUvAdX',title:'Low Life',artist:'Future',duration:221,albumArt:'https://cdn-images.dzcdn.net/images/cover/d67a9d21359a1704127c45dde2c8c57c/500x500-000000-80-0-0.jpg'},
+  {id:'7KGHenqXZofXNm5MKDbT3J',title:'Plot Twist',artist:'Drake',duration:295,albumArt:'https://cdn-images.dzcdn.net/images/cover/cccf5e9af10b6aae96f5cdd5a27c2aff/500x500-000000-80-0-0.jpg'},
+  {id:'3cLCA9LSb6UiOeNvTZoaav',title:'Wants and Needs',artist:'Drake',duration:274,albumArt:'https://cdn-images.dzcdn.net/images/cover/14fddd3675b7aeeab18d58b1d46acf92/500x500-000000-80-0-0.jpg'},
+];
+const TOTAL_DURATION=TRACKS.reduce((s,t)=>s+t.duration,0);
+function getCurrentTrack(){
+  const totalElapsed=Math.floor(Date.now()/1000)%TOTAL_DURATION;
+  let cumulative=0,currentTrack=TRACKS[0],trackStart=0;
+  for(const track of TRACKS){
+    if(totalElapsed<cumulative+track.duration){currentTrack=track;trackStart=cumulative;break;}
+    cumulative+=track.duration;
+  }
+  return {...currentTrack,isPlaying:true,elapsed:totalElapsed-trackStart};
+}
+function formatTime(s){const m=Math.floor(s/60),ss=Math.floor(s%60);return m+':'+(ss<10?'0':'')+ss;}
+function updateProgress(){
+  if(currentTrackDuration<=0)return;
+  currentElapsed=(currentElapsed+1)%(currentTrackDuration+1);
+  const bar=document.getElementById('spot-progress-fill'),cur=document.getElementById('spot-current');
+  if(bar)bar.style.width=(currentElapsed/currentTrackDuration*100)+'%';
+  if(cur)cur.textContent=formatTime(currentElapsed);
+}
+let currentTrackId=null;
+function updateSpotify(){
+  const data=getCurrentTrack();
+  const img=document.getElementById('spot-img'),tr=document.getElementById('spot-track'),
+        ar=document.getElementById('spot-artist'),st=document.getElementById('spot-status'),
+        tot=document.getElementById('spot-total'),link=document.getElementById('spot-link');
+  if(data.id!==currentTrackId){
+    currentTrackId=data.id;currentTrackDuration=data.duration||180;currentElapsed=data.elapsed||0;
+    if(img&&data.albumArt){img.src=data.albumArt;img.style.display='block';}else if(img){img.style.display='none';}
+    if(tr)tr.textContent=data.title;
+    if(ar)ar.textContent=data.artist;
+    if(st)st.textContent=data.isPlaying?'Spotify / now playing':'Spotify / paused';
+    if(tot)tot.textContent=formatTime(currentTrackDuration);
+    if(link)link.href='https://open.spotify.com/track/'+data.id;
+    const embed=document.getElementById('spotify-embed');
+    if(embed)embed.src='https://open.spotify.com/embed/track/'+data.id+'?theme=0';
+  }
+}
+updateSpotify();
+setInterval(updateSpotify,30000);
+setInterval(updateProgress,1000);
+
+/* ---------- command palette ---------- */
+const overlay=document.getElementById('palette-overlay'),palInput=document.getElementById('palette-input'),palOutput=document.getElementById('palette-output');
+let paletteOpen=false;
+function openPalette(){if(paletteOpen)return;paletteOpen=true;overlay.classList.add('open');palInput.value='';palOutput.innerHTML='';setTimeout(()=>palInput.focus(),50);}
+function closePalette(){if(!paletteOpen)return;paletteOpen=false;overlay.classList.remove('open');palInput.blur();}
+function palPrint(text,cls){const d=document.createElement('div');d.className='pal-line'+(cls?' '+cls:'');d.textContent=text;palOutput.appendChild(d);palOutput.scrollTop=palOutput.scrollHeight;}
+function palPrintH(html,cls){const d=document.createElement('div');d.className='pal-line'+(cls?' '+cls:'');d.innerHTML=html;palOutput.appendChild(d);palOutput.scrollTop=palOutput.scrollHeight;}
+const COMMANDS={
+  help(){
+    palPrint('');palPrint('Commands:','hi');
+    [['whoami','About Abdurrahman'],['projects','All projects'],['skills','Tech stack'],['homelab','Infrastructure status'],['spotify','Now playing'],['neofetch','System info'],['contact','Contact info'],['clear','Clear output']]
+      .forEach(([c,d])=>palPrintH('  <span style="color:var(--accent);display:inline-block;min-width:160px">'+c+'</span><span style="color:var(--text-2)">'+d+'</span>'));
+    palPrint('');
+  },
+  whoami(){
+    palPrint('');palPrint('Abdurrahman (tox9c)','hi');
+    palPrint('3rd-year B.Eng / Cybersecurity & Cloud Computing / NTU, Iraq');
+    palPrint('Part-time IT at TAQA');
+    palPrint('Based in Iraq / UTC+3');palPrint('');
+  },
+  projects(){
+    palPrint('');
+    ['01 Athenas Core  Agentic multi-agent IDE (Rust/Tauri)','02 E-Commerce  Full-stack store (Next.js, Prisma, live on Vercel)','03 Social Media  Real-time platform (Socket.io)','04 CashPilot  Personal finance tracker','05 PriceHawk  Price tracking tool','06 OsSecurity  Real-time ransomware detector','07 Football Predictor  ML model, 58.77% accuracy'].forEach(l=>palPrint(l));
+    palPrint('');
+  },
+  skills(){
+    palPrint('');
+    [['Frontend','Next.js / React / TypeScript / Tailwind'],['Backend ','Node.js / Express / PostgreSQL / Prisma'],['AI / ML ','Python / XGBoost / Data analysis'],['Systems ','Rust / Tauri / OS security'],['Infra   ','Tailscale / Pi-hole / Jellyfin / Docker']]
+      .forEach(([k,v])=>palPrintH('  <span style="color:var(--text-2)">'+k+' :: </span>'+v));
+    palPrint('');
+  },
+  homelab(){
+    palPrint('');palPrint('Services:','hi');palPrint('');
+    ['Jellyfin   ONLINE  Self-hosted media server','Pi-hole    ONLINE  DNS ad blocker (network-wide)','Tailscale  ONLINE  Mesh VPN / access from anywhere'].forEach(l=>palPrint('  '+l,'ok'));
+    palPrint('');palPrint('All running 24/7 on own hardware.','dim');palPrint('');
+  },
+  spotify(){
+    palPrint('');palPrint('Now playing:','hi');
+    palPrint('  '+document.getElementById('spot-track').textContent);
+    palPrint('  '+document.getElementById('spot-artist').textContent,'dim');palPrint('');
+  },
+  contact(){
+    palPrint('');palPrint('Contact:','hi');
+    palPrint('  GitHub > github.com/TOX9C');
+    palPrint('  X      > x.com/tox9c');palPrint('');
+  },
+  neofetch(){
+    palPrint('');
+    palPrintH('  <span style="color:var(--accent)"> ████████╗ ██████╗ ██╗  ██╗   </span> <span style="color:var(--text)">tox9c</span><span style="color:var(--text-2)">@poster</span>');
+    palPrintH('  <span style="color:var(--accent)">    ██╔══╝██╔═══██╗╚██╗██╔╝   </span> <span style="color:var(--text-2)">────────────────</span>');
+    palPrintH('  <span style="color:var(--accent)">    ██║   ██║   ██║ ╚███╔╝    </span> OS: posterOS v1.0');
+    palPrintH('  <span style="color:var(--accent)">    ██║   ██║   ██║ ██╔██╗    </span> Stack: Next.js / Rust / Python');
+    palPrintH('  <span style="color:var(--accent)">    ██║   ╚██████╔╝██╔╝ ██╗   </span> Homelab: Jellyfin / Pi-hole / Tailscale');
+    palPrintH('  <span style="color:var(--accent)">    ╚═╝    ╚═════╝ ╚═╝  ╚═╝   </span> AI: 58.77% match prediction');
+    palPrintH('                                Status: <span style="color:var(--accent)">Open to internships</span>');
+    palPrint('');
+  },
+  clear(){palOutput.innerHTML='';}
+};
+function runCommand(raw){
+  const low=raw.toLowerCase().trim();
+  if(!low)return;
+  palPrint('> '+raw,'cmd');
+  if(COMMANDS[low])COMMANDS[low]();
+  else if(low==='sudo rm -rf /'){palPrint('');palPrint('nice try.','err');palPrint('');}
+  else{palPrint("command not found: "+raw+" / try 'help'",'err');palPrint('');}
+}
+palInput.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){const val=palInput.value.trim();if(val)runCommand(val);palInput.value='';}
+  if(e.key==='Escape')closePalette();
+});
+overlay.addEventListener('click',e=>{if(e.target===overlay)closePalette();});
+document.addEventListener('keydown',e=>{
+  if(paletteOpen&&e.key==='Escape'){closePalette();return;}
+  if(e.key==='/'&&!paletteOpen){
+    const tag=document.activeElement?.tagName;
+    if(tag==='INPUT'||tag==='TEXTAREA')return;
+    e.preventDefault();openPalette();return;
+  }
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();paletteOpen?closePalette():openPalette();}
+});
+})();
+</script>
 </body>
 </html>
