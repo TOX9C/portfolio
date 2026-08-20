@@ -7,9 +7,25 @@ const ROOT = __dirname;
 
 const server = http.createServer((req, res) => {
   const urlPath = new URL(req.url, `http://localhost:${PORT}`).pathname;
-  let filePath = urlPath === '/' ? '/index.html' : urlPath;
-  if (filePath.endsWith('/')) filePath += 'index.html';
-  filePath = path.join(ROOT, filePath);
+  let relativePath;
+
+  try {
+    relativePath = decodeURIComponent(urlPath === '/' ? 'index.html' : urlPath.replace(/^\/+/, ''));
+  } catch {
+    res.writeHead(400);
+    res.end('Bad Request');
+    return;
+  }
+
+  if (relativePath.endsWith('/')) relativePath += 'index.html';
+  const filePath = path.resolve(ROOT, relativePath);
+  const insideRoot = filePath === ROOT || filePath.startsWith(`${ROOT}${path.sep}`);
+
+  if (!insideRoot) {
+    res.writeHead(403);
+    res.end('Forbidden');
+    return;
+  }
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
