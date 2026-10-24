@@ -235,9 +235,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 @keyframes led{50%{opacity:.35}}
 
-.menu-toggle{display:none;width:42px;height:42px;position:relative;border-radius:12px}
+.menu-toggle{display:none;width:44px;height:44px;position:relative;border-radius:12px}
 .menu-toggle span{
-  position:absolute;left:11px;width:20px;height:2px;background:var(--ink);
+  position:absolute;left:12px;width:20px;height:2px;background:var(--ink);
   transition:transform .4s var(--ease),opacity .3s var(--ease)
 }
 .menu-toggle span:nth-child(1){top:16px}
@@ -654,15 +654,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .legend-list{
   display:grid;
   /* Seven across in one row. A 4-column grid made the manifest two rows
-     tall, which overflowed the one-screen hero and clipped the headline.
-     Legibility comes from the overlaid caption, not from wider cards. */
+     tall, which overflowed the one-screen hero and clipped the headline. */
   grid-template-columns:repeat(7,minmax(0,1fr));
-  gap:.55rem
+  gap:.55rem;
+  align-items:stretch
 }
+.legend-list li{display:flex}
 .legend-list button{
   position:relative;
-  width:100%;text-align:left;
-  display:block;padding:0;border-radius:12px;
+  width:100%;height:100%;text-align:left;
+  display:flex;flex-direction:column;
+  padding:0;border-radius:12px;
   border:1px solid var(--hair-soft);
   background:rgba(12,17,32,.55);
   overflow:hidden;
@@ -677,8 +679,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
    list. On phones it is the only readable view of the work. */
 .legend-shot{
   display:block;width:100%;aspect-ratio:16/9;overflow:hidden;
-  border-radius:7px 7px 0 0;background:#05070e;
-  border:1px solid var(--hair-soft);border-bottom:0
+  border-radius:11px 11px 0 0;background:#05070e;
+  border-bottom:1px solid var(--hair-soft);
+  flex:none
 }
 .legend-shot img{
   width:100%;height:100%;object-fit:cover;object-position:top left;
@@ -688,28 +691,34 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   opacity:.95;transition:opacity .35s var(--ease),transform .5s var(--ease),filter .35s var(--ease)
 }
 .legend-list button:hover .legend-shot img{filter:brightness(1.32) saturate(1.15);opacity:1;transform:scale(1.04)}
-/* The caption sits over the screenshot instead of below it. Stacked cards made
-   the manifest two full rows tall, which overflowed the one-screen hero and
-   clipped the headline. */
+/* The caption sits BELOW the screenshot, in normal flow. It used to be an
+   overlay on the image with the proof badge pinned to the top-right corner —
+   and the badge painted straight over the project name (measured 19–54px of
+   overlap on every card) while the tech-stack line was hard-clipped by the
+   card's own height. A card that hides its own name is worse than a taller
+   card. */
 .legend-text{
-  position:absolute;left:0;right:0;bottom:0;
-  display:flex;flex-direction:column;gap:.1rem;
-  padding:1.5rem .6rem .5rem;
-  background:linear-gradient(180deg,transparent,rgba(5,7,14,.92) 42%)
+  display:flex;flex-direction:column;gap:.18rem;
+  padding:.5rem .55rem .6rem;
+  flex:1;min-width:0
+}
+/* Index and proof share one row so neither can land on the other. */
+.legend-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:.4rem;min-width:0
 }
 .legend-key{
-  font-family:var(--mono);font-size:.76rem;color:var(--cyan);
-  letter-spacing:.04em
+  font-family:var(--mono);font-size:.72rem;color:var(--cyan);
+  letter-spacing:.04em;flex:none
 }
 /* The hard number, on the card. A recruiter sees the proof without opening
    the drawer, which is what makes the manifest evidence and not decoration. */
 .legend-proof{
-  position:absolute;top:.4rem;right:.4rem;
-  padding:.18rem .42rem;border-radius:6px;
-  background:rgba(5,7,14,.78);border:1px solid rgba(84,225,255,.3);
-  font-family:var(--mono);font-size:.68rem;font-weight:600;
-  letter-spacing:.04em;color:var(--cyan);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)
+  padding:.12rem .38rem;border-radius:6px;
+  background:rgba(84,225,255,.1);border:1px solid rgba(84,225,255,.3);
+  font-family:var(--mono);font-size:.64rem;font-weight:600;
+  letter-spacing:.03em;color:var(--cyan);
+  white-space:nowrap;flex:none
 }
 .legend-name{
   font-family:var(--pixel);font-size:.76rem;letter-spacing:.03em;line-height:1.25;
@@ -719,19 +728,23 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   overflow:hidden;overflow-wrap:anywhere
 }
 .legend-tag{
-  font-family:var(--mono);font-size:.74rem;letter-spacing:.02em;
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.02em;
   text-transform:none;color:var(--muted);
   /* Wraps instead of clipping: "multi-agent desktop …" tells a visitor
      nothing, and on a phone the card has room for the full phrase. */
-  line-height:1.45;overflow-wrap:anywhere
+  line-height:1.4;overflow-wrap:anywhere;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  overflow:hidden
 }
 /* The stack, on the card. "Who / what / with what" should be answerable from
-   the first screen without opening a drawer or scrolling to section 02. */
+   the first screen without opening a drawer or scrolling to section 02.
+   Three lines: OsSecurity's stack is a three-item sentence and was clipped
+   mid-word at two. */
 .legend-stack{
-  font-family:var(--mono);font-size:.64rem;letter-spacing:.03em;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.03em;
   text-transform:uppercase;color:var(--faint);
   line-height:1.4;overflow:hidden;
-  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
   overflow-wrap:anywhere
 }
 
@@ -1327,8 +1340,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .dossier.open{transform:none;visibility:visible}
 .dossier-close{
-  position:absolute;top:1.1rem;right:1.2rem;
-  width:38px;height:38px;border-radius:12px;
+  position:absolute;top:1rem;right:1rem;
+  width:44px;height:44px;border-radius:12px;
   border:1px solid var(--hair);color:var(--muted);
   font-size:.9rem;line-height:1;
   transition:background .3s var(--ease),color .3s var(--ease),transform .4s var(--ease)
@@ -1522,7 +1535,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
     opacity:0;visibility:hidden;
     /* Visibility flips instantly on open so the links are focusable right
        away, and only after the fade on close. */
-    transition:opacity .3s var(--ease),visibility 0s .3s
+    transition:opacity .3s var(--ease),visibility 0s .3s;
+    /* Below the brand and the toggle: the panel used to paint over the
+       hamburger, so the only way out of the menu was a link or Escape. */
+    z-index:1
   }
   .hud-nav.open{
     opacity:1;visibility:visible;
@@ -1546,7 +1562,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .hud-nav a em{font-size:.7rem}
   /* keep the brand on top of the full-screen menu so identity stays visible */
   .hud .brand{position:relative;z-index:3}
-  .menu-toggle{display:block;z-index:2}
+  .menu-toggle{display:block;z-index:4}
   .hud-readout .hud-place{display:none}
   /* On a phone the drawer is the whole screen. It used to slide in from
      translateX(102%), which parked it at x=398 in a 390px viewport for over
@@ -1624,6 +1640,19 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .legend-list .legend-shot{height:72px}
   .hud-nav a{font-size:clamp(1.8rem,8vw,2.6rem)}
   .contact-mail-addr{font-size:.98rem}
+
+  /* WCAG 2.5.5 wants 44px. These were all under: the terminal field was
+     16px tall, "open a dossier" 35px, the footer link 16px, the atlas
+     landmarks 31px. */
+  .menu-toggle{width:44px;height:44px}
+  .dossier-close{width:44px;height:44px}
+  .terminal-input input{min-height:24px;font-size:.88rem}
+  .stage-open button{min-height:44px;padding:.55rem .9rem}
+  .footer a{min-height:44px;display:inline-flex;align-items:center}
+  .atlas-label{min-height:40px;align-items:center}
+  .stage-proof a{min-height:40px;display:inline-flex;align-items:center}
+  .channel-list a{min-height:44px}
+  .dossier-thumbs button{width:84px;height:52px}
 }
 
 /* Phones: the atlas is the signature element, so it has to be reachable

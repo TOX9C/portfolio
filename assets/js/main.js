@@ -98,12 +98,14 @@ function manifest({ onOpen, onHover }) {
     btn.innerHTML = `
       <span class="legend-shot"><img src="${thumb}" alt="${p.images[0].alt}" loading="lazy" width="480" height="270"></span>
       <span class="legend-text">
-        <span class="legend-key">${p.index}</span>
+        <span class="legend-head">
+          <span class="legend-key">${p.index}</span>
+          <span class="legend-proof" aria-hidden="true">${p.stats[0].value}</span>
+        </span>
         <span class="legend-name">${p.name}</span>
         <span class="legend-tag">${p.tag}</span>
         <span class="legend-stack">${p.stack.slice(0, 3).join(' · ')}</span>
-      </span>
-      <span class="legend-proof" aria-hidden="true">${p.stats[0].value}</span>`;
+      </span>`;
     btn.addEventListener('click', () => onOpen?.(p.id));
     btn.addEventListener('mouseenter', () => onHover?.(p.id));
     btn.addEventListener('mouseleave', () => onHover?.(null));
@@ -321,6 +323,14 @@ function mobileNav() {
   });
 
   $$('a', nav).forEach((link) => link.addEventListener('click', close));
+  // Tapping the dark area outside the menu closed nothing — the page stayed
+  // scroll-locked and the menu stayed open, so the only way out was a link
+  // or Escape. The menu panel is the whole viewport, so "outside" means
+  // anywhere that is not a link.
+  nav.addEventListener('click', (e) => {
+    if (e.target.closest('a')) return;
+    close();
+  });
   document.addEventListener('keydown', (e) => {
     if (!isOpen()) return;
     if (e.key === 'Escape') close();
