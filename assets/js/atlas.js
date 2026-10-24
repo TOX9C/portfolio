@@ -50,7 +50,7 @@ function box(color, w, h, d, x, y, z, emissive = 0) {
 
 function buildIsland(group) {
   const top = new THREE.Mesh(
-    new THREE.BoxGeometry(22, 1.6, 16),
+    new THREE.BoxGeometry(24, 1.6, 17),
     new THREE.MeshLambertMaterial({ color: PALETTE.base })
   );
   top.position.y = -0.8;
@@ -58,7 +58,7 @@ function buildIsland(group) {
 
   // soil rim
   const rim = new THREE.Mesh(
-    new THREE.BoxGeometry(23, 0.6, 17),
+    new THREE.BoxGeometry(25, 0.6, 18),
     new THREE.MeshLambertMaterial({ color: PALETTE.baseEdge })
   );
   rim.position.y = -0.3;
@@ -70,8 +70,8 @@ function buildIsland(group) {
     seed = (seed * 9301 + 49297) % 233280;
     return seed / 233280;
   };
-  for (let i = 0; i < 46; i++) {
-    const x = -10 + rand() * 20;
+  for (let i = 0; i < 58; i++) {
+    const x = -10.5 + rand() * 21;
     const z = -7 + rand() * 14;
     const h = 0.18 + rand() * 0.24;
     const tile = new THREE.Mesh(
@@ -86,9 +86,9 @@ function buildIsland(group) {
   }
 
   // underside crystals — depth below the island
-  for (let i = 0; i < 22; i++) {
-    const x = -9 + rand() * 18;
-    const z = -6 + rand() * 12;
+  for (let i = 0; i < 26; i++) {
+    const x = -10 + rand() * 20;
+    const z = -6.5 + rand() * 13;
     const depth = 0.8 + rand() * 2.4;
     const shard = new THREE.Mesh(
       new THREE.ConeGeometry(0.34 + rand() * 0.3, depth, 4),
@@ -326,19 +326,19 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
 
   // landmarks
   const layout = [
-    [-7.2, 0, -4.2],
+    [-7.4, 0, -4.4],
     [0, 0, -6.4],
-    [7.2, 0, -4.2],
-    [-7.2, 0, 3.8],
-    [0, 0, 6.2],
-    [7.2, 0, 3.8],
+    [7.4, 0, -4.4],
+    [-7.4, 0, 3.6],
+    [0, 0, 5.8],
+    [7.4, 0, 3.6],
     [0, 0, 0]
   ];
   const landmarks = [];
   PROJECTS.forEach((project, i) => {
     const color = new THREE.Color(project.hue).getHex();
     const group = buildLandmark(project, color);
-    group.position.set(layout[i][0], 0.2, layout[i][1]);
+    group.position.set(layout[i][0], 0.2, layout[i][2]);
     group.userData.project = project;
     world.add(group);
     landmarks.push(group);
@@ -363,8 +363,8 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   /* ---------- interaction ---------- */
 
   let targetAzimuth = 0.28;
-  let targetPolar = 1.02;
-  let targetDistance = 36;
+  let targetPolar = 0.82;
+  let targetDistance = 46;
   let azimuth = targetAzimuth;
   let polar = targetPolar;
   let distance = targetDistance;
@@ -435,7 +435,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
 
   const onWheel = (e) => {
     e.preventDefault();
-    targetDistance = Math.max(22, Math.min(52, targetDistance + e.deltaY * 0.03));
+    targetDistance = Math.max(26, Math.min(70, targetDistance + e.deltaY * 0.04));
   };
 
   canvas.addEventListener('pointerdown', onPointerDown);
@@ -527,8 +527,8 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       if (!group) return;
       const angle = Math.atan2(group.position.x, group.position.z);
       targetAzimuth = angle;
-      targetDistance = 28;
-      targetPolar = 0.98;
+      targetDistance = 36;
+      targetPolar = 0.86;
     },
     setHover(id) {
       for (const group of landmarks) {
