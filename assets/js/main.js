@@ -134,12 +134,36 @@ function trapFocus(panel, event) {
 // Hide the page behind a modal from assistive tech and from the tab order.
 // The mobile menu lives inside `.hud`, so the header must stay out of this list
 // when the menu is the modal — otherwise the menu would inert itself.
-function setBackgroundInert(inert, { keepHeader = false } = {}) {
+//
+// `inert` is inherited, so an exempt subtree cannot live inside an inerted
+// container. When `exempt` is given, the container is left alone and its
+// children are inerted one by one, skipping the exempt branch. The terminal's
+// section (#shell) is exempt while a dossier is open: the terminal is a
+// second door into the same dossiers and has to stay usable.
+function setBackgroundInert(inert, { keepHeader = false, exempt = [] } = {}) {
   const targets = keepHeader ? [$('#main'), $('.footer')] : [$('#main'), $('.hud'), $('.footer')];
+  if (!inert) {
+    targets.forEach((el) => el?.removeAttribute('inert'));
+    // The per-child inerting below needs a matching cleanup.
+    $$('[data-inerted]', document).forEach((el) => el.removeAttribute('inert'));
+    $$('[data-inerted]', document).forEach((el) => el.removeAttribute('data-inerted'));
+    return;
+  }
+  if (!exempt.length) {
+    targets.forEach((el) => el?.setAttribute('inert', ''));
+    return;
+  }
   targets.forEach((el) => {
     if (!el) return;
-    if (inert) el.setAttribute('inert', '');
-    else el.removeAttribute('inert');
+    if (exempt.some((keep) => keep && el.contains(keep))) {
+      [...el.children].forEach((child) => {
+        if (exempt.some((keep) => keep && child.contains(keep))) return;
+        child.setAttribute('inert', '');
+        child.setAttribute('data-inerted', '');
+      });
+    } else {
+      el.setAttribute('inert', '');
+    }
   });
 }
 
@@ -241,6 +265,7 @@ function mobileNav() {
 function dossier({ atlas }) {
   const panel = $('#dossier');
   const closeBtn = $('#dossier-close');
+  const scrim = $('#dossier-scrim');
   let lastFocus = null;
 
   const fill = (project) => {
@@ -300,8 +325,14 @@ function dossier({ atlas }) {
     panel.setAttribute('aria-hidden', 'false');
     document.body.classList.add('is-locked');
     document.body.classList.add('dossier-open');
-    setBackgroundInert(true);
-    closeBtn.focus();
+    // The terminal stays live — it is a second door into the same dossiers.
+    setBackgroundInert(true, { exempt: [$('#shell')] });
+    if (scrim) scrim.hidden = false;
+    // Only take focus if it is not already somewhere usable. Stealing focus
+    // from the terminal field made the next command land on the close
+    // button and vanish — and the trailing Enter closed the drawer.
+    const active = document.activeElement;
+    if (!panel.contains(active) && active !== $('#terminal-field')) closeBtn.focus();
     atlas?.focus(id);
   };
 
@@ -311,14 +342,20 @@ function dossier({ atlas }) {
     document.body.classList.remove('is-locked');
     document.body.classList.remove('dossier-open');
     setBackgroundInert(false);
-    if (lastFocus instanceof HTMLElement) lastFocus.focus();
+    if (scrim) scrim.hidden = true;
+    // Return focus to where it was, but only if that element is still
+    // focusable — restoring focus to a detached node silently drops it.
+    if (lastFocus instanceof HTMLElement && lastFocus.isConnected) {
+      lastFocus.focus();
+    }
   };
 
   closeBtn.addEventListener('click', close);
+  scrim?.addEventListener('click', close);
   document.addEventListener('keydown', (e) => {
     if (!panel.classList.contains('open')) return;
     if (e.key === 'Escape') close();
-    else trapFocus(panel, e);
+    else if (e.target !== $('#terminal-field')) trapFocus(panel, e);
   });
 
   return { open, close };
@@ -348,7 +385,7 @@ function terminal({ openDossier } = {}) {
     write(`${p.index}  ${p.name.padEnd(20, ' ')} ${p.tag}`, 't-dim');
   });
   write('', 't-dim');
-  write('run "help" for commands · "dossier <id>" to inspect one', 't-hi');
+  write('run "help" for commands · "dossier 1" to inspect one', 't-hi');
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -430,6 +467,9 @@ async function init() {
     onOpen: openDossier,
     onHover: (id) => atlas?.setHover(id)
   });
+
+  // A visible way into the dossiers from the hero copy.
+  $('#stage-open-dossier')?.addEventListener('click', () => openDossier(PROJECTS[0].id));
 
   terminal({ openDossier });
 

@@ -379,6 +379,33 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 .stage-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.4rem}
 
+/* A visible way into the dossiers. The drawer was only reachable by
+   discovering that a map landmark was clickable. */
+.stage-open{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem .9rem;
+  margin-top:.9rem
+}
+.stage-open button{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-family:var(--mono);font-size:.76rem;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);
+  padding:.4rem .75rem;border-radius:8px;
+  border:1px solid rgba(84,225,255,.3);
+  background:rgba(84,225,255,.08);
+  cursor:pointer;
+  transition:background .3s var(--ease),border-color .3s var(--ease),transform .3s var(--ease)
+}
+.stage-open button:hover{
+  background:rgba(84,225,255,.16);border-color:rgba(84,225,255,.55);
+  transform:translateY(-1px)
+}
+.stage-open button span{transition:transform .3s var(--ease)}
+.stage-open button:hover span{transform:translate(2px,-2px)}
+.stage-open>span{
+  font-family:var(--mono);font-size:.72rem;line-height:1.5;
+  color:var(--faint);letter-spacing:.02em;max-width:42ch
+}
+
 .btn{
   display:inline-flex;align-items:center;gap:.9rem;
   font-family:var(--pixel);font-size:.88rem;letter-spacing:.08em;
@@ -1038,6 +1065,16 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .footer a:hover{color:var(--cyan)}
 
 /* ---------- dossier panel ---------- */
+/* A scrim so the drawer reads as a modal. Without it the page behind stayed
+   fully lit and interactive, and the panel looked detached from any logic. */
+.dossier-scrim{
+  position:fixed;inset:0;z-index:1250;
+  background:rgba(3,5,10,.6);
+  backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+  animation:scrim-in .4s var(--ease)
+}
+.dossier-scrim[hidden]{display:none}
+@keyframes scrim-in{from{opacity:0}to{opacity:1}}
 .dossier{
   position:fixed;top:0;right:0;bottom:0;z-index:1300;
   width:min(480px,100vw);
