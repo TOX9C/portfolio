@@ -502,6 +502,35 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   text-transform:uppercase;color:var(--muted)
 }
 
+/* The proof strip. A recruiter's first three clicks are the CV, the live
+   product and the source code — all three were eight viewports down.
+   Every link here goes straight to real, verifiable work. */
+.stage-proof{
+  list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:.6rem;margin:1.1rem 0 0;padding:0
+}
+.stage-proof a{
+  display:flex;flex-direction:column;gap:.1rem;
+  padding:.7rem .85rem;border-radius:12px;
+  border:1px solid var(--hair);
+  background:rgba(12,17,32,.5);
+  transition:border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--ease)
+}
+.stage-proof a:hover{
+  border-color:rgba(84,225,255,.45);
+  background:rgba(84,225,255,.08);
+  transform:translateY(-2px)
+}
+.stage-proof b{
+  font-family:var(--pixel);font-size:.76rem;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--ink)
+}
+.stage-proof a:hover b{color:var(--cyan)}
+.stage-proof span{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;
+  color:var(--faint);line-height:1.4
+}
+
 .stage-corner{
   position:absolute;left:1rem;bottom:1rem;z-index:4;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
@@ -1220,8 +1249,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border-left:1px solid var(--hair);
   box-shadow:-40px 0 90px rgba(0,0,0,.55);
   transform:translateX(102%);
-  transition:transform .6s var(--ease);
+  /* 280ms, not 600ms. The drawer is a panel the visitor is waiting to read;
+     a slow slide made a tap feel like nothing happened. */
+  transition:transform .28s var(--ease);
   visibility:hidden;
+  will-change:transform;
 }
 .dossier.open{transform:none;visibility:visible}
 .dossier-close{

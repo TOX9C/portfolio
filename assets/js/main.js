@@ -214,22 +214,41 @@ function reveals() {
 
   const sections = $$('main section[id]');
   const navLinks = $$('.hud-nav a');
-  const spy = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        navLinks.forEach((link) => {
-          const isActive = link.getAttribute('href') === `#${entry.target.id}`;
-          link.classList.toggle('active', isActive);
-          // The active state was a class only. Screen readers get no signal.
-          if (isActive) link.setAttribute('aria-current', 'true');
-          else link.removeAttribute('aria-current');
-        });
-      });
-    },
-    { rootMargin: '-45% 0px -50% 0px' }
-  );
-  sections.forEach((s) => spy.observe(s));
+  // A band-based observer never fires for the last section: the viewport
+  // middle only reaches it when there is more page below, and there is not.
+  // Pick the section whose top is closest to the reading line instead.
+  const setActive = (id) => {
+    navLinks.forEach((link) => {
+      const isActive = link.getAttribute('href') === `#${id}`;
+      link.classList.toggle('active', isActive);
+      // The active state was a class only. Screen readers get no signal.
+      if (isActive) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    });
+  };
+
+  let spyTicking = false;
+  const updateSpy = () => {
+    spyTicking = false;
+    const line = window.scrollY + window.innerHeight * 0.35;
+    let current = sections[0];
+    for (const section of sections) {
+      if (section.offsetTop <= line) current = section;
+      else break;
+    }
+    // At the very bottom, the last section wins even if it is short.
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 2) {
+      current = sections[sections.length - 1];
+    }
+    if (current) setActive(current.id);
+  };
+  window.addEventListener('scroll', () => {
+    if (spyTicking) return;
+    spyTicking = true;
+    requestAnimationFrame(updateSpy);
+  }, { passive: true });
+  window.addEventListener('resize', updateSpy, { passive: true });
+  updateSpy();
 }
 
 function scrollProgress() {

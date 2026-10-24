@@ -436,13 +436,15 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     return { el, group, w: 0, keyW: 0 };
   });
 
-  // Cache label widths once so the render loop can declutter without forcing layout.
-  requestAnimationFrame(() => {
+  // Cache label widths so the render loop can declutter without forcing layout.
+  // Re-measured on resize: the narrow/wide class changes the label's width.
+  const cacheLabelWidths = () => {
     for (const l of labels) {
       l.w = l.el.offsetWidth;
       l.keyW = (l.el.querySelector('.atlas-label-key')?.offsetWidth || 0) + 18;
     }
-  });
+  };
+  requestAnimationFrame(cacheLabelWidths);
 
   /* ---------- interaction ---------- */
 
@@ -526,6 +528,10 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
   let hovered = null;
+  // Set when something other than camera motion changes the labels — a hover
+  // swap, a resize, a viewport-class change. The frame loop uses it to skip
+  // the expensive declutter when the camera has settled.
+  let labelsDirty = true;
 
   const onPointerDown = (e) => {
     dragging = true;
@@ -564,6 +570,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     const next = hit ? hit.userData.project.id : null;
     if (next !== hovered) {
       hovered = next;
+      labelsDirty = true;
       canvas.style.cursor = hovered ? 'pointer' : 'grab';
       onHover?.(hovered);
     }
@@ -652,6 +659,9 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
 
     baseDistance = fitDistance(targetAzimuth, targetPolar);
     if (!dragging) distance = targetDistance = baseDistance * zoom;
+    // The narrow/wide class and the camera framing both changed.
+    cacheLabelWidths();
+    labelsDirty = true;
   };
   const observer = new ResizeObserver(resize);
   observer.observe(canvas);
@@ -687,6 +697,9 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     elapsed += dt;
 
     const ease = reducedMotion ? 1 : 1 - Math.pow(0.0016, dt);
+    const prevAzimuth = azimuth;
+    const prevPolar = polar;
+    const prevDistance = distance;
     azimuth += (targetAzimuth - azimuth) * ease;
     polar += (targetPolar - polar) * ease;
     const wanted = baseDistance * zoom;
@@ -730,7 +743,17 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
 
     // project labels to screen space
     const rect = canvas.getBoundingClientRect();
-    const placed = [];
+    // The camera eases toward its target, so it is almost always "moving" by a
+    // fraction of a pixel. The declutter below is the expensive part — it
+    // measures every label and nudges them apart — and it only needs to run
+    // when a label would actually change position. Below this threshold the
+    // camera has settled and the previous layout still holds.
+    const cameraMoved =
+      Math.abs(prevAzimuth - azimuth) > 0.0006 ||
+      Math.abs(prevPolar - polar) > 0.0006 ||
+      Math.abs(prevDistance - distance) > 0.01 ||
+      labelsDirty;
+
     for (const l of labels) {
       const { el, group } = l;
       projected.set(0, group.userData.labelY ?? screenTop(group.userData.project.landmark) + 1.1, 0);
@@ -739,18 +762,22 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       const x = (projected.x * 0.5 + 0.5) * rect.width;
       const y = (-projected.y * 0.5 + 0.5) * rect.height;
       const visible = projected.z < 1;
-      el.style.transform = `translate(-50%,-100%) translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
-      el.style.opacity = visible ? '1' : '0';
-      el.style.pointerEvents = visible ? 'auto' : 'none';
       l.x = x;
       l.y = y;
       l.visible = visible;
+      if (!cameraMoved) continue;
+      el.style.transform = `translate(-50%,-100%) translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
+      el.style.opacity = visible ? '1' : '0';
+      el.style.pointerEvents = visible ? 'auto' : 'none';
     }
+
+    if (!cameraMoved) return;
 
     // Declutter: on narrow canvases the full names cover the models and collide.
     // Phones get a numbered chip only — the manifest directly below carries the
     // number-to-name mapping, so no information is lost. A label is never dropped.
     const narrow = rect.width < 560;
+    const placed = [];
     // A small margin so labels that merely touch do not read as overlapping.
     const PAD = 3;
     // True when the candidate box [l,r] x [t,b] clears every placed box.
@@ -765,7 +792,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     // arrives last, has nowhere to go, and gets demoted to a bare number.
     const order = [...labels].sort((a, b) => {
       if (a.visible !== b.visible) return a.visible ? -1 : 1;
-      return (b.el.offsetWidth || 0) - (a.el.offsetWidth || 0);
+      return (b.w || 0) - (a.w || 0);
     });
     for (const l of order) {
       if (!l.visible) {
@@ -778,6 +805,9 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       // the cached width was taken before the narrow-viewport class applied.
       l.el.classList.toggle('tight', narrow);
       l.el.classList.remove('compact');
+      // Read the size once per frame, not inside the nudge loop. Reading
+      // offsetWidth there forced a layout on every candidate position, which
+      // starved the main thread and stalled the page's CSS transitions.
       let w = l.el.offsetWidth;
       let h = l.el.offsetHeight;
       let y = l.y;
@@ -808,6 +838,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       l.finalY = y;
       l.finalW = w;
     }
+    labelsDirty = false;
   };
 
   // Stop rendering when the atlas scrolls out of view or the tab is hidden.
