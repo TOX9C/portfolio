@@ -777,6 +777,24 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   /* One credential line, not three broken fragments. */
   text-transform:uppercase
 }
+/* Credentials at a glance — the recruiter's shortlist of who this person is. */
+.profile-credentials{
+  margin:0 0 1.1rem;
+  border-top:1px solid var(--hair-soft)
+}
+.profile-credentials>div{
+  display:grid;grid-template-columns:7.5rem minmax(0,1fr);
+  gap:.8rem;padding:.7rem 0;
+  border-bottom:1px solid var(--hair-soft)
+}
+.profile-credentials dt{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--faint)
+}
+.profile-credentials dd{
+  margin:0;font-family:var(--sans);font-weight:600;font-size:.95rem;
+  color:var(--ink)
+}
 .profile-card-note{
   font-family:var(--mono);font-size:.72rem;line-height:1.9;
   letter-spacing:.04em;color:var(--faint)
@@ -1156,6 +1174,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .hud-readout .hud-place{display:none}
   .dossier{width:100%}
   .profile-facts li{grid-template-columns:1fr;gap:.2rem}
+  .profile-credentials>div{grid-template-columns:6.5rem minmax(0,1fr);gap:.6rem}
 }
 
 @media (max-width:640px){
