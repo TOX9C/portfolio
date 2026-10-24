@@ -29,7 +29,7 @@ export const PROJECTS = [
     desc: 'Full store: catalog, cart, checkout, order management and an admin dashboard. Deployed live and taking orders.',
     stats: [
       { value: 'LIVE', label: 'deployed store' },
-      { value: '4', label: 'store surfaces' }
+      { value: '5', label: 'store surfaces' }
     ],
     stack: ['Next.js 16', 'TypeScript', 'PostgreSQL', 'Prisma'],
     images: [
