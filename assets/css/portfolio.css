@@ -347,6 +347,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border:1px dashed var(--hair);border-radius:var(--radius);padding:2rem
 }
 .no-js .stage-fallback{display:flex}
+/* A static map the visitor sees on first paint, before Three.js has built
+   the diorama. The panel used to be an empty dark rectangle for the first
+   seconds — half the hero showed nothing. The 3D scene replaces it. */
+.atlas-placeholder{
+  position:absolute;inset:0;
+  display:grid;place-items:center;
+  opacity:.85;
+  transition:opacity .6s var(--ease)
+}
+.atlas-placeholder svg{width:min(78%,360px);height:auto}
+.stage-canvas.atlas-live .atlas-placeholder{opacity:0;pointer-events:none}
 
 .eyebrow{
   display:inline-flex;align-items:center;gap:.6rem;

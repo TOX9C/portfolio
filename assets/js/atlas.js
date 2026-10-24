@@ -696,6 +696,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   // visible. Off-screen it stops entirely.
   let onScreen = true;
   let tabVisible = true;
+  let live = false;
 
   const startLoop = () => {
     if (raf || !onScreen || !tabVisible) return;
@@ -713,6 +714,13 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     elapsed += dt;
+    // The static placeholder retires on the first real frame, not at setup:
+    // retiring it early left the panel blank when WebGL built but the first
+    // frame had not landed yet.
+    if (!live) {
+      live = true;
+      canvas.parentElement?.classList.add('atlas-live');
+    }
 
     const ease = reducedMotion ? 1 : 1 - Math.pow(0.0016, dt);
     const prevAzimuth = azimuth;

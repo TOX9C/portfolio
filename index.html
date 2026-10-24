@@ -69,6 +69,29 @@
   <!-- 01 / ATLAS -->
   <section class="stage" id="atlas" aria-labelledby="atlas-title">
     <div class="stage-canvas">
+      <div class="atlas-placeholder" aria-hidden="true">
+        <svg viewBox="0 0 320 220" preserveAspectRatio="xMidYMid meet">
+          <g fill="none" stroke="rgba(84,225,255,.5)" stroke-width="1">
+            <path d="M40 170 L120 110 L200 130 L280 70"/>
+            <circle cx="40" cy="170" r="14"/>
+            <circle cx="120" cy="110" r="14"/>
+            <circle cx="200" cy="130" r="14"/>
+            <circle cx="280" cy="70" r="14"/>
+          </g>
+          <g fill="rgba(84,225,255,.16)" stroke="rgba(84,225,255,.55)" stroke-width="1">
+            <circle cx="40" cy="170" r="7"/>
+            <circle cx="120" cy="110" r="7"/>
+            <circle cx="200" cy="130" r="7"/>
+            <circle cx="280" cy="70" r="7"/>
+          </g>
+          <g fill="rgba(140,154,187,.4)" font-family="monospace" font-size="8" letter-spacing="1">
+            <text x="40" y="196" text-anchor="middle">01</text>
+            <text x="120" y="92" text-anchor="middle">02</text>
+            <text x="200" y="156" text-anchor="middle">03</text>
+            <text x="280" y="52" text-anchor="middle">04</text>
+          </g>
+        </svg>
+      </div>
       <canvas id="atlas-canvas" aria-hidden="true"></canvas>
       <p class="stage-fallback">The atlas needs JavaScript. Every project is listed below with links.</p>
       <div class="stage-corner" aria-hidden="true">
