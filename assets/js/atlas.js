@@ -765,13 +765,20 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       const x = (projected.x * 0.5 + 0.5) * rect.width;
       const y = (-projected.y * 0.5 + 0.5) * rect.height;
       const visible = projected.z < 1;
+      // Off-canvas landmarks are not merely invisible — they are still
+      // buttons, so Tab walked into invisible map furniture before reaching
+      // the hero copy. Take them out of the tab order.
+      const onScreen = visible && x > -40 && x < rect.width + 40 && y > -20 && y < rect.height + 20;
       l.x = x;
       l.y = y;
       l.visible = visible;
+      l.onScreen = onScreen;
       if (!cameraMoved) continue;
       el.style.transform = `translate(-50%,-100%) translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
-      el.style.opacity = visible ? '1' : '0';
-      el.style.pointerEvents = visible ? 'auto' : 'none';
+      el.style.opacity = onScreen ? '1' : '0';
+      el.style.pointerEvents = onScreen ? 'auto' : 'none';
+      el.tabIndex = onScreen ? 0 : -1;
+      el.setAttribute('aria-hidden', String(!onScreen));
     }
 
     if (!cameraMoved) return;
@@ -794,14 +801,16 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     // Wide labels claim their spot first — otherwise "Football Predictor"
     // arrives last, has nowhere to go, and gets demoted to a bare number.
     const order = [...labels].sort((a, b) => {
-      if (a.visible !== b.visible) return a.visible ? -1 : 1;
+      if (a.onScreen !== b.onScreen) return a.onScreen ? -1 : 1;
       return (b.w || 0) - (a.w || 0);
     });
     for (const l of order) {
-      if (!l.visible) {
+      if (!l.onScreen) {
         l.el.classList.remove('compact', 'tight');
         l.el.style.opacity = '0';
         l.el.style.pointerEvents = 'none';
+        l.el.tabIndex = -1;
+        l.el.setAttribute('aria-hidden', 'true');
         continue;
       }
       // Start from the full label (name included) and measure it as rendered —
