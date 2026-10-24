@@ -270,21 +270,43 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
    the manifest all fit above the fold, so the seven projects are visible on
    first paint instead of hiding below it. */
 @media (min-width:1081px){
-  .stage{height:100dvh}
+  /* The hero is exactly one viewport tall so the diorama and the manifest are
+     both above the fold. `min-height`, not `height`: with a fixed height the
+     copy column overflowed its grid row and the proof links landed on top of
+     the SYSTEM MANIFEST heading. The hero grows instead of overlapping. */
+  .stage{min-height:100dvh}
   .stage-canvas{height:100%;min-height:0}
   .stage-copy{min-height:0}
-  /* The manifest gets a fixed slice of the screen; the diorama takes what is
-     left. The copy is centred inside its own row and never leaves it. */
   .stage-legend{max-height:34vh}
   .stage-canvas{min-height:0}
-  /* The copy column was 113px taller than its grid row and overflowed into
-     the manifest, so the proof links landed on top of the SYSTEM MANIFEST
-     heading. The first row now sizes to the copy — the diorama absorbs the
-     difference — so nothing can collide. */
-  .stage{grid-template-rows:auto minmax(0,1fr)}
+  /* Row 1 takes at least the copy's height and absorbs the leftover space;
+     row 2 is the manifest at its natural size. With a plain `1fr` the
+     manifest row collapsed and the legend overflowed upward onto the copy —
+     the proof links landed on the SYSTEM MANIFEST heading. `min-content` as
+     the floor lets the hero grow instead of overlapping. */
+  .stage{grid-template-rows:minmax(min-content,1fr) auto}
   .stage-copy{align-self:start}
   .stage-legend{align-self:end;max-height:34vh}
   .stage-canvas{align-self:stretch}
+}
+
+/* Short laptop windows (860px and less) have no room for the full copy
+   column and the manifest together. Tighten the vertical rhythm rather than
+   let one of them collide with the other. */
+@media (min-width:1081px) and (max-height:860px){
+  .stage{padding-top:clamp(4.2rem,6.2vh,4.9rem);row-gap:.7rem;padding-bottom:1rem}
+  .display{font-size:clamp(2rem,min(4.3vw,7.8vh),3.4rem);margin:.55rem 0 .65rem}
+  .stage-role-line{font-size:.7rem;margin-top:.5rem}
+  .stage-lede{font-size:.82rem;line-height:1.5;margin-top:.45rem;max-width:52ch}
+  .stage-role{margin-top:.45rem;line-height:1.45}
+  .stage-open{margin-top:.5rem}
+  .stage-actions{margin-top:.7rem}
+  .stage-chips{margin-top:.7rem;padding-top:.55rem;gap:1.4rem}
+  .stage-chips b{font-size:1.2rem}
+  .stage-proof{margin-top:.55rem;gap:.3rem}
+  .stage-proof a{padding:.3rem .55rem}
+  .stage-proof span{display:none}
+  .stage-legend{max-height:26vh}
 }
 
 /* The dossier docks over the right edge. Shift only the canvas column left so
