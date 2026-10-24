@@ -360,9 +360,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 @keyframes display-rise{to{transform:none}}
 .display .outline{
   color:transparent;
-  /* Brighter than --faint: the outlined middle line has to read as a
-     deliberate second tier, not as a rendering mistake. */
-  -webkit-text-stroke:1.6px rgba(178,196,224,.62);
+  /* Near-full-strength stroke. At .62 alpha the outlined middle line read
+     dimmer than the body copy below it, which inverted the hierarchy. */
+  -webkit-text-stroke:2px rgba(222,232,248,.88);
 }
 .display .accent{
   color:var(--cyan);
@@ -682,7 +682,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .lab-unit{
   position:relative;overflow:hidden;
-  padding:1.5rem 1.4rem 2.4rem;
+  padding:1.5rem 1.4rem 3rem;
   border-radius:var(--radius);
   background:
     linear-gradient(180deg,rgba(18,26,46,.85),rgba(8,12,23,.92)),
@@ -712,6 +712,16 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .status i{width:6px;height:6px;border-radius:1px;background:var(--green);box-shadow:0 0 8px rgba(124,242,155,.7)}
 .lab-unit p{color:var(--muted);font-size:.9rem;line-height:1.75}
+.lab-value{
+  margin-top:.7rem;padding-top:.7rem;
+  border-top:1px solid var(--hair-soft);
+  font-family:var(--sans);font-size:.9rem!important;font-weight:600;color:var(--ink)!important
+}
+.lab-value span{
+  display:block;margin-bottom:.15rem;
+  font-family:var(--mono);font-size:.68rem;font-weight:400;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--faint)
+}
 .lab-meta{
   position:absolute;bottom:1rem;left:1.4rem;
   font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;color:var(--faint)
@@ -814,6 +824,47 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 
 /* ---------- terminal ---------- */
+/* The terminal beside its command reference: one lone band left a third of the
+   section empty and gave a first-time visitor no way to know what to type. */
+.shell-grid{
+  display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
+  gap:clamp(1rem,2vw,1.6rem);
+  max-width:78rem;align-items:stretch
+}
+.shell-reference{
+  display:flex;flex-direction:column;
+  padding:1.3rem 1.4rem;border-radius:var(--radius);
+  border:1px solid var(--hair);
+  background:linear-gradient(160deg,rgba(18,26,46,.9),rgba(8,12,23,.92));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)
+}
+.shell-reference-head{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--faint);
+  padding-bottom:.7rem;margin-bottom:.2rem;
+  border-bottom:1px solid var(--hair-soft)
+}
+.shell-reference dl{flex:1}
+.shell-reference dl>div{
+  display:grid;grid-template-columns:8.5rem minmax(0,1fr);
+  gap:.8rem;padding:.62rem 0;
+  border-bottom:1px solid var(--hair-soft)
+}
+.shell-reference dt{
+  font-family:var(--mono);font-size:.78rem;font-weight:600;
+  color:var(--cyan);letter-spacing:.02em
+}
+.shell-reference dt code{
+  font-family:var(--mono);font-size:inherit;color:var(--cyan);
+  background:none;padding:0
+}
+.shell-reference dd{
+  margin:0;color:var(--muted);font-size:.84rem;line-height:1.4
+}
+.shell-reference-note{
+  margin-top:1rem;
+  font-family:var(--sans);font-size:.82rem;line-height:1.55;color:var(--faint)
+}
 .terminal{
   max-width:78rem;
   border-radius:var(--radius);
@@ -1160,6 +1211,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .legend-list{grid-template-columns:repeat(auto-fit,minmax(158px,1fr))}
   .profile-grid{grid-template-columns:1fr}
   .contact-payoff{grid-template-columns:1fr;gap:2.4rem}
+  .shell-grid{grid-template-columns:1fr}
 }
 
 @media (max-width:860px){

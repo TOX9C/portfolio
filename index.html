@@ -176,16 +176,19 @@
       <article class="lab-unit">
         <header><h3>Jellyfin</h3><span class="status"><i aria-hidden="true"></i>running</span></header>
         <p>Media server, self-hosted streaming, zero subscriptions.</p>
+        <p class="lab-value"><span>replaces</span>subscription streaming</p>
         <span class="lab-meta">UNIT-01 · STREAM</span>
       </article>
       <article class="lab-unit">
         <header><h3>Pi-hole</h3><span class="status"><i aria-hidden="true"></i>running</span></header>
         <p>Network-wide DNS ad blocker for every device on the network.</p>
+        <p class="lab-value"><span>blocks</span>ads before they load</p>
         <span class="lab-meta">UNIT-02 · FILTER</span>
       </article>
       <article class="lab-unit">
         <header><h3>Tailscale</h3><span class="status"><i aria-hidden="true"></i>running</span></header>
         <p>Mesh VPN — secure access to the home cloud from anywhere.</p>
+        <p class="lab-value"><span>reaches</span>the cloud from anywhere</p>
         <span class="lab-meta">UNIT-03 · MESH</span>
       </article>
     </div>
@@ -249,17 +252,32 @@
       <h2 id="shell-title">Shell</h2>
       <p class="section-note">A real terminal. Try <code>help</code>.</p>
     </div>
-    <div class="terminal" id="terminal">
-      <div class="terminal-bar">
-        <span>tox9c@atlas: ~</span>
-        <span class="terminal-bar-meta"><i aria-hidden="true"></i>session live</span>
+    <div class="shell-grid">
+      <div class="terminal" id="terminal">
+        <div class="terminal-bar">
+          <span>tox9c@atlas: ~</span>
+          <span class="terminal-bar-meta"><i aria-hidden="true"></i>session live</span>
+        </div>
+        <div class="terminal-body" id="terminal-body" role="log" aria-live="polite"></div>
+        <form class="terminal-input" id="terminal-form">
+          <label class="sr-only" for="terminal-field">Terminal command</label>
+          <span class="terminal-prompt" aria-hidden="true">$</span>
+          <input id="terminal-field" type="text" autocomplete="off" spellcheck="false" placeholder="type a command — try 'help'"/>
+        </form>
       </div>
-      <div class="terminal-body" id="terminal-body" role="log" aria-live="polite"></div>
-      <form class="terminal-input" id="terminal-form">
-        <label class="sr-only" for="terminal-field">Terminal command</label>
-        <span class="terminal-prompt" aria-hidden="true">$</span>
-        <input id="terminal-field" type="text" autocomplete="off" spellcheck="false" placeholder="type a command — try 'help'"/>
-      </form>
+      <aside class="shell-reference">
+        <p class="shell-reference-head">Command reference</p>
+        <dl>
+          <div><dt>whoami</dt><dd>identity & credentials</dd></div>
+          <div><dt>projects</dt><dd>all seven systems</dd></div>
+          <div><dt>dossier <n></dt><dd>open a system — try <code>1</code> or <code>football</code></dd></div>
+          <div><dt>skills</dt><dd>the stack</dd></div>
+          <div><dt>lab</dt><dd>home server services</dd></div>
+          <div><dt>contact</dt><dd>channels & email</dd></div>
+          <div><dt>clear</dt><dd>wipe this log</dd></div>
+        </dl>
+        <p class="shell-reference-note">The terminal and the atlas are two doors into the same seven projects.</p>
+      </aside>
     </div>
   </section>
 
