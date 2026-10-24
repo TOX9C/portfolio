@@ -103,7 +103,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   background:var(--cyan);color:var(--void);
   font-family:var(--pixel);font-size:.8rem;letter-spacing:.08em;
   padding:.7rem 1.1rem;border-radius:10px;
-  transition:transform .3s var(--ease)
+  /* No transition. A keyboard user tabs to this and it must be there now —
+     animating it in meant it was still off-screen at the moment of focus. */
 }
 .skip-link:focus{transform:none}
 
@@ -379,6 +380,30 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 .stage-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.4rem}
 
+/* The availability status. A recruiter needs "who wants what" on the first
+   screen — it was buried in the terminal, the résumé and the contact section. */
+.stage-role{
+  display:block;
+  margin-top:.85rem;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--green);
+  line-height:1.7
+}
+/* Inline, not a flex item. As a flex row the whole text block wrapped to its
+   own line and the dot sat alone, reading as a stray bullet. */
+.stage-role-dot{
+  display:inline-block;vertical-align:middle;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green);
+  margin-right:.55rem;
+  box-shadow:0 0 0 3px rgba(124,242,155,.14),0 0 10px rgba(124,242,155,.6);
+  animation:pulse-dot 2.4s ease-in-out infinite
+}
+@keyframes pulse-dot{
+  0%,100%{box-shadow:0 0 0 3px rgba(124,242,155,.14),0 0 10px rgba(124,242,155,.55)}
+  50%{box-shadow:0 0 0 6px rgba(124,242,155,.05),0 0 14px rgba(124,242,155,.75)}
+}
+
 /* A visible way into the dossiers. The drawer was only reachable by
    discovering that a map landmark was clickable. */
 .stage-open{
@@ -486,6 +511,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   gap:.9rem;align-items:center;
   padding-top:1rem;
   border-top:1px solid var(--hair);
+  /* The manifest sits below the fixed HUD. Jumping to it without this
+     landed the section title underneath the header bar. */
+  scroll-margin-top:5.5rem;
 }
 .legend-head{
   display:flex;align-items:baseline;justify-content:space-between;
@@ -573,6 +601,15 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   /* Wraps instead of clipping: "multi-agent desktop …" tells a visitor
      nothing, and on a phone the card has room for the full phrase. */
   line-height:1.45;overflow-wrap:anywhere
+}
+/* The stack, on the card. "Who / what / with what" should be answerable from
+   the first screen without opening a drawer or scrolling to section 02. */
+.legend-stack{
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.03em;
+  text-transform:uppercase;color:var(--faint);
+  line-height:1.4;overflow:hidden;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;
+  overflow-wrap:anywhere
 }
 
 .noscript-list{

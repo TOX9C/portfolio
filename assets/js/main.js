@@ -93,6 +93,7 @@ function manifest({ onOpen, onHover }) {
         <span class="legend-key">${p.index}</span>
         <span class="legend-name">${p.name}</span>
         <span class="legend-tag">${p.tag}</span>
+        <span class="legend-stack">${p.stack.slice(0, 3).join(' · ')}</span>
       </span>
       <span class="legend-proof" aria-hidden="true">${p.stats[0].value}</span>`;
     btn.addEventListener('click', () => onOpen?.(p.id));
@@ -171,22 +172,40 @@ function setBackgroundInert(inert, { keepHeader = false, exempt = [] } = {}) {
 
 function reveals() {
   // The hero manifest is above-the-fold content on most screens. Hiding it
-  // behind a scroll reveal removed the portfolio's table of contents from the
-  // first screen entirely on shorter viewports.
+  // behind a scroll reveal removed the portfolio's table of contents from
+  // the first screen entirely on shorter viewports.
   const targets = $$('.section-head, .rack, .lab-unit, .profile-lede, .profile-facts, .profile-card, .terminal, .channel-list a');
   targets.forEach((el) => el.classList.add('rv'));
+
+  const show = (el) => {
+    el.classList.add('in');
+    io.unobserve(el);
+  };
+
   const io = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in');
-          io.unobserve(entry.target);
-        }
+        if (entry.isIntersecting) show(entry.target);
       });
     },
     { rootMargin: '0px 0px -12% 0px', threshold: 0.08 }
   );
   targets.forEach((el) => io.observe(el));
+
+  // A jump straight to a section left it blank: the reveal never fired for
+  // the content the user was sent to. Anything inside the viewport at load
+  // is already seen, so reveal it immediately.
+  const revealVisible = () => {
+    targets.forEach((el) => {
+      if (el.classList.contains('in')) return;
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) show(el);
+    });
+  };
+  revealVisible();
+  window.addEventListener('load', revealVisible);
+  // Hash navigation lands after the browser's own scroll.
+  window.addEventListener('hashchange', () => setTimeout(revealVisible, 120));
 
   const sections = $$('main section[id]');
   const navLinks = $$('.hud-nav a');
