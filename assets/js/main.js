@@ -608,6 +608,11 @@ async function init() {
       const fallback = $('.stage-fallback');
       if (fallback) fallback.style.display = 'flex';
     }
+    // The badge reports real load state, so it hides the moment the atlas
+    // exists — before the cosmetic step sequence. Waiting for the animation
+    // kept a "still assembling" chip on the hero for seconds after the page
+    // was already interactive.
+    $('#boot')?.classList.add('done');
     await boot();
     // expose for smoke checks
     window.__atlas = { projects: PROJECTS, dossier: dossierPanel, atlas };
