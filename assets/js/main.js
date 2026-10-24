@@ -23,19 +23,24 @@ function boot() {
     return Promise.resolve();
   }
 
+  // Fast. The badge is a status indicator, not a performance — every 130ms
+  // step added up to a visible pause on a slow machine, and the hero was
+  // readable the whole time.
+  const STEP = 70;
+
   return new Promise((resolve) => {
     let i = 0;
     const tick = () => {
       log.textContent = steps[i];
       fill.style.width = `${((i + 1) / steps.length) * 100}%`;
       i++;
-      if (i < steps.length) setTimeout(tick, 130);
+      if (i < steps.length) setTimeout(tick, STEP);
       else setTimeout(() => {
         overlay.classList.add('done');
         resolve();
-      }, 180);
+      }, 120);
     };
-    setTimeout(tick, 60);
+    setTimeout(tick, 30);
   });
 }
 
@@ -285,10 +290,11 @@ function mobileNav() {
 
 /* ---------- dossier ---------- */
 
-function dossier({ atlas }) {
+function dossier({ atlas: initialAtlas }) {
   const panel = $('#dossier');
   const closeBtn = $('#dossier-close');
   const scrim = $('#dossier-scrim');
+  let atlas = initialAtlas;
   let lastFocus = null;
 
   const fill = (project) => {
@@ -381,7 +387,13 @@ function dossier({ atlas }) {
     else if (e.target !== $('#terminal-field')) trapFocus(panel, e);
   });
 
-  return { open, close };
+  return {
+    open,
+    close,
+    // The atlas is created after this panel (the Three.js import is deferred),
+    // so the panel needs a way to receive it.
+    setAtlas(next) { atlas = next; }
+  };
 }
 
 /* ---------- terminal ---------- */
@@ -465,21 +477,6 @@ async function init() {
   mobileNav();
 
   let atlas = null;
-  try {
-    const { createAtlas } = await import('./atlas.js');
-    const canvas = $('#atlas-canvas');
-    if (canvas && window.WebGLRenderingContext) {
-      atlas = createAtlas(canvas, {
-        onSelect: (id) => openDossier(id),
-        onHover: (id) => atlas?.setHover(id)
-      });
-    }
-  } catch (error) {
-    console.warn('atlas unavailable:', error);
-    const fallback = $('.stage-fallback');
-    if (fallback) fallback.style.display = 'flex';
-  }
-
   const dossierPanel = dossier({ atlas });
 
   function openDossier(id) {
@@ -493,13 +490,38 @@ async function init() {
 
   // A visible way into the dossiers from the hero copy.
   $('#stage-open-dossier')?.addEventListener('click', () => openDossier(PROJECTS[0].id));
+  // The headline itself is the first dossier — it is the first thing a
+  // visitor looks at, so it should be the first thing that does something.
+  $('#atlas-title-btn')?.addEventListener('click', () => openDossier(PROJECTS[0].id));
 
   terminal({ openDossier });
 
-  await boot();
+  // The manifest, the terminal and the dossiers are wired up before the 3D
+  // atlas loads. Three.js is ~380KB and its import blocks the main thread;
+  // awaiting it first left the whole page inert for seconds on a slow
+  // machine. The site now works while the diorama is still assembling.
+  const canvas = $('#atlas-canvas');
+  const loadAtlas = async () => {
+    try {
+      const { createAtlas } = await import('./atlas.js');
+      if (!canvas || !window.WebGLRenderingContext) throw new Error('no webgl');
+      atlas = createAtlas(canvas, {
+        onSelect: (id) => openDossier(id),
+        onHover: (id) => atlas?.setHover(id)
+      });
+      dossierPanel.setAtlas(atlas);
+    } catch (error) {
+      console.warn('atlas unavailable:', error);
+      const fallback = $('.stage-fallback');
+      if (fallback) fallback.style.display = 'flex';
+    }
+    await boot();
+    // expose for smoke checks
+    window.__atlas = { projects: PROJECTS, dossier: dossierPanel, atlas };
+  };
 
-  // expose for smoke checks
-  window.__atlas = { projects: PROJECTS, dossier: dossierPanel, atlas };
+  // Yield first so the first paint lands before the import starts.
+  requestAnimationFrame(() => requestAnimationFrame(loadAtlas));
 }
 
 if (document.readyState === 'loading') {
