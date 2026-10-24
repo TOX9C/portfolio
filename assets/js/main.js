@@ -585,6 +585,22 @@ async function init() {
         pickerBtn.focus();
       }
     });
+    // Arrow keys move through the seven systems, as in a native menu. The
+    // listener lives on the document because focus starts on the toggle
+    // button, outside the panel — an on-panel listener never saw the first
+    // ArrowDown.
+    document.addEventListener('keydown', (e) => {
+      if (picker.hidden) return;
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      e.preventDefault();
+      const items = $$('button[data-project]', pickerList);
+      if (!items.length) return;
+      const at = items.indexOf(document.activeElement);
+      const next = e.key === 'ArrowDown'
+        ? items[(at + 1 + items.length) % items.length]
+        : items[(at - 1 + items.length) % items.length];
+      next.focus();
+    });
   }
 
   terminal({ openDossier });

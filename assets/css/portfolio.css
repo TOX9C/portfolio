@@ -1668,6 +1668,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
     opacity:0
   }
   .dossier.open{transform:none;visibility:visible;opacity:1}
+  /* The drawer is a full-screen scrolling sheet on a phone. The close
+     button was absolutely positioned at the top of the content, so after a
+     screen of reading it had scrolled away and the only exit was flinging
+     back to the top. Sticky keeps it in reach at any depth. */
+  .dossier-close{
+    position:sticky;top:.6rem;
+    margin-left:auto;
+    z-index:5;
+    background:rgba(8,12,23,.92);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)
+  }
   .profile-facts li{grid-template-columns:1fr;gap:.2rem}
   .profile-focus li{grid-template-columns:1fr;gap:.2rem}
   .profile-credentials>div{grid-template-columns:6.5rem minmax(0,1fr);gap:.6rem}
@@ -1739,7 +1750,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      landmarks 31px. */
   .menu-toggle{width:44px;height:44px}
   .dossier-close{width:44px;height:44px}
-  .terminal-input input{min-height:24px;font-size:.88rem}
+  .terminal-input input{min-height:24px;font-size:1rem}
   .stage-open button{min-height:44px;padding:.55rem .9rem}
   .footer a{min-height:44px;display:inline-flex;align-items:center}
   .atlas-label{min-height:40px;align-items:center}
