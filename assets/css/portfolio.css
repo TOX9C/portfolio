@@ -248,7 +248,19 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   align-items:center;
   gap:clamp(1rem,2vw,2rem) clamp(1.5rem,3vw,3rem);
   padding:clamp(5rem,8.5vh,6.4rem) var(--pad) clamp(1.2rem,2.5vh,2rem);
-  overflow:hidden;
+  /* Clip horizontally only. Clipping vertically cut the eyebrow and the top of
+     the headline on short laptop windows; letting the hero grow and the page
+     scroll is far better than hiding the copy. */
+  overflow-x:hidden;
+}
+/* Row 1 holds the copy and the diorama, row 2 the manifest. Without this the
+   legend's auto row grew past the viewport and pushed the headline up under
+   the fixed HUD, clipping the eyebrow and the top of the display type. */
+.stage-copy{
+  grid-column:1;grid-row:1;
+  max-width:40rem;
+  align-self:center;
+  min-height:0
 }
 
 /* On desktop the hero is exactly one viewport tall: the copy, the diorama and
@@ -258,6 +270,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage{height:100dvh}
   .stage-canvas{height:100%;min-height:0}
   .stage-copy{min-height:0}
+  /* The manifest gets a fixed slice of the screen; the diorama takes what is
+     left. The copy is centred inside its own row and never leaves it. */
+  .stage-legend{max-height:34vh}
+  .stage-canvas{min-height:0}
 }
 
 /* The dossier docks over the right edge. Shift only the canvas column left so
@@ -310,8 +326,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .no-js .stage-fallback{display:flex}
 
-.stage-copy{grid-column:1;grid-row:1;max-width:40rem;align-self:center}
-
 .eyebrow{
   display:inline-flex;align-items:center;gap:.6rem;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;
@@ -327,7 +341,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 .display{
   font-family:var(--pixel);font-weight:700;
-  font-size:clamp(2.7rem,5.6vw,5.2rem);
+  /* Scale on both axes: a short laptop window (720px tall) has to fit the
+     same hero as a tall desktop, so the type follows the viewport height too. */
+  font-size:clamp(2.4rem,min(5.6vw,11vh),5.2rem);
   line-height:.94;letter-spacing:-.01em;
   margin:1rem 0 1.1rem;
   text-transform:uppercase;
@@ -344,7 +360,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 @keyframes display-rise{to{transform:none}}
 .display .outline{
   color:transparent;
-  -webkit-text-stroke:1.6px var(--faint);
+  /* Brighter than --faint: the outlined middle line has to read as a
+     deliberate second tier, not as a rendering mistake. */
+  -webkit-text-stroke:1.6px rgba(178,196,224,.62);
 }
 .display .accent{
   color:var(--cyan);
@@ -352,8 +370,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 
 .stage-lede{
-  color:var(--muted);font-size:clamp(.88rem,1vw,.98rem);
-  line-height:1.65;max-width:44ch;
+  color:var(--muted);font-size:clamp(.86rem,min(1vw,1.9vh),.98rem);
+  line-height:1.6;max-width:44ch;
 }
 .stage-lede strong{color:var(--ink);font-weight:600}
 
@@ -414,6 +432,23 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   pointer-events:none;
 }
 .stage-corner span{color:var(--muted)}
+/* The hint is the only instruction the map ever gives, so it needs to look
+   like a control cue rather than a caption. The pulsing dot is the cue. */
+.stage-corner .hint{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.42rem .7rem;border-radius:99px;
+  background:rgba(5,7,14,.7);border:1px solid var(--hair-soft);
+  color:var(--muted);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)
+}
+.stage-corner .hint::before{
+  content:'';width:7px;height:7px;border-radius:50%;flex:none;
+  background:var(--cyan);box-shadow:0 0 10px var(--glow);
+  animation:hint-pulse 2.2s var(--ease) infinite
+}
+@keyframes hint-pulse{
+  0%,100%{opacity:.45;transform:scale(.8)}
+  50%{opacity:1;transform:scale(1.15)}
+}
 
 .stage-legend{
   grid-column:1 / -1;grid-row:2;
@@ -438,17 +473,19 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .legend-list{
   display:grid;
-  /* 7 across fits the full hero width at desktop and keeps every project on
-     one row — the manifest is the portfolio's table of contents. */
+  /* Seven across in one row. A 4-column grid made the manifest two rows
+     tall, which overflowed the one-screen hero and clipped the headline.
+     Legibility comes from the overlaid caption, not from wider cards. */
   grid-template-columns:repeat(7,minmax(0,1fr));
   gap:.55rem
 }
 .legend-list button{
+  position:relative;
   width:100%;text-align:left;
-  display:flex;flex-direction:column;gap:.45rem;
-  padding:.4rem;border-radius:12px;
+  display:block;padding:0;border-radius:12px;
   border:1px solid var(--hair-soft);
   background:rgba(12,17,32,.55);
+  overflow:hidden;
   transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease)
 }
 .legend-list button:hover{
@@ -460,15 +497,23 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
    list. On phones it is the only readable view of the work. */
 .legend-shot{
   display:block;width:100%;aspect-ratio:16/9;overflow:hidden;
-  border-radius:7px;background:#05070e;
-  border:1px solid var(--hair-soft)
+  border-radius:7px 7px 0 0;background:#05070e;
+  border:1px solid var(--hair-soft);border-bottom:0
 }
 .legend-shot img{
   width:100%;height:100%;object-fit:cover;object-position:top left;
   opacity:.85;transition:opacity .35s var(--ease),transform .5s var(--ease)
 }
 .legend-list button:hover .legend-shot img{opacity:1;transform:scale(1.04)}
-.legend-text{display:flex;flex-direction:column;gap:.15rem;padding:0 .15rem .25rem}
+/* The caption sits over the screenshot instead of below it. Stacked cards made
+   the manifest two full rows tall, which overflowed the one-screen hero and
+   clipped the headline. */
+.legend-text{
+  position:absolute;left:0;right:0;bottom:0;
+  display:flex;flex-direction:column;gap:.1rem;
+  padding:1.5rem .6rem .5rem;
+  background:linear-gradient(180deg,transparent,rgba(5,7,14,.92) 42%)
+}
 .legend-key{
   font-family:var(--mono);font-size:.72rem;color:var(--cyan);
   letter-spacing:.04em
@@ -483,7 +528,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .legend-tag{
   font-family:var(--mono);font-size:.72rem;letter-spacing:.02em;
   text-transform:none;color:var(--faint);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+  /* Wraps instead of clipping: "multi-agent desktop …" tells a visitor
+     nothing, and on a phone the card has room for the full phrase. */
+  line-height:1.45;overflow-wrap:anywhere
 }
 
 .noscript-list{
@@ -1080,6 +1127,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-corner{font-size:.72rem;gap:1rem}
   .channel-list a{grid-template-columns:1fr auto}
   .channel-list em{grid-column:1 / -1;order:3}
+  /* Metadata is supporting text on desktop but becomes the primary content
+     on a phone, where there is no second column to lean on. */
+  .stage-chips span{font-size:.74rem}
+  .legend-key,.legend-name,.legend-tag{font-size:.78rem}
+  .profile-status b,.profile-card-note{font-size:.76rem}
+  .profile-badge p{font-size:.82rem}
   .section{padding-left:20px;padding-right:20px}
   .stage{padding-left:20px;padding-right:20px}
   .terminal-body{font-size:.72rem}
@@ -1117,4 +1170,40 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   html{scroll-behavior:auto}
   .display-line>span{transform:none}
   .rv{opacity:1;transform:none}
+}
+
+/* ---------- short desktop windows ----------
+   These come last so they win over the base rules. A laptop at 1280x720 or
+   1440x700 cannot fit the full-size hero in one screen, so the copy shrinks
+   to fit rather than sliding under the fixed HUD. */
+@media (min-width:1081px) and (max-height:860px){
+  .stage{
+    /* Fixed height again: with the tightened copy the first row now has
+       enough space, so the hero fits one screen instead of growing. */
+    height:100dvh;min-height:0;
+    padding-top:calc(60px + 3vh);
+    padding-bottom:1rem;
+    gap:.9rem clamp(1.5rem,3vw,3rem)
+  }
+  .display{font-size:clamp(2.1rem,min(4.8vw,8.6vh),3.5rem);margin:.65rem 0 .75rem}
+  .stage-lede{font-size:.86rem;line-height:1.5}
+  .stage-actions{margin-top:.85rem}
+  .stage-actions .btn{padding:.72rem 1rem}
+  .stage-chips{margin-top:.85rem;padding-top:.65rem}
+  .stage-chips b{font-size:1.15rem}
+  .stage-legend{padding-top:.6rem;gap:.5rem}
+  .legend-head h2{font-size:.9rem}
+}
+@media (min-width:1081px) and (max-height:780px){
+  .stage{padding-top:calc(60px + 1.8vh);padding-bottom:.8rem;gap:.7rem clamp(1.5rem,3vw,3rem)}
+  .display{font-size:clamp(1.9rem,min(4.3vw,7.4vh),2.9rem);margin:.5rem 0 .55rem}
+  .stage-lede{font-size:.82rem;line-height:1.45;max-width:54ch}
+  .eyebrow{padding:.32rem .75rem}
+  .stage-actions{margin-top:.65rem}
+  .stage-actions .btn{padding:.62rem .85rem;font-size:.8rem}
+  .stage-chips{margin-top:.6rem;padding-top:.5rem;gap:1.3rem}
+  .stage-chips b{font-size:1rem}
+  .stage-chips span{font-size:.66rem}
+  .stage-legend{padding-top:.45rem;gap:.4rem}
+  .legend-head h2{font-size:.82rem}
 }
