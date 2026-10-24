@@ -93,7 +93,8 @@ function manifest({ onOpen, onHover }) {
         <span class="legend-key">${p.index}</span>
         <span class="legend-name">${p.name}</span>
         <span class="legend-tag">${p.tag}</span>
-      </span>`;
+      </span>
+      <span class="legend-proof" aria-hidden="true">${p.stats[0].value}</span>`;
     btn.addEventListener('click', () => onOpen?.(p.id));
     btn.addEventListener('mouseenter', () => onHover?.(p.id));
     btn.addEventListener('mouseleave', () => onHover?.(null));

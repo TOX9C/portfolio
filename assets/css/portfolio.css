@@ -518,6 +518,16 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--mono);font-size:.76rem;color:var(--cyan);
   letter-spacing:.04em
 }
+/* The hard number, on the card. A recruiter sees the proof without opening
+   the drawer, which is what makes the manifest evidence and not decoration. */
+.legend-proof{
+  position:absolute;top:.4rem;right:.4rem;
+  padding:.18rem .42rem;border-radius:6px;
+  background:rgba(5,7,14,.78);border:1px solid rgba(84,225,255,.3);
+  font-family:var(--mono);font-size:.68rem;font-weight:600;
+  letter-spacing:.04em;color:var(--cyan);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)
+}
 .legend-name{
   font-family:var(--pixel);font-size:.76rem;letter-spacing:.03em;line-height:1.25;
   text-transform:uppercase;
