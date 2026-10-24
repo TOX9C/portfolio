@@ -434,7 +434,22 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     // leaves a screen reader announcing "03" with no project name.
     el.setAttribute('aria-label', `Open ${group.userData.project.name} dossier`);
     el.innerHTML = `<span class="atlas-label-key">${group.userData.project.index}</span><span class="atlas-label-name">${group.userData.project.name}</span>`;
-    el.addEventListener('click', () => onSelect?.(group.userData.project.id));
+    // Open on pointerdown, not click. The label is rewritten every frame to
+    // follow the orbiting camera, so by the time a `click` fires the element
+    // has moved out from under the pointer and the browser cancels the
+    // click — roughly a third of landmark taps did nothing. Pointerdown
+    // fires while the label is still under the finger.
+    el.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      e.preventDefault();
+      e.stopPropagation();
+      onSelect?.(group.userData.project.id);
+    });
+    // Keyboard users still need a click path — Enter/Space on a button fires
+    // a `click` with no pointerdown before it.
+    el.addEventListener('click', (e) => {
+      if (e.detail === 0) onSelect?.(group.userData.project.id);
+    });
     labelRoot.appendChild(el);
     return { el, group, w: 0, keyW: 0 };
   });
