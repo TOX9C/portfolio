@@ -612,11 +612,28 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .badge-pixel{
   width:42px;height:42px;flex:none;
-  background:
-    linear-gradient(135deg,var(--amber) 0 50%,transparent 50% 100%),
-    linear-gradient(45deg,var(--amber) 0 50%,var(--void) 50% 100%);
-  box-shadow:0 0 22px rgba(255,182,92,.4);
-  border-radius:6px
+  filter:drop-shadow(0 0 12px rgba(255,182,92,.45))
+}
+.profile-status{
+  display:flex;align-items:flex-start;gap:.7rem;
+  padding:.95rem 1.1rem;margin-bottom:1.1rem;
+  border-radius:14px;
+  background:rgba(84,225,255,.06);
+  border:1px solid rgba(84,225,255,.2)
+}
+.profile-status .status-dot{
+  width:8px;height:8px;flex:none;margin-top:.4rem;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 0 3px rgba(124,242,155,.16),0 0 12px rgba(124,242,155,.6)
+}
+.profile-status b{
+  display:block;
+  font-family:var(--mono);font-size:.56rem;letter-spacing:.2em;
+  color:var(--faint);margin-bottom:.35rem
+}
+.profile-status span{
+  display:block;
+  font-size:.86rem;line-height:1.5;color:var(--cyan)
 }
 .profile-badge p{
   font-family:var(--pixel);font-weight:700;font-size:.86rem;
@@ -820,13 +837,18 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .atlas-label:hover{
   border-color:var(--cyan);
   background:rgba(84,225,255,.16);
-  transform:translate(-50%,-100%) scale(1.06) !important;
+  /* `scale` is independent of the inline transform that positions the label,
+     so hovering must not use transform here or the label jumps to the corner. */
+  scale:1.06;
+  z-index:5
 }
 .atlas-label-key{
   font-family:var(--mono);font-size:.5rem;color:var(--cyan);letter-spacing:.04em
 }
 .atlas-label-name{color:var(--muted)}
 .atlas-label:hover .atlas-label-name{color:var(--ink)}
+.atlas-label.compact .atlas-label-name{display:none}
+.atlas-label.compact{padding:.3rem .45rem}
 
 /* ---------- scroll reveal ---------- */
 .rv{
@@ -844,7 +866,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
     padding-top:clamp(5.5rem,10vh,7rem)
   }
   .stage-copy{grid-column:1;grid-row:1;max-width:38rem}
-  .stage-canvas{grid-column:1;grid-row:2;height:min(54vh,500px);min-height:320px}
+  .stage-canvas{grid-column:1;grid-row:2;height:min(62vh,560px);min-height:380px}
   .stage-legend{grid-column:1;grid-row:4;grid-template-columns:1fr;align-self:start}
   .legend-list{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
   .profile-grid{grid-template-columns:1fr}

@@ -357,13 +357,81 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     el.innerHTML = `<span class="atlas-label-key">${group.userData.project.index}</span><span class="atlas-label-name">${group.userData.project.name}</span>`;
     el.addEventListener('click', () => onSelect?.(group.userData.project.id));
     labelRoot.appendChild(el);
-    return { el, group };
+    return { el, group, w: 0, keyW: 0 };
+  });
+
+  // Cache label widths once so the render loop can declutter without forcing layout.
+  requestAnimationFrame(() => {
+    for (const l of labels) {
+      l.w = l.el.offsetWidth;
+      l.keyW = (l.el.querySelector('.atlas-label-key')?.offsetWidth || 0) + 18;
+    }
   });
 
   /* ---------- interaction ---------- */
 
-  let targetAzimuth = 0.28;
-  let targetPolar = 0.82;
+  // Points that must stay inside the frame: the island corners and the label
+  // anchor height above each landmark.
+  const FIT_POINTS = [];
+  for (const group of landmarks) {
+    const p = group.position;
+    FIT_POINTS.push(new THREE.Vector3(p.x, 0, p.z));
+    FIT_POINTS.push(new THREE.Vector3(p.x, 4.6, p.z));
+  }
+  const ISLAND_HALF_W = 12;
+  const ISLAND_HALF_D = 8.5;
+  for (const sx of [-1, 1]) {
+    for (const sz of [-1, 1]) {
+      FIT_POINTS.push(new THREE.Vector3(sx * ISLAND_HALF_W, 0, sz * ISLAND_HALF_D));
+    }
+  }
+
+  const TARGET = new THREE.Vector3(0, 1.6, 0);
+  const _v = new THREE.Vector3();
+
+  const placeCamera = (d, az, pol) => {
+    const sinP = Math.sin(pol);
+    camera.position.set(d * sinP * Math.sin(az), d * Math.cos(pol) + 2, d * sinP * Math.cos(az));
+    camera.lookAt(TARGET);
+  };
+
+  // Smallest camera distance that keeps every fit point inside the frame.
+  // Binary search against three.js's own projection — no hand-derived frustum math.
+  const fitDistance = (az, pol) => {
+    const inside = (d) => {
+      placeCamera(d, az, pol);
+      camera.updateMatrixWorld(true);
+      for (const p of FIT_POINTS) {
+        _v.copy(p).project(camera);
+        if (Math.abs(_v.x) > 0.9 || Math.abs(_v.y) > 0.9) return false;
+      }
+      return true;
+    };
+    if (inside(18)) return 18;
+    let lo = 18;
+    let hi = 160;
+    if (!inside(hi)) return hi;
+    for (let i = 0; i < 22; i++) {
+      const mid = (lo + hi) / 2;
+      if (inside(mid)) hi = mid;
+      else lo = mid;
+    }
+    return hi;
+  };
+
+  // The island is 24 wide x 17 deep. On a portrait viewport the long axis must run
+  // vertically on screen, so view it from the side instead of across its width.
+  const homeCamera = () => {
+    const a = camera.aspect || 1;
+    return a < 0.95 ? { azimuth: Math.PI / 2, polar: 0.78 } : { azimuth: 0.28, polar: 0.82 };
+  };
+
+  let userAdjusted = false;
+  let baseDistance = 46;
+  let zoom = 1;
+  const home = { azimuth: 0.28, polar: 0.82 };
+  let targetAzimuth = home.azimuth;
+  let targetPolar = home.polar;
   let targetDistance = 46;
   let azimuth = targetAzimuth;
   let polar = targetPolar;
@@ -397,6 +465,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       if (Math.abs(dx) + Math.abs(dy) > 3) pointerMoved = true;
       targetAzimuth -= dx * 0.006;
       targetPolar = Math.max(0.42, Math.min(1.42, targetPolar - dy * 0.004));
+      userAdjusted = true;
       lastX = e.clientX;
       lastY = e.clientY;
       return;
@@ -435,7 +504,8 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
 
   const onWheel = (e) => {
     e.preventDefault();
-    targetDistance = Math.max(26, Math.min(70, targetDistance + e.deltaY * 0.04));
+    zoom = Math.max(0.6, Math.min(1.5, zoom - e.deltaY * 0.0012));
+    userAdjusted = true;
   };
 
   canvas.addEventListener('pointerdown', onPointerDown);
@@ -451,8 +521,24 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     const w = canvas.clientWidth || 800;
     const h = canvas.clientHeight || 600;
     renderer.setSize(w, h, false);
+    const prevAspect = camera.aspect;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+    if (!userAdjusted) {
+      const h0 = homeCamera();
+      targetAzimuth = h0.azimuth;
+      targetPolar = h0.polar;
+    }
+    // A major aspect change (rotation / breakpoint) invalidates the current framing.
+    if (prevAspect && Math.abs(prevAspect - camera.aspect) > 0.35) {
+      userAdjusted = false;
+      const h0 = homeCamera();
+      targetAzimuth = h0.azimuth;
+      targetPolar = h0.polar;
+      zoom = 1;
+    }
+    baseDistance = fitDistance(targetAzimuth, targetPolar);
+    if (!dragging) distance = targetDistance = baseDistance * zoom;
   };
   const observer = new ResizeObserver(resize);
   observer.observe(canvas);
@@ -474,15 +560,11 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     const ease = reducedMotion ? 1 : 1 - Math.pow(0.0016, dt);
     azimuth += (targetAzimuth - azimuth) * ease;
     polar += (targetPolar - polar) * ease;
+    const wanted = baseDistance * zoom;
+    targetDistance += (wanted - targetDistance) * ease;
     distance += (targetDistance - distance) * ease;
 
-    const sinP = Math.sin(polar);
-    camera.position.set(
-      distance * sinP * Math.sin(azimuth),
-      distance * Math.cos(polar) + 2,
-      distance * sinP * Math.cos(azimuth)
-    );
-    camera.lookAt(0, 1.6, 0);
+    placeCamera(distance, azimuth, polar);
 
     world.rotation.y = Math.sin(elapsed * 0.08) * 0.06;
     stars.rotation.y = elapsed * 0.006;
@@ -506,7 +588,9 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
 
     // project labels to screen space
     const rect = canvas.getBoundingClientRect();
-    for (const { el, group } of labels) {
+    const placed = [];
+    for (const l of labels) {
+      const { el, group } = l;
       projected.set(0, 4.6, 0);
       group.localToWorld(projected);
       projected.project(camera);
@@ -516,6 +600,52 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       el.style.transform = `translate(-50%,-100%) translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
       el.style.opacity = visible ? '1' : '0';
       el.style.pointerEvents = visible ? 'auto' : 'none';
+      l.x = x;
+      l.y = y;
+      l.visible = visible;
+    }
+
+    // Declutter: on narrow canvases the full names collide. Try full width, fall back
+    // to a numbered chip, then nudge vertically. A label is never dropped — every
+    // landmark stays identifiable.
+    const narrow = rect.width < 560;
+    const h = 22;
+    const fits = (l, r, t, b) => !placed.some((p) => r > p.l && l < p.r && t < p.b && b > p.t);
+    for (const l of labels) {
+      if (!l.visible) {
+        l.el.classList.remove('compact');
+        l.el.style.opacity = '0';
+        l.el.style.pointerEvents = 'none';
+        continue;
+      }
+      let w = l.w;
+      let y = l.y;
+      if (!fits(l.x - w / 2, l.x + w / 2, y - h, y)) {
+        if (narrow) {
+          w = l.keyW;
+          l.el.classList.add('compact');
+        }
+        // Nudge upward until clear, then downward if we ran out of room above.
+        let found = false;
+        for (let dy = 0; dy <= 90; dy += 6) {
+          const up = l.y - dy;
+          if (up - h > 4 && fits(l.x - w / 2, l.x + w / 2, up - h, up)) { y = up; found = true; break; }
+          const down = l.y + dy;
+          if (down < rect.height - 4 && fits(l.x - w / 2, l.x + w / 2, down - h, down)) { y = down; found = true; break; }
+        }
+        if (!found) {
+          // Last resort: keep the chip and push it to the top edge.
+          w = l.keyW;
+          l.el.classList.add('compact');
+          y = Math.max(h + 4, Math.min(l.y, rect.height - 6));
+        }
+      } else {
+        l.el.classList.remove('compact');
+      }
+      l.el.style.transform = `translate(-50%,-100%) translate(${l.x.toFixed(1)}px,${y.toFixed(1)}px)`;
+      l.el.style.opacity = '1';
+      l.el.style.pointerEvents = 'auto';
+      placed.push({ l: l.x - w / 2, r: l.x + w / 2, t: y - h, b: y });
     }
   };
 
@@ -527,7 +657,8 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       if (!group) return;
       const angle = Math.atan2(group.position.x, group.position.z);
       targetAzimuth = angle;
-      targetDistance = 36;
+      userAdjusted = true;
+      zoom = 0.78;
       targetPolar = 0.86;
     },
     setHover(id) {
