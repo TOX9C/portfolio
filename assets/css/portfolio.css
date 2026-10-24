@@ -152,7 +152,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   text-shadow:0 0 24px rgba(84,225,255,.5);
 }
 .boot-log{
-  font-family:var(--mono);font-size:.56rem;letter-spacing:.16em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;
   text-transform:uppercase;color:var(--faint);
   margin:.4rem 0 .7rem;min-height:1.2em;
 }
@@ -173,9 +173,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:flex;align-items:center;justify-content:space-between;
   gap:clamp(.8rem,2vw,2rem);
   padding:.85rem var(--pad);
-  background:linear-gradient(180deg,rgba(5,7,14,.92),rgba(5,7,14,.45) 62%,transparent);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
+  /* A real scrim: the bar sits over section headings, so it must separate
+     them rather than fade into the page. */
+  background:linear-gradient(180deg,rgba(5,7,14,.96) 0%,rgba(5,7,14,.88) 62%,rgba(5,7,14,.72) 100%);
+  backdrop-filter:blur(16px) saturate(1.2);
+  -webkit-backdrop-filter:blur(16px) saturate(1.2);
+  border-bottom:1px solid var(--hair-soft);
 }
 .brand{
   display:inline-flex;align-items:center;gap:.65rem;
@@ -200,7 +203,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   transition:color .3s var(--ease)
 }
 .hud-nav a em{
-  font-style:normal;font-family:var(--mono);font-size:.56rem;
+  font-style:normal;font-family:var(--mono);font-size:.72rem;
   color:var(--faint);margin-right:.4rem;letter-spacing:.06em
 }
 .hud-nav a::after{
@@ -214,7 +217,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 .hud-readout{
   display:flex;align-items:center;gap:.6rem;
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
   color:var(--muted);text-transform:uppercase;
   font-variant-numeric:tabular-nums;
 }
@@ -243,18 +246,30 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
   grid-template-rows:minmax(0,1fr) auto;
   align-items:center;
-  gap:clamp(1.2rem,2.4vw,2.4rem) clamp(1.5rem,3vw,3rem);
-  padding:clamp(5.5rem,10vh,7.5rem) var(--pad) clamp(1.6rem,3.5vh,2.6rem);
+  gap:clamp(1rem,2vw,2rem) clamp(1.5rem,3vw,3rem);
+  padding:clamp(5rem,8.5vh,6.4rem) var(--pad) clamp(1.2rem,2.5vh,2rem);
   overflow:hidden;
 }
 
-/* The dossier docks over the right edge. Shift the stage left so the diorama
-   stays in frame instead of being cropped by the panel. */
+/* On desktop the hero is exactly one viewport tall: the copy, the diorama and
+   the manifest all fit above the fold, so the seven projects are visible on
+   first paint instead of hiding below it. */
+@media (min-width:1081px){
+  .stage{height:100dvh}
+  .stage-canvas{height:100%;min-height:0}
+  .stage-copy{min-height:0}
+}
+
+/* The dossier docks over the right edge. Shift only the canvas column left so
+   the diorama stays in frame — translating the whole stage dragged the
+   headline off the left edge of the viewport. */
 @media (min-width:1180px){
-  body.dossier-open .stage{
-    grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
-    transform:translateX(calc(-1 * min(240px, 22vw)));
+  body.dossier-open .stage-canvas{
+    transform:translateX(calc(-1 * min(260px, 24vw)));
     transition:transform .6s var(--ease);
+  }
+  body.dossier-open .stage-copy{
+    transition:opacity .4s var(--ease);
   }
 }
 
@@ -299,7 +314,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 .eyebrow{
   display:inline-flex;align-items:center;gap:.6rem;
-  font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;
   text-transform:uppercase;color:var(--muted);
   border:1px solid var(--hair);border-radius:99px;
   padding:.45rem .95rem;
@@ -312,19 +327,21 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 .display{
   font-family:var(--pixel);font-weight:700;
-  font-size:clamp(2.9rem,6.6vw,6.2rem);
+  font-size:clamp(2.7rem,5.6vw,5.2rem);
   line-height:.94;letter-spacing:-.01em;
-  margin:1.3rem 0 1.4rem;
+  margin:1rem 0 1.1rem;
   text-transform:uppercase;
 }
 .display-line{display:block;overflow:hidden}
 .display-line>span{
   display:inline-block;transform:translateY(105%);
-  transition:transform 1s var(--ease)
+  /* A CSS animation, not a JS class toggle: requestAnimationFrame is suspended
+     in background tabs, which once left the headline invisible for ~50s. */
+  animation:display-rise .95s var(--ease) forwards
 }
-.display.go .display-line>span{transform:none}
-.display-line:nth-child(2)>span{transition-delay:.09s}
-.display-line:nth-child(3)>span{transition-delay:.18s}
+.display-line:nth-child(2)>span{animation-delay:.09s}
+.display-line:nth-child(3)>span{animation-delay:.18s}
+@keyframes display-rise{to{transform:none}}
 .display .outline{
   color:transparent;
   -webkit-text-stroke:1.6px var(--faint);
@@ -335,12 +352,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 
 .stage-lede{
-  color:var(--muted);font-size:clamp(.9rem,1.05vw,1rem);
-  line-height:1.75;max-width:44ch;
+  color:var(--muted);font-size:clamp(.88rem,1vw,.98rem);
+  line-height:1.65;max-width:44ch;
 }
 .stage-lede strong{color:var(--ink);font-weight:600}
 
-.stage-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.7rem}
+.stage-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.4rem}
 
 .btn{
   display:inline-flex;align-items:center;gap:.9rem;
@@ -374,7 +391,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 .stage-chips{
   display:flex;flex-wrap:wrap;gap:2rem;
-  margin-top:1.9rem;padding-top:1.2rem;
+  margin-top:1.4rem;padding-top:1rem;
   border-top:1px solid var(--hair-soft);
 }
 .stage-chips li{display:flex;flex-direction:column;gap:.15rem}
@@ -385,13 +402,13 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   color:var(--ink)
 }
 .stage-chips span{
-  font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;
   text-transform:uppercase;color:var(--faint)
 }
 
 .stage-corner{
   position:absolute;left:1rem;bottom:1rem;z-index:4;
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
   text-transform:uppercase;color:var(--faint);
   display:flex;flex-wrap:wrap;gap:.9rem;
   pointer-events:none;
@@ -401,10 +418,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .stage-legend{
   grid-column:1 / -1;grid-row:2;
   align-self:end;
-  display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,3fr);
-  gap:clamp(1rem,2.4vw,2.4rem);align-items:center;
-  padding-top:1.1rem;
+  display:grid;grid-template-columns:minmax(0,1fr);
+  gap:.9rem;align-items:center;
+  padding-top:1rem;
   border-top:1px solid var(--hair);
+}
+.legend-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  gap:1rem;flex-wrap:wrap
 }
 .legend-head h2{
   font-family:var(--pixel);font-weight:700;
@@ -412,18 +433,20 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   text-transform:uppercase
 }
 .legend-head p{
-  font-family:var(--mono);font-size:.64rem;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--faint);margin-top:.25rem
+  font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--faint)
 }
 .legend-list{
   display:grid;
+  /* 7 across fits the full hero width at desktop and keeps every project on
+     one row — the manifest is the portfolio's table of contents. */
   grid-template-columns:repeat(7,minmax(0,1fr));
-  gap:.4rem
+  gap:.55rem
 }
 .legend-list button{
   width:100%;text-align:left;
-  display:flex;flex-direction:column;gap:.2rem;
-  padding:.5rem .55rem;border-radius:10px;
+  display:flex;flex-direction:column;gap:.45rem;
+  padding:.4rem;border-radius:12px;
   border:1px solid var(--hair-soft);
   background:rgba(12,17,32,.55);
   transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease)
@@ -433,20 +456,33 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border-color:rgba(84,225,255,.38);
   transform:translateY(-2px)
 }
+/* The real screenshot is what makes the manifest a portfolio rather than a
+   list. On phones it is the only readable view of the work. */
+.legend-shot{
+  display:block;width:100%;aspect-ratio:16/9;overflow:hidden;
+  border-radius:7px;background:#05070e;
+  border:1px solid var(--hair-soft)
+}
+.legend-shot img{
+  width:100%;height:100%;object-fit:cover;object-position:top left;
+  opacity:.85;transition:opacity .35s var(--ease),transform .5s var(--ease)
+}
+.legend-list button:hover .legend-shot img{opacity:1;transform:scale(1.04)}
+.legend-text{display:flex;flex-direction:column;gap:.15rem;padding:0 .15rem .25rem}
 .legend-key{
-  font-family:var(--mono);font-size:.6rem;color:var(--cyan);
+  font-family:var(--mono);font-size:.72rem;color:var(--cyan);
   letter-spacing:.04em
 }
 .legend-name{
-  font-family:var(--pixel);font-size:.68rem;letter-spacing:.03em;line-height:1.25;
+  font-family:var(--pixel);font-size:.72rem;letter-spacing:.03em;line-height:1.25;
   text-transform:uppercase;
   /* Two lines rather than an ellipsis: a truncated project name is useless. */
   display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
   overflow:hidden;overflow-wrap:anywhere
 }
 .legend-tag{
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.04em;
-  text-transform:uppercase;color:var(--faint);
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.02em;
+  text-transform:none;color:var(--faint);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
 
@@ -481,6 +517,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding:clamp(5rem,11vh,9rem) var(--pad);
   border-bottom:1px solid var(--hair-soft);
   position:relative;
+  /* Anchor jumps must clear the fixed HUD, and a heading must never scroll
+     up underneath it. */
+  scroll-margin-top:5.5rem;
 }
 .section-head{
   display:grid;grid-template-columns:auto minmax(0,1fr);
@@ -501,7 +540,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   letter-spacing:.01em;text-transform:uppercase
 }
 .section-note{
-  font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;
   text-transform:uppercase;color:var(--faint)
 }
 
@@ -534,7 +573,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .rack-led.amber{background:var(--amber);box-shadow:0 0 10px rgba(255,182,92,.6)}
 .rack-led.magenta{background:var(--magenta);box-shadow:0 0 10px rgba(255,92,154,.6)}
 .rack-code{
-  font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;color:var(--faint)
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;color:var(--faint)
 }
 .rack h3{
   font-family:var(--pixel);font-weight:700;
@@ -543,7 +582,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .tag-list{display:flex;flex-wrap:wrap;gap:.45rem}
 .tag-list li{
-  font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
   padding:.32rem .7rem;border-radius:99px;
   border:1px solid var(--hair);color:var(--muted);
   background:rgba(5,7,14,.5)
@@ -556,11 +595,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border-top:1px solid var(--hair-soft);
 }
 .rack-proof span{
-  font-family:var(--mono);font-size:.54rem;letter-spacing:.18em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;
   text-transform:uppercase;color:var(--faint);margin-right:.15rem
 }
 .rack-proof b{
-  font-family:var(--mono);font-size:.6rem;font-weight:500;letter-spacing:.04em;
+  font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.04em;
   color:var(--cyan);padding:.22rem .5rem;border-radius:6px;
   background:rgba(84,225,255,.09);border:1px solid rgba(84,225,255,.18)
 }
@@ -599,14 +638,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .status{
   display:inline-flex;align-items:center;gap:.45rem;
-  font-family:var(--mono);font-size:.56rem;letter-spacing:.16em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;
   text-transform:uppercase;color:var(--green)
 }
 .status i{width:6px;height:6px;border-radius:1px;background:var(--green);box-shadow:0 0 8px rgba(124,242,155,.7)}
 .lab-unit p{color:var(--muted);font-size:.9rem;line-height:1.75}
 .lab-meta{
   position:absolute;bottom:1rem;left:1.4rem;
-  font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;color:var(--faint)
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;color:var(--faint)
 }
 
 /* ---------- profile ---------- */
@@ -631,7 +670,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border-bottom:1px solid var(--hair-soft)
 }
 .profile-facts span{
-  font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;
   text-transform:uppercase;color:var(--faint);padding-top:.2rem
 }
 .profile-facts b{font-weight:400;font-size:.94rem;color:var(--muted)}
@@ -669,7 +708,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .profile-status b{
   display:block;
-  font-family:var(--mono);font-size:.56rem;letter-spacing:.2em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;
   color:var(--faint);margin-bottom:.35rem
 }
 .profile-status span{
@@ -681,7 +720,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   line-height:1.35;letter-spacing:.08em;color:var(--amber)
 }
 .profile-card-note{
-  font-family:var(--mono);font-size:.66rem;line-height:1.9;
+  font-family:var(--mono);font-size:.72rem;line-height:1.9;
   letter-spacing:.04em;color:var(--faint)
 }
 
@@ -698,7 +737,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:flex;align-items:center;justify-content:space-between;gap:1rem;
   padding:.7rem 1.1rem;
   border-bottom:1px solid var(--hair-soft);
-  font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;
   text-transform:uppercase;color:var(--faint)
 }
 .terminal-bar-meta{display:inline-flex;align-items:center;gap:.45rem;color:var(--green)}
@@ -775,14 +814,16 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .contact-mail-label{
   grid-area:label;
-  font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;
   text-transform:uppercase;color:var(--faint);
 }
 .contact-mail .btn-arrow{grid-area:arrow}
 .contact-mail-addr{
   grid-area:addr;
-  font-family:var(--pixel);font-weight:700;
-  font-size:clamp(1.05rem,2.2vw,1.7rem);line-height:1.15;
+  /* A mono face, not the pixel display font: at 17px Pixelify renders the `@`
+     as an unreadable circled mark, and this is the most important string here. */
+  font-family:var(--mono);font-weight:600;
+  font-size:clamp(1rem,1.9vw,1.35rem);line-height:1.3;
   letter-spacing:.01em;color:var(--cyan);
   overflow-wrap:anywhere;
 }
@@ -805,7 +846,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-size:clamp(1.05rem,2.2vw,1.7rem);letter-spacing:.04em;text-transform:uppercase
 }
 .channel-list em{
-  font-style:normal;font-family:var(--mono);font-size:.68rem;
+  font-style:normal;font-family:var(--mono);font-size:.72rem;
   letter-spacing:.06em;color:var(--faint);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
@@ -820,7 +861,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:flex;justify-content:space-between;align-items:center;
   flex-wrap:wrap;gap:1rem;
   padding:1.5rem var(--pad);
-  font-family:var(--mono);font-size:.56rem;letter-spacing:.14em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
   text-transform:uppercase;color:var(--faint)
 }
 .footer a{color:var(--muted);transition:color .3s var(--ease)}
@@ -849,7 +890,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .dossier-close:hover{background:rgba(255,92,154,.16);color:var(--magenta);transform:rotate(90deg)}
 .dossier-index{
-  font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;
   color:var(--cyan);text-transform:uppercase
 }
 .dossier-title{
@@ -858,7 +899,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   text-transform:uppercase;margin:.5rem 0 .4rem;padding-right:3rem
 }
 .dossier-tag{
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
   text-transform:uppercase;color:var(--faint);margin-bottom:1.4rem
 }
 .dossier-shot{
@@ -869,7 +910,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .dossier-shot img{width:100%;height:100%;object-fit:cover;object-position:top left}
 .dossier-caption{
   margin-top:.6rem;
-  font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
   text-transform:uppercase;color:var(--faint);
 }
 .dossier-scan{
@@ -906,7 +947,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .dossier-stats span{
   display:block;margin-top:.35rem;
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
   text-transform:uppercase;color:var(--faint)
 }
 .dossier-stack{margin-top:1.2rem}
@@ -933,7 +974,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border:1px solid rgba(140,154,187,.26);
   background:rgba(5,7,14,.72);
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  font-family:var(--pixel);font-size:.68rem;letter-spacing:.07em;
+  font-family:var(--pixel);font-size:.72rem;letter-spacing:.07em;
   text-transform:uppercase;color:var(--ink);
   white-space:nowrap;pointer-events:auto;
   transition:border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--ease);
@@ -947,7 +988,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   z-index:5
 }
 .atlas-label-key{
-  font-family:var(--mono);font-size:.6rem;color:var(--cyan);letter-spacing:.03em
+  font-family:var(--mono);font-size:.72rem;color:var(--cyan);letter-spacing:.03em
 }
 .atlas-label-name{color:var(--muted)}
 .atlas-label:hover .atlas-label-name{color:var(--ink)}
@@ -973,7 +1014,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-copy{grid-column:1;grid-row:1;max-width:38rem}
   .stage-canvas{grid-column:1;grid-row:2;height:min(62vh,560px);min-height:380px}
   .stage-legend{grid-column:1;grid-row:4;grid-template-columns:1fr;align-self:start}
-  .legend-list{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+  .legend-list{grid-template-columns:repeat(auto-fit,minmax(158px,1fr))}
   .profile-grid{grid-template-columns:1fr}
   .contact-payoff{grid-template-columns:1fr;gap:2.4rem}
 }
@@ -984,7 +1025,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      cover the viewport. Move it to the body and keep the toggle in the header. */
   .hud{
     backdrop-filter:none;-webkit-backdrop-filter:none;
-    background:linear-gradient(180deg,rgba(5,7,14,.96),rgba(5,7,14,.6) 62%,transparent)
+    background:linear-gradient(180deg,rgba(5,7,14,.97) 0%,rgba(5,7,14,.92) 70%,rgba(5,7,14,.8) 100%)
   }
   .hud-nav{
     position:fixed;inset:0;
@@ -1025,12 +1066,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 @media (max-width:640px){
   .display{font-size:clamp(2.6rem,13vw,4.2rem)}
   .stage-chips{gap:1.4rem}
-  .stage-corner{font-size:.54rem;gap:1rem}
+  .stage-corner{font-size:.72rem;gap:1rem}
   .channel-list a{grid-template-columns:1fr auto}
   .channel-list em{grid-column:1 / -1;order:3}
   .section{padding-left:20px;padding-right:20px}
   .stage{padding-left:20px;padding-right:20px}
-  .terminal-body{font-size:.68rem}
+  .terminal-body{font-size:.72rem}
 }
 
 @media (prefers-reduced-motion:reduce){

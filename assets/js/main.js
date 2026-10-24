@@ -71,6 +71,39 @@ function clocks() {
   if (year) year.textContent = String(new Date().getFullYear());
 }
 
+/* ---------- manifest ---------- */
+
+// The hero manifest is the portfolio's table of contents: the names, the real
+// screenshot, and the stack. It is rendered from data.js so it can never drift
+// from the 3D map, and it carries the work on phones where the 3D billboards
+// are too small to read.
+function manifest({ onOpen, onHover }) {
+  const list = $('#legend-list');
+  if (!list) return;
+
+  list.innerHTML = '';
+  PROJECTS.forEach((p) => {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.dataset.project = p.id;
+    btn.innerHTML = `
+      <span class="legend-shot"><img src="${p.images[0].src}" alt="${p.images[0].alt}" loading="lazy"></span>
+      <span class="legend-text">
+        <span class="legend-key">${p.index}</span>
+        <span class="legend-name">${p.name}</span>
+        <span class="legend-tag">${p.tag}</span>
+      </span>`;
+    btn.addEventListener('click', () => onOpen?.(p.id));
+    btn.addEventListener('mouseenter', () => onHover?.(p.id));
+    btn.addEventListener('mouseleave', () => onHover?.(null));
+    btn.addEventListener('focus', () => onHover?.(p.id));
+    btn.addEventListener('blur', () => onHover?.(null));
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+}
+
 /* ---------- modal plumbing ---------- */
 
 // Shared by the dossier drawer and the mobile menu: make the rest of the page
@@ -112,7 +145,10 @@ function setBackgroundInert(inert, { keepHeader = false } = {}) {
 /* ---------- reveal + nav ---------- */
 
 function reveals() {
-  const targets = $$('.section-head, .rack, .lab-unit, .profile-lede, .profile-facts, .profile-card, .terminal, .channel-list a, .stage-legend');
+  // The hero manifest is above-the-fold content on most screens. Hiding it
+  // behind a scroll reveal removed the portfolio's table of contents from the
+  // first screen entirely on shorter viewports.
+  const targets = $$('.section-head, .rack, .lab-unit, .profile-lede, .profile-facts, .profile-card, .terminal, .channel-list a');
   targets.forEach((el) => el.classList.add('rv'));
   const io = new IntersectionObserver(
     (entries) => {
@@ -283,7 +319,7 @@ function dossier({ atlas }) {
 
 /* ---------- terminal ---------- */
 
-function terminal() {
+function terminal({ openDossier } = {}) {
   const body = $('#terminal-body');
   const form = $('#terminal-form');
   const field = $('#terminal-field');
@@ -305,7 +341,7 @@ function terminal() {
     write(`${p.index}  ${p.name.padEnd(20, ' ')} ${p.tag}`, 't-dim');
   });
   write('', 't-dim');
-  write('run "help" for commands · "projects" for detail', 't-hi');
+  write('run "help" for commands · "dossier <id>" to inspect one', 't-hi');
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -322,12 +358,26 @@ function terminal() {
       return;
     }
 
+    // `dossier <id>` opens the same panel the map does — the terminal and the
+    // atlas are two doors into the same seven projects.
+    const [verb, arg] = cmd.split(/\s+/);
+    if (verb === 'dossier') {
+      const project = PROJECT_BY_ID[arg];
+      if (!project) {
+        write(`unknown system: ${arg || '(none)'}. try: dossier ${PROJECTS[0].id}`, 't-amber');
+        return;
+      }
+      write(`opening ${project.name.toLowerCase()} dossier...`, 't-ok');
+      openDossier?.(project.id);
+      return;
+    }
+
     const entry = TERMINAL_COMMANDS[cmd];
     if (!entry) {
       write(`command not found: ${cmd}. try "help"`, 't-amber');
       return;
     }
-    entry.lines.forEach((line, i) => {
+    entry.lines.forEach((line) => {
       const cls = line.trim().startsWith('available') ? 't-hi'
         : /\[running\]/.test(line) ? 't-ok'
         : /^ {2}[a-z]/.test(line) ? 't-hi'
@@ -369,23 +419,12 @@ async function init() {
     dossierPanel.open(id);
   }
 
-  // manifest buttons
-  $$('.legend-list button').forEach((btn) => {
-    btn.addEventListener('click', () => openDossier(btn.dataset.project));
+  manifest({
+    onOpen: openDossier,
+    onHover: (id) => atlas?.setHover(id)
   });
 
-  // highlight legend row on atlas hover
-  $$('.legend-list button').forEach((btn) => {
-    btn.addEventListener('mouseenter', () => atlas?.setHover(btn.dataset.project));
-    btn.addEventListener('mouseleave', () => atlas?.setHover(null));
-  });
-
-  terminal();
-
-  // Reveal the headline immediately — the boot overlay is decoration and must not
-  // withhold the LCP element for two seconds.
-  const display = $('.display');
-  if (display) requestAnimationFrame(() => display.classList.add('go'));
+  terminal({ openDossier });
 
   await boot();
 

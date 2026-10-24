@@ -36,7 +36,10 @@ export const PROJECTS = [
       { src: 'assets/projects/ecommerce-landing.jpg', alt: 'E-commerce landing page' },
       { src: 'assets/projects/ecommerce-products.jpg', alt: 'E-commerce product catalog' }
     ],
-    links: [{ label: 'Visit store', href: 'https://ecommerce-ten-flame-39.vercel.app', primary: true }],
+    links: [
+      { label: 'Visit store', href: 'https://ecommerce-ten-flame-39.vercel.app', primary: true },
+      { label: 'Source', href: 'https://github.com/TOX9C/ecommerce' }
+    ],
     hue: '#FFB65C',
     landmark: 'store'
   },
@@ -142,6 +145,7 @@ export const TERMINAL_COMMANDS = {
       'available commands:',
       '  whoami      identity & credentials',
       '  projects    seven shipped systems',
+      '  dossier     open one system  (dossier athenas)',
       '  skills      the stack',
       '  lab         home server services',
       '  contact     channels',
@@ -159,9 +163,10 @@ export const TERMINAL_COMMANDS = {
     ]
   },
   projects: {
-    lines: PROJECTS.map(
-      (p) => `  ${p.index}  ${p.name.padEnd(20, ' ')} ${p.tag}`
-    )
+    lines: [
+      ...PROJECTS.map((p) => `  ${p.index}  ${p.name.padEnd(20, ' ')} ${p.tag}`),
+      '→ inspect one: dossier athenas'
+    ]
   },
   skills: {
     lines: [

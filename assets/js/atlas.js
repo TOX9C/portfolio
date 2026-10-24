@@ -105,9 +105,14 @@ function buildIsland(group) {
 // A billboard carrying the project's real screenshot, so the map itself shows the
 // work instead of abstract shapes. Two crossed planes keep it readable from any
 // orbit angle without needing a per-frame billboard shader.
-const SCREEN_W = 2.6;
-const SCREEN_H = 1.62;
+//
+// Size matters: at 2.6 world units the screenshot rendered ~65 CSS px wide —
+// a grey rectangle you could not read. At 4.6 it is legible at rest, and it
+// scales up further on hover/focus so the detail is always reachable.
+const SCREEN_W = 4.6;
+const SCREEN_H = 2.88;
 const SCREEN_POST = 0.55;
+const SCREEN_HOVER_SCALE = 1.35;
 
 // Height each landmark's own geometry reaches, so the screenshot billboard can
 // be mounted just above it and the label anchor just above that.
@@ -708,6 +713,16 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
           ring.scale.setScalar(0.6 + t * 0.8);
           ring.material.opacity = Math.max(0, 0.55 - t * 0.22);
         });
+      }
+      // The hovered landmark's billboard grows so its screenshot can actually be
+      // read. This is the payoff interaction: hover to inspect, click to open.
+      const screen = group.userData.screen;
+      if (screen) {
+        const wanted = group.userData.project.id === hovered ? SCREEN_HOVER_SCALE : 1;
+        const s = group.userData.screenScale ?? 1;
+        const next = reducedMotion ? wanted : s + (wanted - s) * (1 - Math.pow(0.002, dt));
+        group.userData.screenScale = next;
+        screen.scale.setScalar(next);
       }
     }
 

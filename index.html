@@ -104,15 +104,10 @@
         <h2>System manifest</h2>
         <p>Seven landmarks · select one to open its dossier</p>
       </div>
-      <ul class="legend-list">
-        <li><button type="button" data-project="athenas"><span class="legend-key">01</span><span class="legend-name">Athenas Core</span><span class="legend-tag">multi-agent IDE</span></button></li>
-        <li><button type="button" data-project="commerce"><span class="legend-key">02</span><span class="legend-name">E-Commerce</span><span class="legend-tag">live store</span></button></li>
-        <li><button type="button" data-project="social"><span class="legend-key">03</span><span class="legend-name">Social</span><span class="legend-tag">real-time platform</span></button></li>
-        <li><button type="button" data-project="cashpilot"><span class="legend-key">04</span><span class="legend-name">CashPilot</span><span class="legend-tag">finance dashboard</span></button></li>
-        <li><button type="button" data-project="pricehawk"><span class="legend-key">05</span><span class="legend-name">PriceHawk</span><span class="legend-tag">price tracker</span></button></li>
-        <li><button type="button" data-project="ossecurity"><span class="legend-key">06</span><span class="legend-name">OsSecurity</span><span class="legend-tag">ransomware detector</span></button></li>
-        <li><button type="button" data-project="football"><span class="legend-key">07</span><span class="legend-name">Football Predictor</span><span class="legend-tag">XGBoost · ELO</span></button></li>
-      </ul>
+      <!-- Rendered from data.js so the manifest can never drift from the map.
+           The thumbnail is what carries the work on phones, where the 3D
+           billboards are too small to read. -->
+      <ul class="legend-list" id="legend-list"></ul>
     </div>
 
     <noscript>
