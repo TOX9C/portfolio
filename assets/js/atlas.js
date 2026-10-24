@@ -263,8 +263,8 @@ function buildLandmark(project, color) {
   g.add(pad);
 
   const halo = new THREE.Mesh(
-    new THREE.RingGeometry(3.2, 3.7, 32),
-    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.35, side: THREE.DoubleSide })
+    new THREE.RingGeometry(3.2, 3.45, 32),
+    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.2, side: THREE.DoubleSide })
   );
   halo.rotation.x = -Math.PI / 2;
   halo.position.y = 0.16;
@@ -664,7 +664,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     setHover(id) {
       for (const group of landmarks) {
         const active = group.userData.project.id === id;
-        group.userData.halo.material.opacity = active ? 0.85 : 0.35;
+        group.userData.halo.material.opacity = active ? 0.7 : 0.2;
         group.scale.setScalar(active ? 1.12 : 1);
       }
     },
