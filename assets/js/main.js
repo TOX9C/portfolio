@@ -514,11 +514,40 @@ async function init() {
     onHover: (id) => atlas?.setHover(id)
   });
 
-  // A visible way into the dossiers from the hero copy.
-  $('#stage-open-dossier')?.addEventListener('click', () => openDossier(PROJECTS[0].id));
-  // The headline itself is the first dossier — it is the first thing a
-  // visitor looks at, so it should be the first thing that does something.
-  $('#atlas-title-btn')?.addEventListener('click', () => openDossier(PROJECTS[0].id));
+  // A visible way into the dossiers from the hero copy. The button promises
+  // "a dossier" — opening one arbitrary project broke that promise, so it
+  // opens a picker of all seven instead.
+  const picker = $('#stage-picker');
+  const pickerList = $('#stage-picker-list');
+  const pickerBtn = $('#stage-open-dossier');
+  if (picker && pickerList && pickerBtn) {
+    pickerList.innerHTML = PROJECTS.map((p) => `
+      <li><button type="button" data-project="${p.id}">
+        <b>${p.index}</b><span>${p.name}</span><i aria-hidden="true">↗</i>
+      </button></li>`).join('');
+    const setPicker = (open) => {
+      picker.hidden = !open;
+      pickerBtn.setAttribute('aria-expanded', String(open));
+    };
+    pickerBtn.addEventListener('click', () => setPicker(picker.hidden));
+    pickerList.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-project]');
+      if (!btn) return;
+      setPicker(false);
+      openDossier(btn.dataset.project);
+    });
+    document.addEventListener('click', (e) => {
+      if (picker.hidden) return;
+      if (picker.contains(e.target) || pickerBtn.contains(e.target)) return;
+      setPicker(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !picker.hidden) {
+        setPicker(false);
+        pickerBtn.focus();
+      }
+    });
+  }
 
   terminal({ openDossier });
 
