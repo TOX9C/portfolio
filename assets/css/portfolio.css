@@ -197,13 +197,13 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .hud-nav{display:flex;gap:clamp(.8rem,1.8vw,1.8rem)}
 .hud-nav a{
   position:relative;
-  font-family:var(--pixel);font-size:.78rem;letter-spacing:.1em;
+  font-family:var(--pixel);font-size:.86rem;letter-spacing:.1em;
   color:var(--muted);
   padding:.35rem .1rem;
   transition:color .3s var(--ease)
 }
 .hud-nav a em{
-  font-style:normal;font-family:var(--mono);font-size:.72rem;
+  font-style:normal;font-family:var(--mono);font-size:.78rem;
   color:var(--faint);margin-right:.4rem;letter-spacing:.06em
 }
 .hud-nav a::after{
@@ -420,8 +420,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   color:var(--ink)
 }
 .stage-chips span{
-  font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--faint)
+  font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted)
 }
 
 .stage-corner{
@@ -515,19 +515,19 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   background:linear-gradient(180deg,transparent,rgba(5,7,14,.92) 42%)
 }
 .legend-key{
-  font-family:var(--mono);font-size:.72rem;color:var(--cyan);
+  font-family:var(--mono);font-size:.76rem;color:var(--cyan);
   letter-spacing:.04em
 }
 .legend-name{
-  font-family:var(--pixel);font-size:.72rem;letter-spacing:.03em;line-height:1.25;
+  font-family:var(--pixel);font-size:.76rem;letter-spacing:.03em;line-height:1.25;
   text-transform:uppercase;
   /* Two lines rather than an ellipsis: a truncated project name is useless. */
   display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
   overflow:hidden;overflow-wrap:anywhere
 }
 .legend-tag{
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.02em;
-  text-transform:none;color:var(--faint);
+  font-family:var(--mono);font-size:.74rem;letter-spacing:.02em;
+  text-transform:none;color:var(--muted);
   /* Wraps instead of clipping: "multi-agent desktop …" tells a visitor
      nothing, and on a phone the card has room for the full phrase. */
   line-height:1.45;overflow-wrap:anywhere
@@ -544,7 +544,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .ticker{
   border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);
   background:var(--deep);
-  overflow:hidden;padding:.8rem 0
+  overflow:hidden;padding:.8rem 0;
+  /* Fade the edges so the marquee reads as text scrolling in and out, not as
+     a word sliced in half by the viewport. */
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)
 }
 .ticker-track{
   display:flex;width:max-content;
@@ -579,12 +583,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--sans);font-weight:600;
   font-size:clamp(2.4rem,5.4vw,4.4rem);line-height:.8;
   letter-spacing:-.04em;
-  color:transparent;-webkit-text-stroke:1.4px var(--faint);
+  color:transparent;-webkit-text-stroke:1.4px rgba(178,196,224,.42);
 }
+/* Typographic hierarchy: pixel type marks the ATLAS interface (the map, the
+   HUD, the manifest, the terminal). Sora marks the EDITORIAL layer — the
+   section headings and the prose a recruiter actually reads. Without this
+   split the whole page reads as one terminal and the hero loses its impact. */
 .section-head h2{
-  font-family:var(--pixel);font-weight:700;
-  font-size:clamp(1.7rem,3.6vw,3rem);line-height:1;
-  letter-spacing:.01em;text-transform:uppercase
+  font-family:var(--sans);font-weight:600;
+  font-size:clamp(1.9rem,3.9vw,3.2rem);line-height:1.02;
+  letter-spacing:-.025em;text-transform:none;
+  color:var(--ink)
 }
 .section-note{
   font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;
@@ -623,9 +632,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;color:var(--faint)
 }
 .rack h3{
-  font-family:var(--pixel);font-weight:700;
-  font-size:1.15rem;letter-spacing:.05em;text-transform:uppercase;
-  margin-bottom:.9rem
+  font-family:var(--sans);font-weight:600;
+  font-size:1.3rem;letter-spacing:-.015em;
+  margin-bottom:.9rem;color:var(--ink)
 }
 .tag-list{display:flex;flex-wrap:wrap;gap:.45rem}
 .tag-list li{
@@ -680,8 +689,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   gap:1rem;margin-bottom:.9rem
 }
 .lab-unit h3{
-  font-family:var(--pixel);font-weight:700;
-  font-size:1.35rem;letter-spacing:.04em;text-transform:uppercase
+  font-family:var(--sans);font-weight:600;
+  font-size:1.45rem;letter-spacing:-.015em;color:var(--ink)
 }
 .status{
   display:inline-flex;align-items:center;gap:.45rem;
@@ -867,6 +876,34 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   text-transform:uppercase;color:var(--faint);
 }
 .contact-mail .btn-arrow{grid-area:arrow}
+/* A recruiter asks for the CV before they ask anything else, so the download
+   sits directly under the email — not buried in the footer. */
+.contact-resume{
+  display:grid;
+  grid-template-columns:1fr auto;
+  grid-template-areas:"label arrow" "note arrow";
+  align-items:center;
+  column-gap:1rem;row-gap:.3rem;
+  margin-top:.7rem;padding:.95rem 1.15rem .95rem 1.4rem;
+  border:1px solid var(--hair);border-radius:var(--radius);
+  background:rgba(8,12,23,.55);
+  transition:transform .4s var(--ease),border-color .35s var(--ease),background .35s var(--ease)
+}
+.contact-resume:hover{
+  transform:translateY(-3px);
+  border-color:rgba(84,225,255,.45);
+  background:rgba(84,225,255,.06)
+}
+.contact-resume-label{
+  grid-area:label;
+  font-family:var(--sans);font-weight:600;font-size:1.05rem;
+  letter-spacing:-.01em;color:var(--ink)
+}
+.contact-resume-note{
+  grid-area:note;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;color:var(--faint)
+}
+.contact-resume .btn-arrow{grid-area:arrow}
 .contact-mail-addr{
   grid-area:addr;
   /* A mono face, not the pixel display font: at 17px Pixelify renders the `@`
@@ -891,8 +928,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding-left:1.1rem;padding-right:1.1rem
 }
 .channel-list span{
-  font-family:var(--pixel);font-weight:700;
-  font-size:clamp(1.05rem,2.2vw,1.7rem);letter-spacing:.04em;text-transform:uppercase
+  font-family:var(--sans);font-weight:600;
+  font-size:clamp(1.15rem,2.3vw,1.75rem);letter-spacing:-.02em;color:var(--ink)
 }
 .channel-list em{
   font-style:normal;font-family:var(--mono);font-size:.72rem;

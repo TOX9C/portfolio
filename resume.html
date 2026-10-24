@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Abdurrahman — Résumé</title>
+<style>
+  @page { size: A4; margin: 11mm 13mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink:#12151d; --muted:#4a5162; --faint:#7b8296;
+    --rule:#d8dbe3; --accent:#0b6f8f; --cyan:#0b6f8f;
+  }
+  body {
+    font-family: Sora, system-ui, -apple-system, sans-serif;
+    color: var(--ink); font-size: 8.8pt; line-height: 1.42;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  @font-face { font-family:'Sora'; src:url('assets/fonts/Sora-400.woff2') format('woff2'); font-weight:400; }
+  @font-face { font-family:'Sora'; src:url('assets/fonts/Sora-600.woff2') format('woff2'); font-weight:600; }
+  @font-face { font-family:'JetBrains Mono'; src:url('assets/fonts/JetBrainsMono-Variable.woff2') format('woff2-variations'); font-weight:100 800; }
+
+  header { border-bottom: 2px solid var(--ink); padding-bottom: 5pt; margin-bottom: 8pt; }
+  h1 { font-size: 18pt; font-weight: 600; letter-spacing: -.02em; line-height: 1.05; }
+  .tagline { color: var(--accent); font-weight: 600; font-size: 9pt; margin-top: 1.5pt; }
+  .contact {
+    font-family:'JetBrains Mono', monospace; font-size: 7.6pt; color: var(--muted);
+    margin-top: 4.5pt; display:flex; flex-wrap:wrap; gap: 2pt 12pt;
+  }
+  .contact a { color: var(--muted); text-decoration: none; }
+
+  h2 {
+    font-size: 7.8pt; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--accent); margin: 9pt 0 4.5pt; padding-bottom: 2.5pt;
+    border-bottom: 1px solid var(--rule);
+  }
+  .lede { color: var(--muted); font-size: 8.8pt; max-width: 66ch; }
+
+  .entry { margin-bottom: 6.5pt; break-inside: avoid; }
+  .entry-head { display:flex; justify-content:space-between; align-items:baseline; gap: 10pt; }
+  .entry-title { font-weight: 600; font-size: 9.4pt; }
+  .entry-meta { font-family:'JetBrains Mono', monospace; font-size: 7.4pt; color: var(--faint); white-space:nowrap; }
+  .entry-sub { color: var(--muted); font-size: 8.6pt; margin-top: .5pt; }
+  .entry p { margin-top: 1.5pt; color: var(--muted); }
+  .entry ul { margin: 2pt 0 0 14pt; color: var(--muted); }
+  .entry li { margin-bottom: 1pt; }
+
+  .metrics { display:flex; gap: 10pt; margin-top: 2pt; flex-wrap:wrap; }
+  .metrics span {
+    font-family:'JetBrains Mono', monospace; font-size: 7.2pt; color: var(--accent);
+    background:#eef5f8; border:1px solid #cfe3ec; border-radius: 4px; padding: .5pt 4.5pt;
+  }
+  .stack { font-family:'JetBrains Mono', monospace; font-size: 7.6pt; color: var(--faint); margin-top: 2pt; }
+
+  .cols { display:grid; grid-template-columns: 1fr 1fr; gap: 0 20pt; }
+  .skills { margin-bottom: 5pt; break-inside: avoid; }
+  .skills b { font-weight: 600; font-size: 8.8pt; }
+  .skills p { color: var(--muted); font-size: 8.4pt; margin-top: .5pt; }
+  footer {
+    margin-top: 9pt; padding-top: 4.5pt; border-top: 1px solid var(--rule);
+    font-family:'JetBrains Mono', monospace; font-size: 7pt; color: var(--faint);
+    display:flex; justify-content:space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Abdurrahman</h1>
+  <p class="tagline">Builds systems that think.</p>
+  <div class="contact">
+    <span>abdulrahmansafah@gmail.com</span>
+    <span>Baghdad, Iraq (UTC+3) — working worldwide</span>
+    <span>github.com/TOX9C</span>
+    <span>linkedin.com/in/tox9c</span>
+    <span>x.com/tox9c</span>
+  </div>
+</header>
+
+<h2>Profile</h2>
+<p class="lede">
+  Third-year B.Eng in Cybersecurity & Cloud Computing at NTU, Iraq, working part-time in IT at TAQA.
+  I've trained machine learning models, built a ransomware detector from scratch, and shipped a
+  multi-agent IDE written in Rust. Away from the editor I run a home server with Jellyfin,
+  Pi-hole, and Tailscale: my own little cloud. Awarded by the university president.
+</p>
+
+<h2>Selected work</h2>
+
+<div class="entry">
+  <div class="entry-head">
+    <span class="entry-title">Athenas Core — desktop IDE for parallel AI agents</span>
+    <span class="entry-meta">Rust / Tauri 2 / Dioxus / MCP</span>
+  </div>
+  <p>Parallel AI agents analyse, review and reason about code in dedicated workspaces, with multi-provider LLM support.</p>
+  <div class="metrics"><span>78 IPC commands</span><span>85+ components</span></div>
+</div>
+
+<div class="entry">
+  <div class="entry-head">
+    <span class="entry-title">E-Commerce — full store, deployed live</span>
+    <span class="entry-meta">Next.js 16 / TypeScript / PostgreSQL / Prisma</span>
+  </div>
+  <p>Catalog, cart, checkout, order management and an admin dashboard. Deployed live and taking orders.</p>
+</div>
+
+<div class="entry">
+  <div class="entry-head">
+    <span class="entry-title">Social — real-time social platform</span>
+    <span class="entry-meta">React 19 / socket.io / Express / Prisma</span>
+  </div>
+  <p>Posts, feeds, profiles, notifications and direct messages over WebSockets.</p>
+</div>
+
+<div class="entry">
+  <div class="entry-head">
+    <span class="entry-title">Football Predictor — XGBoost match model</span>
+    <span class="entry-meta">Python / XGBoost</span>
+  </div>
+  <p>Model with 58.77% accuracy that beats bookmaker baselines, plus live ELO rankings.</p>
+  <div class="metrics"><span>58.77% accuracy</span><span>live ELO rankings</span></div>
+</div>
+
+<div class="entry">
+  <div class="entry-head">
+    <span class="entry-title">CashPilot — personal finance dashboard</span>
+    <span class="entry-meta">React 19 / Express 5 / Prisma / PostgreSQL</span>
+  </div>
+  <p>Accounts, transactions, budgets and savings goals in one dashboard.</p>
+</div>
+
+<div class="entry">
+  <div class="entry-head">
+    <span class="entry-title">OsSecurity — ransomware detector</span>
+    <span class="entry-meta">OS-level monitoring</span>
+  </div>
+  <p>Detects ransomware at the OS level with real-time encryption alerts.</p>
+</div>
+
+<div class="entry">
+  <div class="entry-head">
+    <span class="entry-title">PriceHawk — cross-store price tracker</span>
+    <span class="entry-meta">Amazon / Walmart / eBay</span>
+  </div>
+  <p>Price tracking across three stores with history charts and price alerts.</p>
+</div>
+
+<div class="cols">
+  <div>
+    <h2>Skills</h2>
+    <div class="skills"><b>Frontend</b><p>Next.js · React · TypeScript · Tailwind</p></div>
+    <div class="skills"><b>Backend</b><p>Node.js · Express · PostgreSQL · Prisma</p></div>
+    <div class="skills"><b>AI / systems</b><p>Python · XGBoost · Rust · Tauri</p></div>
+    <div class="skills"><b>Infrastructure</b><p>Docker · Tailscale · Pi-hole · Jellyfin</p></div>
+  </div>
+  <div>
+    <h2>Homelab — my own little cloud</h2>
+    <div class="skills"><b>Jellyfin</b><p>Self-hosted media server, streaming with zero subscriptions — running.</p></div>
+    <div class="skills"><b>Pi-hole</b><p>Network-wide DNS ad blocker — running.</p></div>
+    <div class="skills"><b>Tailscale</b><p>Mesh VPN, secure access from anywhere — running.</p></div>
+  </div>
+</div>
+
+<h2>Education & work</h2>
+<div class="entry">
+  <div class="entry-head">
+    <span class="entry-title">B.Eng, Cybersecurity & Cloud Computing</span>
+    <span class="entry-meta">NTU, Iraq</span>
+  </div>
+  <div class="entry-sub">Third year. Awarded by the university president.</div>
+</div>
+<div class="entry">
+  <div class="entry-head">
+    <span class="entry-title">Part-time IT — TAQA</span>
+    <span class="entry-meta">Weekdays</span>
+  </div>
+  <div class="entry-sub">IT support at one of the largest companies in Iraq.</div>
+</div>
+
+<h2>Status</h2>
+<p class="lede">Open to internships & junior roles. Based in Iraq, working worldwide.</p>
+
+<footer>
+  <span>tox9c</span>
+  <span>Every metric above is verifiable — see the live atlas at the portfolio.</span>
+</footer>
+
+</body>
+</html>
