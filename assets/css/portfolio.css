@@ -37,9 +37,10 @@
   --panel-2:#121A2E;
   --ink:#EAF1FF;
   --muted:#8C9ABB;
-  /* #6E7C9E = 4.69:1 on panel, 4.83:1 on void — passes WCAG AA (4.5:1) for
-     body-size text. The old #5A6788 was 3.47:1 and failed. */
-  --faint:#6E7C9E;
+  /* #7A88AA = 4.89:1 on panel, 5.68:1 on void — clears WCAG AA (4.5:1) with
+     margin on every surface. The old #6E7C9E passed on void but fell to
+     4.16:1 on the panel cards. */
+  --faint:#7A88AA;
   --cyan:#54E1FF;
   --amber:#FFB65C;
   --magenta:#FF5C9A;
@@ -800,11 +801,28 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   align-items:start;
   max-width:78rem
 }
+/* The copy column ran short against the timeline card, leaving a hole in
+   the lower-left. Let the facts list stretch to meet the card. */
+.profile-copy{display:flex;flex-direction:column}
+.profile-facts{flex:1 1 auto}
+/* The bio was the one place on the site that read like an unstyled <p>.
+   A pixel marker and a hanging indent give it the same language as the
+   rest of the page without changing the words. */
 .profile-lede{
+  position:relative;
   font-size:clamp(1.05rem,1.6vw,1.32rem);
   line-height:1.75;color:var(--ink);max-width:58ch;
-  text-wrap:pretty
+  text-wrap:pretty;
+  padding-left:2.2rem;
+  border-left:1px solid var(--hair);
 }
+.profile-lede::before{
+  content:'◆';
+  position:absolute;left:-.42em;top:.08em;
+  font-size:.62em;color:var(--cyan);
+  text-shadow:0 0 10px rgba(84,225,255,.6)
+}
+.profile-lede strong{color:var(--cyan);font-weight:600}
 .profile-facts{
   margin-top:2.2rem;display:grid;gap:.1rem;
   border-top:1px solid var(--hair)
@@ -821,6 +839,32 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .profile-facts b{font-weight:400;font-size:.94rem;color:var(--muted)}
 .profile-facts b.accent{color:var(--cyan)}
 
+/* "Looking for" — the recruiter's actual question, answered from facts
+   already on the page. It also balances the copy column against the
+   timeline card. */
+.profile-focus{
+  margin-top:1.8rem;padding:1.1rem 1.2rem;
+  border-radius:16px;
+  background:rgba(84,225,255,.05);
+  border:1px solid rgba(84,225,255,.18)
+}
+.profile-focus-label{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:.8rem
+}
+.profile-focus ul{list-style:none;margin:0;padding:0;display:grid;gap:.65rem}
+.profile-focus li{
+  display:grid;grid-template-columns:9rem minmax(0,1fr);
+  gap:.4rem 1rem;align-items:baseline
+}
+.profile-focus b{
+  font-family:var(--pixel);font-size:.74rem;font-weight:700;
+  letter-spacing:.03em;text-transform:uppercase;color:var(--ink)
+}
+.profile-focus span{
+  font-size:.84rem;line-height:1.55;color:var(--muted)
+}
+
 .profile-card{
   position:relative;
   padding:1.6rem 1.5rem;
@@ -828,6 +872,38 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border:1px solid var(--hair);
   background:linear-gradient(160deg,rgba(18,26,46,.92),rgba(8,12,23,.95));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+/* A run of four milestones down the card. The section had a visible hole in
+   its lower-right quadrant; a timeline fills it with something worth reading
+   instead of padding. */
+.profile-track{
+  list-style:none;margin:1.4rem 0 0;padding:0;
+  position:relative;
+  display:grid;gap:.9rem
+}
+.profile-track::before{
+  content:'';position:absolute;left:4px;top:6px;bottom:6px;width:1px;
+  background:linear-gradient(180deg,var(--cyan),rgba(84,225,255,.06))
+}
+.profile-track li{
+  position:relative;padding-left:1.4rem
+}
+.track-node{
+  position:absolute;left:0;top:.42em;
+  width:9px;height:9px;border-radius:2px;
+  background:var(--void);border:1.5px solid var(--cyan);
+  box-shadow:0 0 8px rgba(84,225,255,.45)
+}
+.profile-track b{
+  display:block;
+  font-family:var(--pixel);font-size:.78rem;font-weight:700;
+  letter-spacing:.03em;text-transform:uppercase;color:var(--ink);
+  line-height:1.35
+}
+.profile-track em{
+  display:block;margin-top:.2rem;
+  font-style:normal;font-family:var(--sans);font-size:.82rem;
+  line-height:1.6;color:var(--muted)
 }
 .profile-badge{
   display:flex;align-items:center;gap:1rem;
@@ -1338,6 +1414,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .hud-readout .hud-place{display:none}
   .dossier{width:100%}
   .profile-facts li{grid-template-columns:1fr;gap:.2rem}
+  .profile-focus li{grid-template-columns:1fr;gap:.2rem}
   .profile-credentials>div{grid-template-columns:6.5rem minmax(0,1fr);gap:.6rem}
 }
 
