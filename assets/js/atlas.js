@@ -102,6 +102,69 @@ function buildIsland(group) {
 
 /* ---------- landmarks ---------- */
 
+// A billboard carrying the project's real screenshot, so the map itself shows the
+// work instead of abstract shapes. Two crossed planes keep it readable from any
+// orbit angle without needing a per-frame billboard shader.
+const SCREEN_W = 2.6;
+const SCREEN_H = 1.62;
+const SCREEN_POST = 0.55;
+
+// Height each landmark's own geometry reaches, so the screenshot billboard can
+// be mounted just above it and the label anchor just above that.
+const LANDMARK_TOP = { owl: 4.4, store: 3.1, antenna: 5.6, vault: 3.3, radar: 3.4, shield: 3.5, pitch: 2.1 };
+
+const screenTop = (landmark) =>
+  (LANDMARK_TOP[landmark] ?? 3.2) + SCREEN_POST + SCREEN_H + 0.24;
+
+function buildScreen(project, color) {
+  const group = new THREE.Group();
+  const W = SCREEN_W;
+  const H = SCREEN_H;
+
+  const frame = new THREE.Mesh(
+    new THREE.BoxGeometry(W + 0.24, H + 0.24, 0.12),
+    new THREE.MeshLambertMaterial({ color: 0x1a2540 })
+  );
+  group.add(frame);
+
+  const texture = new THREE.TextureLoader().load(project.images[0].src, (t) => {
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.minFilter = THREE.LinearFilter;
+    t.magFilter = THREE.LinearFilter;
+    t.generateMipmaps = false;
+    t.needsUpdate = true;
+  });
+  const screenMat = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+
+  const a = new THREE.Mesh(new THREE.PlaneGeometry(W, H), screenMat);
+  a.position.z = 0.07;
+  group.add(a);
+  const b = new THREE.Mesh(new THREE.PlaneGeometry(W, H), screenMat);
+  b.rotation.y = Math.PI / 2;
+  b.position.x = 0.07;
+  group.add(b);
+
+  // A lit strip along the top edge keeps the screen reading as hardware.
+  const strip = new THREE.Mesh(
+    new THREE.BoxGeometry(W + 0.24, 0.07, 0.14),
+    new THREE.MeshBasicMaterial({ color })
+  );
+  strip.position.y = H / 2 + 0.12;
+  group.add(strip);
+
+  // Post drops from the screen's bottom edge. The group is later positioned so
+  // the post lands exactly on the model's top.
+  const bottom = -H / 2 - 0.12;
+  const post = new THREE.Mesh(
+    new THREE.BoxGeometry(0.1, SCREEN_POST, 0.1),
+    new THREE.MeshLambertMaterial({ color: 0x1a2540 })
+  );
+  post.position.y = bottom - SCREEN_POST / 2;
+  group.add(post);
+
+  return group;
+}
+
 function buildLandmark(project, color) {
   const g = new THREE.Group();
   const mat = new THREE.MeshLambertMaterial({ color });
@@ -262,6 +325,13 @@ function buildLandmark(project, color) {
   pad.position.y = 0.08;
   g.add(pad);
 
+  // The project's real screenshot, raised above the model on a post.
+  const base = LANDMARK_TOP[project.landmark] ?? 3.2;
+  const screen = buildScreen(project, color);
+  // Screen centre sits one post-length above the model's top.
+  screen.position.set(0, base + SCREEN_POST + SCREEN_H / 2 + 0.12, 0);
+  g.add(screen);
+
   const halo = new THREE.Mesh(
     new THREE.RingGeometry(3.2, 3.45, 32),
     new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.2, side: THREE.DoubleSide })
@@ -376,7 +446,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   for (const group of landmarks) {
     const p = group.position;
     FIT_POINTS.push(new THREE.Vector3(p.x, 0, p.z));
-    FIT_POINTS.push(new THREE.Vector3(p.x, 4.6, p.z));
+    FIT_POINTS.push(new THREE.Vector3(p.x, screenTop(group.userData.project.landmark) + 1.1, p.z));
   }
   const ISLAND_HALF_W = 12;
   const ISLAND_HALF_D = 8.5;
@@ -591,7 +661,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     const placed = [];
     for (const l of labels) {
       const { el, group } = l;
-      projected.set(0, 4.6, 0);
+      projected.set(0, screenTop(group.userData.project.landmark) + 1.1, 0);
       group.localToWorld(projected);
       projected.project(camera);
       const x = (projected.x * 0.5 + 0.5) * rect.width;

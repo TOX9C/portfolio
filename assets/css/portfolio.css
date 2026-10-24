@@ -240,6 +240,16 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   overflow:hidden;
 }
 
+/* The dossier docks over the right edge. Shift the stage left so the diorama
+   stays in frame instead of being cropped by the panel. */
+@media (min-width:1180px){
+  body.dossier-open .stage{
+    grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+    transform:translateX(calc(-1 * min(240px, 22vw)));
+    transition:transform .6s var(--ease);
+  }
+}
+
 .stage-canvas{
   position:relative;
   grid-column:2;grid-row:1;
@@ -526,6 +536,22 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   background:rgba(5,7,14,.5)
 }
 
+/* Which shipped systems each workbench actually produced — proof, not a skills widget. */
+.rack-proof{
+  display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;
+  margin-top:1.15rem;padding-top:.9rem;
+  border-top:1px solid var(--hair-soft);
+}
+.rack-proof span{
+  font-family:var(--mono);font-size:.54rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--faint);margin-right:.15rem
+}
+.rack-proof b{
+  font-family:var(--mono);font-size:.6rem;font-weight:500;letter-spacing:.04em;
+  color:var(--cyan);padding:.22rem .5rem;border-radius:6px;
+  background:rgba(84,225,255,.09);border:1px solid rgba(84,225,255,.18)
+}
+
 /* ---------- lab ---------- */
 .lab-grid{
   display:grid;
@@ -690,6 +716,59 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 /* ---------- contact ---------- */
 .section-contact{padding-bottom:clamp(4rem,8vh,7rem)}
+.contact-payoff{
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  gap:clamp(2rem,5vw,5rem);
+  align-items:start;
+  max-width:78rem;
+}
+.contact-copy{max-width:40rem}
+.contact-position{
+  font-size:clamp(1.05rem,1.6vw,1.35rem);
+  line-height:1.6;color:var(--ink);font-weight:400;
+  letter-spacing:-.01em;text-wrap:pretty;
+}
+.contact-position::first-line{color:var(--ink)}
+.contact-status{
+  display:flex;align-items:flex-start;gap:.7rem;
+  margin-top:1.4rem;
+  font-family:var(--mono);font-size:.72rem;line-height:1.7;
+  letter-spacing:.04em;color:var(--muted);
+}
+.contact-status b{color:var(--green);font-weight:600}
+.contact-status .status-dot{margin-top:.5rem;flex:none}
+.contact-mail{
+  display:grid;
+  grid-template-columns:1fr auto;
+  grid-template-areas:"label arrow" "addr arrow";
+  align-items:center;
+  column-gap:1rem;row-gap:.35rem;
+  margin-top:2rem;padding:1.15rem 1.15rem 1.15rem 1.4rem;
+  border:1px solid rgba(84,225,255,.3);border-radius:var(--radius);
+  background:linear-gradient(135deg,rgba(84,225,255,.10),rgba(84,225,255,.02));
+  box-shadow:0 18px 60px rgba(84,225,255,.10);
+  transition:transform .45s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease);
+}
+.contact-mail:hover{
+  transform:translateY(-4px);
+  border-color:rgba(84,225,255,.6);
+  box-shadow:0 24px 70px rgba(84,225,255,.18);
+}
+.contact-mail-label{
+  grid-area:label;
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--faint);
+}
+.contact-mail .btn-arrow{grid-area:arrow}
+.contact-mail-addr{
+  grid-area:addr;
+  font-family:var(--pixel);font-weight:700;
+  font-size:clamp(1.05rem,2.2vw,1.7rem);line-height:1.15;
+  letter-spacing:.01em;color:var(--cyan);
+  overflow-wrap:anywhere;
+}
+.contact-payoff .channel-list{border-top:1px solid var(--hair)}
 .channel-list{max-width:78rem;border-top:1px solid var(--hair)}
 .channel-list a{
   display:grid;
@@ -770,10 +849,15 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   aspect-ratio:16/10;
 }
 .dossier-shot img{width:100%;height:100%;object-fit:cover;object-position:top left}
+.dossier-caption{
+  margin-top:.6rem;
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint);
+}
 .dossier-scan{
   position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(0deg,rgba(5,7,14,.22) 0 1px,transparent 1px 3px);
-  opacity:.55
+  background:repeating-linear-gradient(0deg,rgba(5,7,14,.14) 0 1px,transparent 1px 4px);
+  opacity:.4
 }
 .dossier-thumbs{display:flex;gap:.5rem;margin-top:.6rem;flex-wrap:wrap}
 .dossier-thumbs button{
@@ -873,6 +957,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-legend{grid-column:1;grid-row:4;grid-template-columns:1fr;align-self:start}
   .legend-list{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
   .profile-grid{grid-template-columns:1fr}
+  .contact-payoff{grid-template-columns:1fr;gap:2.4rem}
 }
 
 @media (max-width:860px){

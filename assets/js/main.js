@@ -167,6 +167,7 @@ function dossier({ atlas }) {
     const [first, ...rest] = project.images;
     image.src = first.src;
     image.alt = first.alt;
+    $('#dossier-caption').textContent = first.alt;
 
     const thumbs = $('#dossier-thumbs');
     thumbs.innerHTML = '';
@@ -179,6 +180,7 @@ function dossier({ atlas }) {
       btn.addEventListener('click', () => {
         image.src = img.src;
         image.alt = img.alt;
+        $('#dossier-caption').textContent = img.alt;
         $$('button', thumbs).forEach((b, bi) => b.setAttribute('aria-current', String(bi === i)));
       });
       thumbs.appendChild(btn);
@@ -206,6 +208,7 @@ function dossier({ atlas }) {
     panel.classList.add('open');
     panel.setAttribute('aria-hidden', 'false');
     document.body.classList.add('is-locked');
+    document.body.classList.add('dossier-open');
     closeBtn.focus();
     atlas?.focus(id);
   };
@@ -214,6 +217,7 @@ function dossier({ atlas }) {
     panel.classList.remove('open');
     panel.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('is-locked');
+    document.body.classList.remove('dossier-open');
     if (lastFocus instanceof HTMLElement) lastFocus.focus();
   };
 
