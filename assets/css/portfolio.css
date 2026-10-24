@@ -262,7 +262,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   grid-column:1;grid-row:1;
   max-width:40rem;
   align-self:center;
-  min-height:0
+  min-height:0;
+  position:relative
 }
 
 /* On desktop the hero is exactly one viewport tall: the copy, the diorama and
@@ -276,6 +277,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      left. The copy is centred inside its own row and never leaves it. */
   .stage-legend{max-height:34vh}
   .stage-canvas{min-height:0}
+  /* The copy column was 113px taller than its grid row and overflowed into
+     the manifest, so the proof links landed on top of the SYSTEM MANIFEST
+     heading. The first row now sizes to the copy — the diorama absorbs the
+     difference — so nothing can collide. */
+  .stage{grid-template-rows:auto minmax(0,1fr)}
+  .stage-copy{align-self:start}
+  .stage-legend{align-self:end;max-height:34vh}
+  .stage-canvas{align-self:stretch}
 }
 
 /* The dossier docks over the right edge. Shift only the canvas column left so
@@ -391,16 +400,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .stage-lede{
   color:var(--muted);font-size:clamp(.86rem,min(1vw,1.9vh),.98rem);
   line-height:1.6;max-width:44ch;
+  margin-top:.85rem
 }
 .stage-lede strong{color:var(--ink);font-weight:600}
 
-.stage-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.4rem}
+.stage-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.1rem}
 
 /* The availability status. A recruiter needs "who wants what" on the first
    screen — it was buried in the terminal, the résumé and the contact section. */
 .stage-role{
   display:block;
-  margin-top:.85rem;
+  margin-top:.7rem;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
   text-transform:uppercase;color:var(--green);
   line-height:1.7
@@ -423,8 +433,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 /* A visible way into the dossiers. The drawer was only reachable by
    discovering that a map landmark was clickable. */
 .stage-open{
+  position:relative;
   display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem .9rem;
-  margin-top:.9rem
+  margin-top:.75rem
 }
 .stage-open button{
   display:inline-flex;align-items:center;gap:.4rem;
@@ -448,14 +459,21 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 
 /* The dossier picker. "Open a dossier" promised a choice; it used to open
-   one arbitrary project. This shows all seven, so the label is honest. */
+   one arbitrary project. This shows all seven, so the label is honest.
+   Absolutely positioned against the copy column: in flow it grew the column
+   and pushed the headline up out of the viewport. It hangs below the button,
+   over the CTAs, so nothing reflows. */
 .stage-picker{
-  margin-top:.6rem;padding:.9rem 1rem 1rem;
+  position:absolute;
+  left:var(--pad);right:var(--pad);
+  top:calc(100% - 8.5rem);
+  z-index:20;
+  padding:.8rem .9rem .9rem;
   border-radius:14px;
   border:1px solid rgba(84,225,255,.28);
-  background:rgba(8,12,23,.9);
+  background:rgba(8,12,23,.96);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  box-shadow:0 24px 60px rgba(0,0,0,.5);
+  box-shadow:0 24px 60px rgba(0,0,0,.55);
   animation:scrim-in .22s var(--ease)
 }
 .stage-picker[hidden]{display:none}
@@ -465,11 +483,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .stage-picker ul{
   list-style:none;margin:0;padding:0;
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.3rem
 }
 .stage-picker button{
-  width:100%;display:flex;align-items:center;gap:.55rem;
-  padding:.5rem .6rem;border-radius:9px;
+  width:100%;display:flex;align-items:center;gap:.45rem;
+  padding:.38rem .5rem;border-radius:8px;
   border:1px solid var(--hair);background:rgba(140,154,187,.05);
   cursor:pointer;text-align:left;
   transition:border-color .25s var(--ease),background .25s var(--ease)
@@ -539,30 +557,31 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 /* The proof strip. A recruiter's first three clicks are the CV, the live
    product and the source code — all three were eight viewports down.
-   Every link here goes straight to real, verifiable work. */
+   Every link here goes straight to real, verifiable work.
+   One row, not cards: as a card row it pushed the copy column past its grid
+   row and the links collided with the SYSTEM MANIFEST heading. */
 .stage-proof{
-  list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:.6rem;margin:1.1rem 0 0;padding:0
+  list-style:none;display:flex;flex-wrap:wrap;gap:.45rem .5rem;
+  margin:.9rem 0 0;padding:0
 }
 .stage-proof a{
-  display:flex;flex-direction:column;gap:.1rem;
-  padding:.7rem .85rem;border-radius:12px;
+  display:inline-flex;align-items:baseline;gap:.45rem;
+  padding:.4rem .7rem;border-radius:9px;
   border:1px solid var(--hair);
   background:rgba(12,17,32,.5);
-  transition:border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--ease)
+  transition:border-color .3s var(--ease),background .3s var(--ease)
 }
 .stage-proof a:hover{
   border-color:rgba(84,225,255,.45);
-  background:rgba(84,225,255,.08);
-  transform:translateY(-2px)
+  background:rgba(84,225,255,.08)
 }
 .stage-proof b{
-  font-family:var(--pixel);font-size:.76rem;font-weight:700;
+  font-family:var(--pixel);font-size:.72rem;font-weight:700;
   letter-spacing:.04em;text-transform:uppercase;color:var(--ink)
 }
 .stage-proof a:hover b{color:var(--cyan)}
 .stage-proof span{
-  font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.04em;
   color:var(--faint);line-height:1.4
 }
 
@@ -1396,7 +1415,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .atlas-label{
   position:absolute;top:0;left:0;
   display:inline-flex;align-items:center;gap:.45rem;
-  padding:.32rem .6rem;border-radius:8px;
+  padding:.42rem .7rem;border-radius:8px;
   border:1px solid rgba(140,154,187,.26);
   background:rgba(5,7,14,.72);
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
@@ -1502,7 +1521,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .hud .brand{position:relative;z-index:3}
   .menu-toggle{display:block;z-index:2}
   .hud-readout .hud-place{display:none}
-  .dossier{width:100%}
+  /* On a phone the drawer is the whole screen. It used to slide in from
+     translateX(102%), which parked it at x=398 in a 390px viewport for over
+     a second while the page was already scroll-locked — the user saw a dim
+     scrim and nothing else. It fades in place instead. */
+  .dossier{
+    width:100%;
+    transform:none;
+    transition:opacity .22s var(--ease);
+    opacity:0
+  }
+  .dossier.open{transform:none;visibility:visible;opacity:1}
   .profile-facts li{grid-template-columns:1fr;gap:.2rem}
   .profile-focus li{grid-template-columns:1fr;gap:.2rem}
   .profile-credentials>div{grid-template-columns:6.5rem minmax(0,1fr);gap:.6rem}
@@ -1518,7 +1547,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-chips li{gap:.1rem}
   .stage-chips b{font-size:1.35rem}
   .stage-chips span{font-size:.6rem;letter-spacing:.06em;line-height:1.3}
-  .stage-picker ul{grid-template-columns:1fr}
+  .stage-picker ul{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stage-picker{top:calc(100% - 8rem)}
   .stage-corner{font-size:.72rem;gap:1rem}
   /* The channel list was five 100px bands — 1140px of scroll for five links.
      Compact rows keep the whole thing scannable in one glance. */

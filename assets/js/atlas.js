@@ -430,6 +430,9 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     el.type = 'button';
     el.className = 'atlas-label';
     el.dataset.project = group.userData.project.id;
+    // The visible chip can be demoted to a bare number on a phone, which
+    // leaves a screen reader announcing "03" with no project name.
+    el.setAttribute('aria-label', `Open ${group.userData.project.name} dossier`);
     el.innerHTML = `<span class="atlas-label-key">${group.userData.project.index}</span><span class="atlas-label-name">${group.userData.project.name}</span>`;
     el.addEventListener('click', () => onSelect?.(group.userData.project.id));
     labelRoot.appendChild(el);
