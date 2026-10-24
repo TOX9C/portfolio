@@ -92,8 +92,11 @@ function manifest({ onOpen, onHover }) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.dataset.project = p.id;
+    // The manifest card is a 170px-wide crop. Loading the full screenshot
+    // for it pulled ~2.7MB of images into the hero; the thumb is ~7KB.
+    const thumb = p.images[0].src.replace('assets/projects/', 'assets/projects/thumbs/');
     btn.innerHTML = `
-      <span class="legend-shot"><img src="${p.images[0].src}" alt="${p.images[0].alt}" loading="lazy"></span>
+      <span class="legend-shot"><img src="${thumb}" alt="${p.images[0].alt}" loading="lazy" width="480" height="270"></span>
       <span class="legend-text">
         <span class="legend-key">${p.index}</span>
         <span class="legend-name">${p.name}</span>
@@ -325,6 +328,7 @@ function dossier({ atlas: initialAtlas }) {
     const [first, ...rest] = project.images;
     image.src = first.src;
     image.alt = first.alt;
+    image.loading = 'lazy';
     $('#dossier-caption').textContent = first.alt;
 
     const thumbs = $('#dossier-thumbs');
@@ -334,8 +338,11 @@ function dossier({ atlas: initialAtlas }) {
       btn.type = 'button';
       btn.setAttribute('aria-current', String(i === 0));
       btn.setAttribute('aria-label', `Show image ${i + 1} of ${project.name}`);
-      btn.innerHTML = `<img src="${img.src}" alt="${img.alt}" loading="lazy">`;
+      // The strip is 60px tall. The full screenshot is a wasted download here.
+      const thumb = img.src.replace('assets/projects/', 'assets/projects/thumbs/');
+      btn.innerHTML = `<img src="${thumb}" alt="${img.alt}" loading="lazy" width="480" height="270">`;
       btn.addEventListener('click', () => {
+        // Only the image actually shown is fetched at full size.
         image.src = img.src;
         image.alt = img.alt;
         $('#dossier-caption').textContent = img.alt;

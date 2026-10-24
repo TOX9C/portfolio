@@ -18,9 +18,9 @@ export const PROJECTS = [
     ],
     stack: ['Rust', 'Tauri 2', 'Dioxus', 'MCP', 'multi-agent'],
     images: [
-      { src: 'assets/projects/athenas-workspace.png', alt: 'Athenas Core multi-agent workspace' },
-      { src: 'assets/projects/athenas-agent.png', alt: 'Athenas Core agent panel' },
-      { src: 'assets/projects/athenas-pixel-art.png', alt: 'Athenas Core pixel-art owl mascot' }
+      { src: 'assets/projects/athenas-workspace.webp', alt: 'Athenas Core multi-agent workspace' },
+      { src: 'assets/projects/athenas-agent.webp', alt: 'Athenas Core agent panel' },
+      { src: 'assets/projects/athenas-pixel-art.webp', alt: 'Athenas Core pixel-art owl mascot' }
     ],
     links: [{ label: 'Source', href: 'https://github.com/TOX9C/athenas-core', primary: true }],
     hue: '#54E1FF',
@@ -43,8 +43,8 @@ export const PROJECTS = [
     ],
     stack: ['Next.js 16', 'TypeScript', 'PostgreSQL', 'Prisma'],
     images: [
-      { src: 'assets/projects/ecommerce-landing.jpg', alt: 'E-commerce landing page' },
-      { src: 'assets/projects/ecommerce-products.jpg', alt: 'E-commerce product catalog' }
+      { src: 'assets/projects/ecommerce-landing.webp', alt: 'E-commerce landing page' },
+      { src: 'assets/projects/ecommerce-products.webp', alt: 'E-commerce product catalog' }
     ],
     links: [
       { label: 'Visit store', href: 'https://ecommerce-ten-flame-39.vercel.app', primary: true },
@@ -70,8 +70,8 @@ export const PROJECTS = [
     ],
     stack: ['React 19', 'socket.io', 'Express', 'Prisma'],
     images: [
-      { src: 'assets/projects/social-home.png', alt: 'Social platform home feed' },
-      { src: 'assets/projects/social-messages.png', alt: 'Social platform direct messages' }
+      { src: 'assets/projects/social-home.webp', alt: 'Social platform home feed' },
+      { src: 'assets/projects/social-messages.webp', alt: 'Social platform direct messages' }
     ],
     links: [{ label: 'Source', href: 'https://github.com/TOX9C/social-media', primary: true }],
     hue: '#FF5C9A',
@@ -94,8 +94,8 @@ export const PROJECTS = [
     ],
     stack: ['React 19', 'Express 5', 'Prisma', 'PostgreSQL'],
     images: [
-      { src: 'assets/projects/cashpilot-dashboard.jpg', alt: 'CashPilot finance dashboard' },
-      { src: 'assets/projects/cashpilot-goals.jpg', alt: 'CashPilot savings goals' }
+      { src: 'assets/projects/cashpilot-dashboard.webp', alt: 'CashPilot finance dashboard' },
+      { src: 'assets/projects/cashpilot-goals.webp', alt: 'CashPilot savings goals' }
     ],
     links: [{ label: 'Source', href: 'https://github.com/TOX9C/cashPilot', primary: true }],
     hue: '#7CF29B',
@@ -118,7 +118,7 @@ export const PROJECTS = [
     ],
     stack: ['price history', 'charts', 'alerts'],
     images: [
-      { src: 'assets/projects/pricehawk-landing.png', alt: 'PriceHawk landing page' }
+      { src: 'assets/projects/pricehawk-landing.webp', alt: 'PriceHawk landing page' }
     ],
     links: [{ label: 'Source', href: 'https://github.com/TOX9C/price-tracker', primary: true }],
     hue: '#54E1FF',
@@ -141,7 +141,7 @@ export const PROJECTS = [
     ],
     stack: ['OS-level monitoring', 'encryption detection', 'alerts'],
     images: [
-      { src: 'assets/projects/ossecurity-terminal.png', alt: 'OsSecurity terminal output' }
+      { src: 'assets/projects/ossecurity-terminal.webp', alt: 'OsSecurity terminal output' }
     ],
     links: [{ label: 'Source', href: 'https://github.com/TOX9C/OsSecurity', primary: true }],
     hue: '#FF5C9A',
@@ -164,7 +164,7 @@ export const PROJECTS = [
     ],
     stack: ['Python', 'XGBoost'],
     images: [
-      { src: 'assets/projects/football-predictor-ui.png', alt: 'Football predictor interface' }
+      { src: 'assets/projects/football-predictor-ui.webp', alt: 'Football predictor interface' }
     ],
     links: [{ label: 'Source', href: 'https://github.com/TOX9C/football-predictor', primary: true }],
     hue: '#7CF29B',
