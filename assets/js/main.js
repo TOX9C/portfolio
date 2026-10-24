@@ -71,6 +71,44 @@ function clocks() {
   if (year) year.textContent = String(new Date().getFullYear());
 }
 
+/* ---------- modal plumbing ---------- */
+
+// Shared by the dossier drawer and the mobile menu: make the rest of the page
+// inert while a modal is open, and keep Tab inside it.
+const MODAL_FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), textarea, select, [tabindex]:not([tabindex="-1"])';
+
+function trapFocus(panel, event) {
+  if (event.key !== 'Tab') return;
+  const items = $$(MODAL_FOCUSABLE, panel).filter((el) => el.offsetParent !== null);
+  if (!items.length) return;
+  const first = items[0];
+  const last = items[items.length - 1];
+  const active = document.activeElement;
+  if (!panel.contains(active)) {
+    event.preventDefault();
+    (event.shiftKey ? last : first).focus();
+  } else if (event.shiftKey && active === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && active === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+// Hide the page behind a modal from assistive tech and from the tab order.
+// The mobile menu lives inside `.hud`, so the header must stay out of this list
+// when the menu is the modal — otherwise the menu would inert itself.
+function setBackgroundInert(inert, { keepHeader = false } = {}) {
+  const targets = keepHeader ? [$('#main'), $('.footer')] : [$('#main'), $('.hud'), $('.footer')];
+  targets.forEach((el) => {
+    if (!el) return;
+    if (inert) el.setAttribute('inert', '');
+    else el.removeAttribute('inert');
+  });
+}
+
 /* ---------- reveal + nav ---------- */
 
 function reveals() {
@@ -130,24 +168,34 @@ function mobileNav() {
   const nav = $('#hud-nav');
   if (!toggle || !nav) return;
 
+  const isOpen = () => toggle.getAttribute('aria-expanded') === 'true';
+
   const close = () => {
+    if (!isOpen()) return;
     toggle.setAttribute('aria-expanded', 'false');
     toggle.setAttribute('aria-label', 'Open menu');
     nav.classList.remove('open');
     document.body.classList.remove('is-locked');
+    setBackgroundInert(false, { keepHeader: true });
+    toggle.focus();
   };
 
   toggle.addEventListener('click', () => {
-    const open = toggle.getAttribute('aria-expanded') === 'true';
+    const open = isOpen();
     toggle.setAttribute('aria-expanded', String(!open));
     toggle.setAttribute('aria-label', open ? 'Open menu' : 'Close menu');
     nav.classList.toggle('open', !open);
     document.body.classList.toggle('is-locked', !open);
+    setBackgroundInert(!open, { keepHeader: true });
+    // The panel flips to `visible` on the next frame, so focus has to wait for it.
+    if (!open) requestAnimationFrame(() => $$('a', nav)[0]?.focus());
   });
 
   $$('a', nav).forEach((link) => link.addEventListener('click', close));
   document.addEventListener('keydown', (e) => {
+    if (!isOpen()) return;
     if (e.key === 'Escape') close();
+    else trapFocus(nav, e);
   });
 }
 
@@ -209,6 +257,7 @@ function dossier({ atlas }) {
     panel.setAttribute('aria-hidden', 'false');
     document.body.classList.add('is-locked');
     document.body.classList.add('dossier-open');
+    setBackgroundInert(true);
     closeBtn.focus();
     atlas?.focus(id);
   };
@@ -218,12 +267,15 @@ function dossier({ atlas }) {
     panel.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('is-locked');
     document.body.classList.remove('dossier-open');
+    setBackgroundInert(false);
     if (lastFocus instanceof HTMLElement) lastFocus.focus();
   };
 
   closeBtn.addEventListener('click', close);
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && panel.classList.contains('open')) close();
+    if (!panel.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    else trapFocus(panel, e);
   });
 
   return { open, close };
@@ -247,6 +299,13 @@ function terminal() {
 
   write('Personal Systems Atlas — type "help" for commands.', 't-hi');
   write('7 systems mapped · Baghdad clock live · session online', 't-dim');
+  write('', 't-dim');
+  write('SYS  NAME                TYPE', 't-ok');
+  PROJECTS.forEach((p) => {
+    write(`${p.index}  ${p.name.padEnd(20, ' ')} ${p.tag}`, 't-dim');
+  });
+  write('', 't-dim');
+  write('run "help" for commands · "projects" for detail', 't-hi');
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -323,10 +382,12 @@ async function init() {
 
   terminal();
 
-  await boot();
-
+  // Reveal the headline immediately — the boot overlay is decoration and must not
+  // withhold the LCP element for two seconds.
   const display = $('.display');
   if (display) requestAnimationFrame(() => display.classList.add('go'));
+
+  await boot();
 
   // expose for smoke checks
   window.__atlas = { projects: PROJECTS, dossier: dossierPanel, atlas };

@@ -331,6 +331,7 @@ function buildLandmark(project, color) {
   // Screen centre sits one post-length above the model's top.
   screen.position.set(0, base + SCREEN_POST + SCREEN_H / 2 + 0.12, 0);
   g.add(screen);
+  g.userData.screen = screen;
 
   const halo = new THREE.Mesh(
     new THREE.RingGeometry(3.2, 3.45, 32),
@@ -446,7 +447,6 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   for (const group of landmarks) {
     const p = group.position;
     FIT_POINTS.push(new THREE.Vector3(p.x, 0, p.z));
-    FIT_POINTS.push(new THREE.Vector3(p.x, screenTop(group.userData.project.landmark) + 1.1, p.z));
   }
   const ISLAND_HALF_W = 12;
   const ISLAND_HALF_D = 8.5;
@@ -475,6 +475,11 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
         _v.copy(p).project(camera);
         if (Math.abs(_v.x) > 0.9 || Math.abs(_v.y) > 0.9) return false;
       }
+      // Label anchors must clear the top edge too.
+      for (const group of landmarks) {
+        _v.set(group.position.x, group.userData.labelY ?? 4.6, group.position.z).project(camera);
+        if (Math.abs(_v.x) > 0.9 || Math.abs(_v.y) > 0.9) return false;
+      }
       return true;
     };
     if (inside(18)) return 18;
@@ -499,6 +504,8 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   let userAdjusted = false;
   let baseDistance = 46;
   let zoom = 1;
+  // Phone-width layout: no billboard screens, smaller/fainter halos.
+  let compact = false;
   const home = { azimuth: 0.28, polar: 0.82 };
   let targetAzimuth = home.azimuth;
   let targetPolar = home.polar;
@@ -572,7 +579,17 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     }
   };
 
+  // A touch scroll cancels the pointer — that must never count as a tap.
+  const onPointerCancel = (e) => {
+    dragging = false;
+    pointerMoved = true;
+    canvas.classList.remove('dragging');
+    canvas.releasePointerCapture?.(e.pointerId);
+  };
+
+  // Zoom is opt-in (ctrl/⌘ + wheel) so the diorama never traps page scroll.
   const onWheel = (e) => {
+    if (!e.ctrlKey && !e.metaKey) return;
     e.preventDefault();
     zoom = Math.max(0.6, Math.min(1.5, zoom - e.deltaY * 0.0012));
     userAdjusted = true;
@@ -581,7 +598,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   canvas.addEventListener('pointerdown', onPointerDown);
   canvas.addEventListener('pointermove', onPointerMove);
   canvas.addEventListener('pointerup', onPointerUp);
-  canvas.addEventListener('pointercancel', onPointerUp);
+  canvas.addEventListener('pointercancel', onPointerCancel);
   canvas.addEventListener('pointerleave', () => { hovered = null; onHover?.(null); });
   canvas.addEventListener('wheel', onWheel, { passive: false });
 
@@ -607,6 +624,27 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       targetPolar = h0.polar;
       zoom = 1;
     }
+    // On a phone the diorama is small enough that billboard screens become
+    // unreadable clutter and collide with the label chips. Drop them there and
+    // let the manifest below carry the same information. This must run before
+    // `fitDistance`, which reads the label anchor heights.
+    compact = w < 560;
+    for (const group of landmarks) {
+      const screen = group.userData.screen;
+      if (screen) screen.visible = !compact;
+      // The halos read as huge concentric circles on a phone because the camera
+      // pulls back to fit the whole island. Shrink and fade them there.
+      const halo = group.userData.halo;
+      if (halo) {
+        halo.scale.setScalar(compact ? 0.52 : 1);
+        halo.material.opacity = compact ? 0.1 : 0.2;
+      }
+      // Without screens the models sit lower, so labels anchor lower too.
+      group.userData.labelY = compact
+        ? (LANDMARK_TOP[group.userData.project.landmark] ?? 3.2) + 0.6
+        : screenTop(group.userData.project.landmark) + 1.1;
+    }
+
     baseDistance = fitDistance(targetAzimuth, targetPolar);
     if (!dragging) distance = targetDistance = baseDistance * zoom;
   };
@@ -620,6 +658,22 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   let last = performance.now();
   let raf = 0;
   let elapsed = 0;
+
+  // The diorama only burns GPU while it is actually on screen and the tab is
+  // visible. Off-screen it stops entirely.
+  let onScreen = true;
+  let tabVisible = true;
+
+  const startLoop = () => {
+    if (raf || !onScreen || !tabVisible) return;
+    last = performance.now();
+    raf = requestAnimationFrame(frame);
+  };
+  const stopLoop = () => {
+    if (!raf) return;
+    cancelAnimationFrame(raf);
+    raf = 0;
+  };
 
   const frame = (now) => {
     raf = requestAnimationFrame(frame);
@@ -636,8 +690,11 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
 
     placeCamera(distance, azimuth, polar);
 
-    world.rotation.y = Math.sin(elapsed * 0.08) * 0.06;
-    stars.rotation.y = elapsed * 0.006;
+    // Reduced motion: the scene must hold still, not drift.
+    if (!reducedMotion) {
+      world.rotation.y = Math.sin(elapsed * 0.08) * 0.06;
+      stars.rotation.y = elapsed * 0.006;
+    }
 
     for (const group of landmarks) {
       const spin = group.userData.spin;
@@ -661,7 +718,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     const placed = [];
     for (const l of labels) {
       const { el, group } = l;
-      projected.set(0, screenTop(group.userData.project.landmark) + 1.1, 0);
+      projected.set(0, group.userData.labelY ?? screenTop(group.userData.project.landmark) + 1.1, 0);
       group.localToWorld(projected);
       projected.project(camera);
       const x = (projected.x * 0.5 + 0.5) * rect.width;
@@ -719,7 +776,25 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     }
   };
 
-  raf = requestAnimationFrame(frame);
+  // Stop rendering when the atlas scrolls out of view or the tab is hidden.
+  const visibility = new IntersectionObserver(
+    ([entry]) => {
+      onScreen = entry.isIntersecting;
+      if (onScreen) startLoop();
+      else stopLoop();
+    },
+    { threshold: 0 }
+  );
+  visibility.observe(canvas);
+
+  const onVisibilityChange = () => {
+    tabVisible = document.visibilityState === 'visible';
+    if (tabVisible) startLoop();
+    else stopLoop();
+  };
+  document.addEventListener('visibilitychange', onVisibilityChange);
+
+  startLoop();
 
   return {
     focus(id) {
@@ -730,20 +805,25 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       userAdjusted = true;
       zoom = 0.78;
       targetPolar = 0.86;
+      startLoop();
     },
     setHover(id) {
       for (const group of landmarks) {
         const active = group.userData.project.id === id;
-        group.userData.halo.material.opacity = active ? 0.7 : 0.2;
+        const halo = group.userData.halo;
+        halo.material.opacity = active ? 0.7 : (compact ? 0.1 : 0.2);
         group.scale.setScalar(active ? 1.12 : 1);
       }
     },
     destroy() {
       cancelAnimationFrame(raf);
       observer.disconnect();
+      visibility.disconnect();
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       canvas.removeEventListener('pointerdown', onPointerDown);
       canvas.removeEventListener('pointermove', onPointerMove);
       canvas.removeEventListener('pointerup', onPointerUp);
+      canvas.removeEventListener('pointercancel', onPointerCancel);
       canvas.removeEventListener('wheel', onWheel);
       labelRoot.remove();
       renderer.dispose();

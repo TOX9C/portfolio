@@ -128,28 +128,36 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 
 /* ---------- boot sequence ---------- */
+/* A corner badge, not a full-screen curtain: the hero must be readable on the
+   first paint, so nothing is allowed to sit on top of the headline. */
 .boot{
-  position:fixed;inset:0;z-index:2500;
+  position:fixed;right:clamp(1rem,3vw,2.2rem);bottom:clamp(1rem,3vw,2.2rem);
+  z-index:2500;
   display:grid;place-items:center;
-  background:var(--void);
-  transition:opacity .6s var(--ease),visibility .6s;
+  width:min(230px,64vw);
+  padding:1rem 1.1rem;
+  border:1px solid var(--hair);border-radius:18px;
+  background:rgba(8,12,23,.92);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  transition:opacity .5s var(--ease),visibility .5s,transform .5s var(--ease);
 }
-.boot.done{opacity:0;visibility:hidden;pointer-events:none}
+.boot.done{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(12px)}
 .no-js .boot{display:none}
-.boot-inner{width:min(340px,78vw);text-align:center}
+.boot-inner{width:100%;text-align:left}
 .boot-logo{
   font-family:var(--pixel);font-weight:700;
-  font-size:clamp(2rem,7vw,3.2rem);letter-spacing:.16em;
+  font-size:1.1rem;letter-spacing:.16em;
   color:var(--cyan);
   text-shadow:0 0 24px rgba(84,225,255,.5);
 }
 .boot-log{
-  font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;
+  font-family:var(--mono);font-size:.56rem;letter-spacing:.16em;
   text-transform:uppercase;color:var(--faint);
-  margin:.6rem 0 1rem;min-height:1.2em;
+  margin:.4rem 0 .7rem;min-height:1.2em;
 }
 .boot-bar{
-  height:6px;background:rgba(140,154,187,.14);
+  height:4px;background:rgba(140,154,187,.14);
   border-radius:99px;overflow:hidden;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.05)
 }
@@ -274,7 +282,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   width:100%;height:100%;display:block;
   image-rendering:pixelated;
   cursor:grab;
-  touch-action:none;
+  /* pan-y keeps vertical page scroll working on touch while still letting a
+     horizontal drag orbit the diorama. */
+  touch-action:pan-y;
 }
 #atlas-canvas.dragging{cursor:grabbing}
 .stage-fallback{
@@ -428,8 +438,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   letter-spacing:.04em
 }
 .legend-name{
-  font-family:var(--pixel);font-size:.72rem;letter-spacing:.04em;
-  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  font-family:var(--pixel);font-size:.68rem;letter-spacing:.03em;line-height:1.25;
+  text-transform:uppercase;
+  /* Two lines rather than an ellipsis: a truncated project name is useless. */
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  overflow:hidden;overflow-wrap:anywhere
 }
 .legend-tag{
   font-family:var(--mono);font-size:.62rem;letter-spacing:.04em;
@@ -692,8 +705,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .terminal-bar-meta i{width:6px;height:6px;border-radius:1px;background:var(--green);box-shadow:0 0 8px rgba(124,242,155,.7)}
 .terminal-body{
   padding:1.1rem 1.2rem;
-  min-height:210px;max-height:340px;overflow-y:auto;
-  font-family:var(--mono);font-size:.74rem;line-height:1.95;
+  min-height:clamp(200px,26vh,260px);max-height:360px;overflow-y:auto;
+  font-family:var(--mono);font-size:.74rem;line-height:1.75;
   scrollbar-width:thin;scrollbar-color:var(--faint) transparent
 }
 .terminal-body div{white-space:pre-wrap;word-break:break-word}
@@ -709,8 +722,13 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .terminal-prompt{color:var(--cyan);font-family:var(--mono)}
 .terminal-input input{
-  flex:1;min-width:0;background:none;border:none;outline:none;
+  flex:1;min-width:0;background:none;border:none;
   color:var(--ink);font-family:var(--mono);font-size:.74rem
+}
+/* The global :focus-visible rule is (0,1,0); this selector is (0,1,1) and would
+   outrank it, so the ring has to be restated here. */
+.terminal-input input:focus-visible{
+  outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px
 }
 .terminal-input input::placeholder{color:var(--faint)}
 
@@ -975,9 +993,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
     background:rgba(5,7,14,.96);
     backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
     opacity:0;visibility:hidden;
-    transition:opacity .45s var(--ease),visibility .45s
+    /* Visibility flips instantly on open so the links are focusable right
+       away, and only after the fade on close. */
+    transition:opacity .45s var(--ease),visibility 0s .45s
   }
-  .hud-nav.open{opacity:1;visibility:visible}
+  .hud-nav.open{
+    opacity:1;visibility:visible;
+    transition:opacity .45s var(--ease),visibility 0s 0s
+  }
   .hud-nav a{
     font-size:clamp(1.6rem,7vw,2.6rem);
     opacity:0;transform:translateY(24px);
