@@ -605,9 +605,9 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       l.visible = visible;
     }
 
-    // Declutter: on narrow canvases the full names collide. Try full width, fall back
-    // to a numbered chip, then nudge vertically. A label is never dropped — every
-    // landmark stays identifiable.
+    // Declutter: on narrow canvases the full names cover the models and collide.
+    // Phones get a numbered chip only — the manifest directly below carries the
+    // number-to-name mapping, so no information is lost. A label is never dropped.
     const narrow = rect.width < 560;
     const h = 22;
     const fits = (l, r, t, b) => !placed.some((p) => r > p.l && l < p.r && t < p.b && b > p.t);
@@ -620,11 +620,11 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       }
       let w = l.w;
       let y = l.y;
+      if (narrow) {
+        w = l.keyW;
+        l.el.classList.add('compact');
+      }
       if (!fits(l.x - w / 2, l.x + w / 2, y - h, y)) {
-        if (narrow) {
-          w = l.keyW;
-          l.el.classList.add('compact');
-        }
         // Nudge upward until clear, then downward if we ran out of room above.
         let found = false;
         for (let dy = 0; dy <= 90; dy += 6) {
@@ -639,7 +639,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
           l.el.classList.add('compact');
           y = Math.max(h + 4, Math.min(l.y, rect.height - 6));
         }
-      } else {
+      } else if (!narrow) {
         l.el.classList.remove('compact');
       }
       l.el.style.transform = `translate(-50%,-100%) translate(${l.x.toFixed(1)}px,${y.toFixed(1)}px)`;

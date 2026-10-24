@@ -851,6 +851,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .atlas-label:hover .atlas-label-name{color:var(--ink)}
 .atlas-label.compact .atlas-label-name{display:none}
 .atlas-label.compact{padding:.3rem .45rem}
+.atlas-label.compact .atlas-label-key{font-size:.72rem;font-weight:700;color:var(--cyan)}
 
 /* ---------- scroll reveal ---------- */
 .rv{
