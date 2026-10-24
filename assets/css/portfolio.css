@@ -1102,12 +1102,13 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .atlas-label.compact .atlas-label-name{display:none}
 .atlas-label.compact{padding:.3rem .45rem}
 .atlas-label.compact .atlas-label-key{font-size:.72rem;font-weight:700;color:var(--cyan)}
-/* Phones keep the project name, just smaller. */
+/* Phones keep the project name, just smaller. 9.9px was unreadable on a
+   phone, so the tight size goes up to a comfortable 11.5px. */
 .atlas-label.tight{
-  padding:.26rem .45rem;gap:.3rem;
-  font-size:.62rem;letter-spacing:.04em
+  padding:.3rem .5rem;gap:.35rem;
+  font-size:.72rem;letter-spacing:.03em
 }
-.atlas-label.tight .atlas-label-key{font-size:.62rem}
+.atlas-label.tight .atlas-label-key{font-size:.72rem}
 
 /* ---------- scroll reveal ---------- */
 .rv{
@@ -1138,7 +1139,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      cover the viewport. Move it to the body and keep the toggle in the header. */
   .hud{
     backdrop-filter:none;-webkit-backdrop-filter:none;
-    background:linear-gradient(180deg,rgba(5,7,14,.97) 0%,rgba(5,7,14,.92) 70%,rgba(5,7,14,.8) 100%)
+    /* Fully opaque all the way down: a translucent bottom edge let section
+       headings show through the bar on a phone. */
+    background:rgba(5,7,14,.98);
+    border-bottom:1px solid var(--hair-soft)
   }
   .hud-nav{
     position:fixed;inset:0;
@@ -1181,8 +1185,19 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .display{font-size:clamp(2.2rem,10.5vw,3.4rem)}
   .stage-chips{gap:1.1rem}
   .stage-corner{font-size:.72rem;gap:1rem}
-  .channel-list a{grid-template-columns:1fr auto}
-  .channel-list em{grid-column:1 / -1;order:3}
+  /* The channel list was five 100px bands — 1140px of scroll for five links.
+     Compact rows keep the whole thing scannable in one glance. */
+  .channel-list a{
+    grid-template-columns:minmax(0,1fr) auto;
+    padding:.85rem .4rem;gap:.2rem .8rem
+  }
+  .channel-list span{font-size:1.05rem}
+  .channel-list em{
+    grid-column:1;order:3;
+    font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  }
+  .channel-list i{grid-column:2;grid-row:1 / span 2}
+  .contact-payoff{gap:1.8rem}
   /* Metadata is supporting text on desktop but becomes the primary content
      on a phone, where there is no second column to lean on. */
   .stage-chips span{font-size:.74rem}
