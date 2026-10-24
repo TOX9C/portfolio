@@ -274,6 +274,12 @@ function dossier({ atlas }) {
     $('#dossier-desc').innerHTML = project.desc
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 
+    // What the system actually does, broken out — one paragraph plus a tech
+    // list reads like filler; a capability list reads like a case study.
+    $('#dossier-features').innerHTML = (project.features || [])
+      .map((f) => `<li><i aria-hidden="true"></i>${f}</li>`)
+      .join('');
+
     $('#dossier-stats').innerHTML = project.stats
       .map((s) => `<li><b>${s.value}</b><span>${s.label}</span></li>`)
       .join('');

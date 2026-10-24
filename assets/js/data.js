@@ -7,6 +7,11 @@ export const PROJECTS = [
     name: 'Athenas Core',
     tag: 'multi-agent desktop IDE',
     desc: 'Desktop IDE where parallel AI agents analyse, review and reason about code in dedicated workspaces. Multi-provider LLM support with MCP.',
+    features: [
+      'Parallel agents in dedicated workspaces',
+      'Multi-provider LLM support over MCP',
+      '78 IPC commands, 85+ components'
+    ],
     stats: [
       { value: '78', label: 'IPC commands' },
       { value: '85+', label: 'components' }
@@ -27,6 +32,11 @@ export const PROJECTS = [
     name: 'E-Commerce',
     tag: 'live store · taking orders',
     desc: 'Full store: catalog, cart, checkout, order management and an admin dashboard. Deployed live and taking orders.',
+    features: [
+      'Catalog, cart and checkout end to end',
+      'Order management with an admin dashboard',
+      'Deployed live and taking orders'
+    ],
     stats: [
       { value: 'LIVE', label: 'deployed store' },
       { value: '5', label: 'store surfaces' }
@@ -49,6 +59,11 @@ export const PROJECTS = [
     name: 'Social',
     tag: 'real-time social platform',
     desc: 'Real-time social platform: posts, feeds, profiles, notifications and direct messages over WebSockets.',
+    features: [
+      'Posts and feeds with user profiles',
+      'Notifications and direct messages',
+      'Real-time transport over WebSockets'
+    ],
     stats: [
       { value: 'WS', label: 'websocket DMs' },
       { value: '5', label: 'core surfaces' }
@@ -68,6 +83,11 @@ export const PROJECTS = [
     name: 'CashPilot',
     tag: 'personal finance dashboard',
     desc: 'Personal finance in one dashboard: accounts, transactions, budgets and savings goals.',
+    features: [
+      'Accounts and transaction history',
+      'Budgets and savings goals',
+      'Four finance modules in one dashboard'
+    ],
     stats: [
       { value: '4', label: 'finance modules' },
       { value: '1', label: 'dashboard' }
@@ -87,6 +107,11 @@ export const PROJECTS = [
     name: 'PriceHawk',
     tag: 'cross-store price tracker',
     desc: 'Price tracker across Amazon, Walmart and eBay with history charts and price alerts.',
+    features: [
+      'Tracks Amazon, Walmart and eBay',
+      'Price history charts per product',
+      'Alerts when a tracked price drops'
+    ],
     stats: [
       { value: '3', label: 'stores tracked' },
       { value: '24/7', label: 'alerts' }
@@ -105,6 +130,11 @@ export const PROJECTS = [
     name: 'OsSecurity',
     tag: 'OS-level ransomware detector',
     desc: 'Ransomware detector: OS-level file monitoring with real-time encryption alerts.',
+    features: [
+      'OS-level file system monitoring',
+      'Encryption behaviour detection',
+      'Real-time alerts the moment files change'
+    ],
     stats: [
       { value: 'OS', label: 'file monitoring' },
       { value: 'REAL-TIME', label: 'encryption alerts' }
@@ -123,6 +153,11 @@ export const PROJECTS = [
     name: 'Football Predictor',
     tag: 'XGBoost · live ELO rankings',
     desc: 'XGBoost model with 58.77% accuracy that beats bookmaker baselines, plus live ELO rankings.',
+    features: [
+      'XGBoost match outcome model',
+      '58.77% accuracy, beats bookmaker baselines',
+      'Live ELO rankings'
+    ],
     stats: [
       { value: '58.77%', label: 'model accuracy' },
       { value: 'ELO', label: 'live rankings' }
