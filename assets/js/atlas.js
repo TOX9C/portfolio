@@ -751,43 +751,62 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     // Phones get a numbered chip only — the manifest directly below carries the
     // number-to-name mapping, so no information is lost. A label is never dropped.
     const narrow = rect.width < 560;
-    const h = 22;
-    const fits = (l, r, t, b) => !placed.some((p) => r > p.l && l < p.r && t < p.b && b > p.t);
-    for (const l of labels) {
+    // A small margin so labels that merely touch do not read as overlapping.
+    const PAD = 3;
+    // True when the candidate box [l,r] x [t,b] clears every placed box.
+    const fits = (l, r, t, b) =>
+      !placed.some((p) =>
+        r > p.l - PAD &&
+        l < p.r + PAD &&
+        b > p.t - PAD &&
+        t < p.b + PAD
+      );
+    // Wide labels claim their spot first — otherwise "Football Predictor"
+    // arrives last, has nowhere to go, and gets demoted to a bare number.
+    const order = [...labels].sort((a, b) => {
+      if (a.visible !== b.visible) return a.visible ? -1 : 1;
+      return (b.el.offsetWidth || 0) - (a.el.offsetWidth || 0);
+    });
+    for (const l of order) {
       if (!l.visible) {
-        l.el.classList.remove('compact');
+        l.el.classList.remove('compact', 'tight');
         l.el.style.opacity = '0';
         l.el.style.pointerEvents = 'none';
         continue;
       }
-      let w = l.w;
+      // Start from the full label (name included) and measure it as rendered —
+      // the cached width was taken before the narrow-viewport class applied.
+      l.el.classList.toggle('tight', narrow);
+      l.el.classList.remove('compact');
+      let w = l.el.offsetWidth;
+      let h = l.el.offsetHeight;
       let y = l.y;
-      if (narrow) {
-        w = l.keyW;
-        l.el.classList.add('compact');
-      }
+
       if (!fits(l.x - w / 2, l.x + w / 2, y - h, y)) {
         // Nudge upward until clear, then downward if we ran out of room above.
         let found = false;
-        for (let dy = 0; dy <= 90; dy += 6) {
+        for (let dy = 0; dy <= 150; dy += 4) {
           const up = l.y - dy;
           if (up - h > 4 && fits(l.x - w / 2, l.x + w / 2, up - h, up)) { y = up; found = true; break; }
           const down = l.y + dy;
           if (down < rect.height - 4 && fits(l.x - w / 2, l.x + w / 2, down - h, down)) { y = down; found = true; break; }
         }
         if (!found) {
-          // Last resort: keep the chip and push it to the top edge.
-          w = l.keyW;
+          // Last resort: drop the name, keep the numbered chip.
           l.el.classList.add('compact');
+          w = l.el.offsetWidth;
+          h = l.el.offsetHeight;
           y = Math.max(h + 4, Math.min(l.y, rect.height - 6));
         }
-      } else if (!narrow) {
-        l.el.classList.remove('compact');
       }
       l.el.style.transform = `translate(-50%,-100%) translate(${l.x.toFixed(1)}px,${y.toFixed(1)}px)`;
       l.el.style.opacity = '1';
       l.el.style.pointerEvents = 'auto';
+      // Record the box the label actually occupies. The element is anchored at
+      // its bottom edge (translate -100% Y), so it occupies [y-h, y].
       placed.push({ l: l.x - w / 2, r: l.x + w / 2, t: y - h, b: y });
+      l.finalY = y;
+      l.finalW = w;
     }
   };
 

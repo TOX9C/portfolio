@@ -514,7 +514,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 /* ---------- sections ---------- */
 .section{
-  padding:clamp(5rem,11vh,9rem) var(--pad);
+  padding:clamp(4rem,8.5vh,7rem) var(--pad);
   border-bottom:1px solid var(--hair-soft);
   position:relative;
   /* Anchor jumps must clear the fixed HUD, and a heading must never scroll
@@ -716,8 +716,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-size:.86rem;line-height:1.5;color:var(--cyan)
 }
 .profile-badge p{
-  font-family:var(--pixel);font-weight:700;font-size:.86rem;
-  line-height:1.35;letter-spacing:.08em;color:var(--amber)
+  font-family:var(--pixel);font-weight:700;font-size:.95rem;
+  line-height:1.3;letter-spacing:.04em;color:var(--amber);
+  /* One credential line, not three broken fragments. */
+  text-transform:uppercase
 }
 .profile-card-note{
   font-family:var(--mono);font-size:.72rem;line-height:1.9;
@@ -974,10 +976,13 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border:1px solid rgba(140,154,187,.26);
   background:rgba(5,7,14,.72);
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  font-family:var(--pixel);font-size:.72rem;letter-spacing:.07em;
+  font-family:var(--pixel);font-size:.68rem;letter-spacing:.07em;
   text-transform:uppercase;color:var(--ink);
   white-space:nowrap;pointer-events:auto;
-  transition:border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--ease);
+  /* No transform transition: the transform is rewritten every frame to follow
+     the orbiting camera, so transitioning it leaves the labels permanently
+     trailing their target and visibly overlapping each other. */
+  transition:border-color .3s var(--ease),background .3s var(--ease);
 }
 .atlas-label:hover{
   border-color:var(--cyan);
@@ -995,6 +1000,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .atlas-label.compact .atlas-label-name{display:none}
 .atlas-label.compact{padding:.3rem .45rem}
 .atlas-label.compact .atlas-label-key{font-size:.72rem;font-weight:700;color:var(--cyan)}
+/* Phones keep the project name, just smaller. */
+.atlas-label.tight{
+  padding:.26rem .45rem;gap:.3rem;
+  font-size:.62rem;letter-spacing:.04em
+}
+.atlas-label.tight .atlas-label-key{font-size:.62rem}
 
 /* ---------- scroll reveal ---------- */
 .rv{
@@ -1064,14 +1075,37 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 
 @media (max-width:640px){
-  .display{font-size:clamp(2.6rem,13vw,4.2rem)}
-  .stage-chips{gap:1.4rem}
+  .display{font-size:clamp(2.2rem,10.5vw,3.4rem)}
+  .stage-chips{gap:1.1rem}
   .stage-corner{font-size:.72rem;gap:1rem}
   .channel-list a{grid-template-columns:1fr auto}
   .channel-list em{grid-column:1 / -1;order:3}
   .section{padding-left:20px;padding-right:20px}
   .stage{padding-left:20px;padding-right:20px}
   .terminal-body{font-size:.72rem}
+}
+
+/* Phones: the atlas is the signature element, so it has to be reachable
+   without a long scroll. The copy compresses, the buttons sit on one row, and
+   the map starts high enough to be seen while the hero is still on screen. */
+@media (max-width:860px){
+  .stage{
+    padding-top:clamp(4.6rem,8vh,5.6rem);
+    gap:1.1rem
+  }
+  .display{margin:.85rem 0 .9rem}
+  .stage-lede{line-height:1.55}
+  .stage-actions{margin-top:1.15rem;gap:.55rem}
+  /* Keep both actions on one row on a phone: the atlas should start higher,
+     and two stacked full-width buttons push it below the fold. */
+  .stage-actions .btn{
+    flex:1 1 0;min-width:0;padding:.72rem .75rem;
+    font-size:.72rem;gap:.45rem;justify-content:center;
+    white-space:nowrap
+  }
+  .stage-chips{margin-top:1.1rem;padding-top:.85rem}
+  .stage-canvas{height:min(52vh,430px);min-height:320px}
+  .legend-head p{display:none}
 }
 
 @media (prefers-reduced-motion:reduce){
