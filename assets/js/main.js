@@ -281,6 +281,22 @@ function mobileNav() {
 
   const isOpen = () => toggle.getAttribute('aria-expanded') === 'true';
 
+  // On desktop this is a plain navigation landmark. On a phone it becomes a
+  // full-screen modal menu — and only then. It used to carry
+  // role="dialog" aria-modal="true" permanently, so assistive tech was told
+  // the whole page was inert even while the nav was a visible inline list.
+  const setModal = (on) => {
+    if (on) {
+      nav.setAttribute('role', 'dialog');
+      nav.setAttribute('aria-modal', 'true');
+      nav.setAttribute('aria-label', 'Menu');
+    } else {
+      nav.removeAttribute('role');
+      nav.removeAttribute('aria-modal');
+      nav.setAttribute('aria-label', 'Primary');
+    }
+  };
+
   const close = () => {
     if (!isOpen()) return;
     toggle.setAttribute('aria-expanded', 'false');
@@ -288,6 +304,7 @@ function mobileNav() {
     nav.classList.remove('open');
     document.body.classList.remove('is-locked');
     setBackgroundInert(false, { keepHeader: true });
+    setModal(false);
     toggle.focus();
   };
 
@@ -298,6 +315,7 @@ function mobileNav() {
     nav.classList.toggle('open', !open);
     document.body.classList.toggle('is-locked', !open);
     setBackgroundInert(!open, { keepHeader: true });
+    setModal(!open);
     // The panel flips to `visible` on the next frame, so focus has to wait for it.
     if (!open) requestAnimationFrame(() => $$('a', nav)[0]?.focus());
   });
