@@ -3,7 +3,7 @@
    reveal observer, clocks. No framework.
    ============================================================ */
 
-import { PROJECTS, PROJECT_BY_ID, TERMINAL_COMMANDS } from './data.js';
+import { PROJECTS, PROJECT_BY_ID, resolveProject, TERMINAL_COMMANDS } from './data.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -29,13 +29,13 @@ function boot() {
       log.textContent = steps[i];
       fill.style.width = `${((i + 1) / steps.length) * 100}%`;
       i++;
-      if (i < steps.length) setTimeout(tick, 190);
+      if (i < steps.length) setTimeout(tick, 130);
       else setTimeout(() => {
         overlay.classList.add('done');
         resolve();
-      }, 260);
+      }, 180);
     };
-    setTimeout(tick, 90);
+    setTimeout(tick, 60);
   });
 }
 
@@ -362,9 +362,9 @@ function terminal({ openDossier } = {}) {
     // atlas are two doors into the same seven projects.
     const [verb, arg] = cmd.split(/\s+/);
     if (verb === 'dossier') {
-      const project = PROJECT_BY_ID[arg];
+      const project = resolveProject(arg);
       if (!project) {
-        write(`unknown system: ${arg || '(none)'}. try: dossier ${PROJECTS[0].id}`, 't-amber');
+        write(`unknown system: ${arg || '(none)'}. try: dossier 1, dossier athenas, dossier football`, 't-amber');
         return;
       }
       write(`opening ${project.name.toLowerCase()} dossier...`, 't-ok');

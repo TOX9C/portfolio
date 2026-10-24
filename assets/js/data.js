@@ -139,13 +139,51 @@ export const PROJECTS = [
 
 export const PROJECT_BY_ID = Object.fromEntries(PROJECTS.map((p) => [p.id, p]));
 
+/* Resolve a project from whatever the visitor typed. The terminal used to
+   accept only the exact id, so "dossier 01", "dossier athenas-core" and
+   "dossier E-Commerce" all failed even though every other command worked. */
+export function resolveProject(input) {
+  if (!input) return null;
+  const q = String(input).trim().toLowerCase();
+  if (!q) return null;
+
+  // Exact id first.
+  if (PROJECT_BY_ID[q]) return PROJECT_BY_ID[q];
+
+  // Index number: 1, 01, 7, 07.
+  const asIndex = Number(q.replace(/^sys[-\s]?/, '').replace(/^0+(?=\d)/, ''));
+  if (Number.isInteger(asIndex) && asIndex >= 1 && asIndex <= PROJECTS.length) {
+    return PROJECTS[asIndex - 1];
+  }
+
+  // Name and common spellings, ignoring case, spaces, hyphens and underscores.
+  const key = (s) => s.toLowerCase().replace(/[\s\-_]+/g, '');
+  const target = key(q);
+  const byName = PROJECTS.find((p) => key(p.name) === target);
+  if (byName) return byName;
+
+  // Substring match, so "football" finds "Football Predictor".
+  const partial = PROJECTS.find((p) => key(p.name).includes(target));
+  if (partial) return partial;
+
+  // A few obvious aliases people reach for.
+  const ALIASES = {
+    ide: 'athenas', store: 'commerce', shop: 'commerce', ecommerce: 'commerce',
+    social: 'social', cash: 'cashpilot', finance: 'cashpilot', price: 'pricehawk',
+    prices: 'pricehawk', tracker: 'pricehawk', security: 'ossecurity',
+    ransomware: 'ossecurity', football: 'football', predictor: 'football'
+  };
+  const alias = ALIASES[target];
+  return alias ? PROJECT_BY_ID[alias] : null;
+}
+
 export const TERMINAL_COMMANDS = {
   help: {
     lines: [
       'available commands:',
       '  whoami      identity & credentials',
       '  projects    seven shipped systems',
-      '  dossier     open one system  (dossier athenas)',
+      '  dossier     open one system  (dossier 1 | dossier athenas | dossier football)',
       '  skills      the stack',
       '  lab         home server services',
       '  contact     channels',
