@@ -232,6 +232,16 @@ function reveals() {
     });
   };
 
+  // Clicking a nav link highlights the target right away instead of waiting
+  // for the smooth scroll to cross the reading line — during a long glide the
+  // HUD otherwise kept pointing at the section the visitor just left.
+  navLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      const id = link.getAttribute('href')?.slice(1);
+      if (id) setActive(id);
+    });
+  });
+
   let spyTicking = false;
   const updateSpy = () => {
     spyTicking = false;

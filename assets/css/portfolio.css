@@ -1059,6 +1059,33 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   background:linear-gradient(160deg,rgba(18,26,46,.92),rgba(8,12,23,.95));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
 }
+
+/* The operator ID line. The card opened straight into the award, which read
+   as a résumé row; the ID makes the person — name, callsign, status — the
+   first thing in the section, using only facts already verified. */
+.profile-id{
+  display:flex;align-items:center;gap:.85rem;
+  padding-bottom:1.1rem;margin-bottom:1.1rem;
+  border-bottom:1px dashed var(--hair)
+}
+.profile-id-glyph{
+  width:44px;height:44px;flex:none;
+  display:grid;place-items:center;
+  border-radius:12px;
+  background:rgba(84,225,255,.08);
+  border:1px solid rgba(84,225,255,.25)
+}
+.profile-id-glyph svg{width:26px;height:26px}
+.profile-id-text{display:flex;flex-direction:column;min-width:0}
+.profile-id-text b{
+  font-family:var(--pixel);font-weight:700;
+  font-size:1.15rem;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--ink);line-height:1.15
+}
+.profile-id-text span{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--cyan);margin-top:.25rem
+}
 /* A run of four milestones down the card. The section had a visible hole in
    its lower-right quadrant; a timeline fills it with something worth reading
    instead of padding. */
@@ -1559,6 +1586,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .lab-panel{grid-column:1 / -1}
 }
 
+
 @media (max-width:860px){
   /* The boot badge sits bottom-right, which on a phone is exactly where the
      hero's CTA row and the "live store" proof link live. Move it to the top
@@ -1768,4 +1796,25 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-proof span{display:none}
   .stage-legend{max-height:26vh;padding-top:.5rem;gap:.45rem}
   .legend-head h2{font-size:.85rem}
+}
+
+/* ---------- phone hero rhythm ----------
+   A phone visitor scrolled two full screens before the first project
+   screenshot. These come last so they win over the 860px block. */
+@media (max-width:640px){
+  .stage{
+    padding-top:clamp(4.4rem,8vh,5.2rem);
+    gap:.9rem
+  }
+  .eyebrow{padding:.28rem .6rem;font-size:.66rem}
+  .stage-role-line{font-size:.7rem;margin-top:.35rem}
+  .display{font-size:clamp(2rem,9.6vw,3rem);margin:.6rem 0 .55rem}
+  .stage-lede{font-size:.86rem;line-height:1.5;margin-top:.5rem}
+  .stage-role{font-size:.78rem;margin-top:.5rem}
+  .stage-open{margin-top:.55rem}
+  .stage-actions{margin-top:.8rem;gap:.5rem}
+  .stage-chips{margin-top:.8rem;padding-top:.6rem}
+  .stage-proof{margin-top:.55rem;gap:.25rem}
+  .stage-proof a{padding:.38rem .55rem}
+  .stage-canvas{height:min(46vh,400px);min-height:300px}
 }
