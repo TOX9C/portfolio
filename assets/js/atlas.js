@@ -190,14 +190,14 @@ function buildLandmark(project, color) {
       add(body);
       add(voxel(0x111a2b, -0.6, 3.6, 0.85));
       add(voxel(0x111a2b, 0.6, 3.6, 0.85));
-      const eyeMat = new THREE.MeshBasicMaterial({ color: 0xffd166 });
+      const eyeMat = new THREE.MeshBasicMaterial({ color: 0x54e1ff });
       const eyeGeo = new THREE.BoxGeometry(0.5, 0.5, 0.3);
       const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
       eyeL.position.set(-0.55, 3.75, 0.86);
       const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
       eyeR.position.set(0.55, 3.75, 0.86);
       add(eyeL, eyeR);
-      add(voxel(0xffb65c, 0, 3.05, 0.9, 0.4));
+      add(voxel(0xeaf1ff, 0, 3.05, 0.9, 0.4));
       const wingL = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2, 1.4), mat);
       wingL.position.set(-1.6, 2.4, 0);
       wingL.rotation.z = 0.2;
@@ -369,16 +369,16 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 200);
   camera.position.set(0, 12, 26);
 
-  scene.add(new THREE.HemisphereLight(0x9fd8ff, 0x1a2540, 2.1));
-  const key = new THREE.DirectionalLight(0xffffff, 1.6);
+  scene.add(new THREE.HemisphereLight(0x9fd8ff, 0x0a0f1c, 1.55));
+  const key = new THREE.DirectionalLight(0xffffff, 1.25);
   key.position.set(10, 18, 12);
   scene.add(key);
-  const rim = new THREE.DirectionalLight(0x54e1ff, 1.2);
+  const rim = new THREE.DirectionalLight(0x54e1ff, 0.9);
   rim.position.set(-12, 6, -10);
   scene.add(rim);
-  const warm = new THREE.PointLight(0xffb65c, 38, 46);
-  warm.position.set(6, 4, 10);
-  scene.add(warm);
+  const fill = new THREE.PointLight(0x9fd8ff, 16, 46);
+  fill.position.set(6, 4, 10);
+  scene.add(fill);
 
   const world = new THREE.Group();
   scene.add(world);
@@ -401,7 +401,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   const stars = new THREE.Points(
     starGeo,
-    new THREE.PointsMaterial({ color: 0x8c9abb, size: 0.32, transparent: true, opacity: 0.65 })
+    new THREE.PointsMaterial({ color: 0x8c9abb, size: 0.28, transparent: true, opacity: 0.4 })
   );
   scene.add(stars);
 

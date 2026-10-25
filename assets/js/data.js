@@ -50,7 +50,7 @@ export const PROJECTS = [
       { label: 'Visit store', href: 'https://ecommerce-ten-flame-39.vercel.app', primary: true },
       { label: 'Source', href: 'https://github.com/TOX9C/ecommerce' }
     ],
-    hue: '#FFB65C',
+    hue: '#9FD8FF',
     landmark: 'store'
   },
   {
@@ -74,7 +74,7 @@ export const PROJECTS = [
       { src: 'assets/projects/social-messages.webp', alt: 'Social platform direct messages' }
     ],
     links: [{ label: 'Source', href: 'https://github.com/TOX9C/social-media', primary: true }],
-    hue: '#FF5C9A',
+    hue: '#7CF2E0',
     landmark: 'antenna'
   },
   {
@@ -98,7 +98,7 @@ export const PROJECTS = [
       { src: 'assets/projects/cashpilot-goals.webp', alt: 'CashPilot savings goals' }
     ],
     links: [{ label: 'Source', href: 'https://github.com/TOX9C/cashPilot', primary: true }],
-    hue: '#7CF29B',
+    hue: '#8FD6FF',
     landmark: 'vault'
   },
   {
@@ -144,7 +144,7 @@ export const PROJECTS = [
       { src: 'assets/projects/ossecurity-terminal.webp', alt: 'OsSecurity terminal output' }
     ],
     links: [{ label: 'Source', href: 'https://github.com/TOX9C/OsSecurity', primary: true }],
-    hue: '#FF5C9A',
+    hue: '#7CF2E0',
     landmark: 'shield'
   },
   {
@@ -167,7 +167,7 @@ export const PROJECTS = [
       { src: 'assets/projects/football-predictor-ui.webp', alt: 'Football predictor interface' }
     ],
     links: [{ label: 'Source', href: 'https://github.com/TOX9C/football-predictor', primary: true }],
-    hue: '#7CF29B',
+    hue: '#8FD6FF',
     landmark: 'pitch'
   }
 ];

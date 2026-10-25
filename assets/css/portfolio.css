@@ -54,15 +54,13 @@
   --ease:cubic-bezier(.16,1,.3,1);
   --ease-out:cubic-bezier(.22,.61,.36,1);
   --pad:clamp(20px,5vw,88px);
-  --radius:22px;
-}
+  --radius:22px}
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 html{
   scroll-behavior:smooth;
-  -webkit-text-size-adjust:100%;
-}
+  -webkit-text-size-adjust:100%}
 
 body{
   background:var(--void);
@@ -71,11 +69,7 @@ body{
   font-size:16px;
   line-height:1.65;
   -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
-  background-image:
-    radial-gradient(900px 520px at 78% -6%,rgba(84,225,255,.10),transparent 62%),
-    radial-gradient(700px 480px at 8% 12%,rgba(255,92,154,.08),transparent 60%);
-}
+  overflow-x:hidden}
 
 body.is-locked{overflow:hidden}
 
@@ -90,8 +84,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 :focus-visible{
   outline:2px solid var(--cyan);
   outline-offset:3px;
-  border-radius:4px;
-}
+  border-radius:4px}
 
 .sr-only{
   position:absolute;width:1px;height:1px;padding:0;margin:-1px;
@@ -109,70 +102,15 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .skip-link:focus{transform:none}
 
-/* ---------- global dither + progress ---------- */
-.dither{
-  position:fixed;inset:0;z-index:2;pointer-events:none;
-  opacity:.35;
-  background-image:radial-gradient(rgba(140,154,187,.12) 1px,transparent 1px);
-  background-size:3px 3px;
-  mix-blend-mode:overlay;
-}
-
+/* ---------- progress ---------- */
 .scroll-progress{
   position:fixed;top:0;left:0;right:0;height:2px;z-index:1200;
-  background:rgba(140,154,187,.10);
-}
+  background:rgba(140,154,187,.10)}
 .scroll-progress i{
   display:block;height:100%;width:0;
-  background:linear-gradient(90deg,var(--cyan),var(--amber));
-  box-shadow:0 0 12px var(--glow);
-  transform-origin:left;
-}
-
-/* ---------- boot sequence ---------- */
-/* A corner badge, not a full-screen curtain: the hero must be readable on the
-   first paint, so nothing is allowed to sit on top of the headline.
-   It is also purely informational — it never takes a click. It used to
-   intercept pointer events, and on a phone it sat right on top of the
-   hero's CTA row, so tapping "live store" during the first seconds did
-   nothing at all. */
-.boot{
-  position:fixed;right:clamp(1rem,3vw,2.2rem);bottom:clamp(1rem,3vw,2.2rem);
-  z-index:2500;
-  display:grid;place-items:center;
-  width:min(230px,64vw);
-  padding:1rem 1.1rem;
-  border:1px solid var(--hair);border-radius:18px;
-  background:rgba(8,12,23,.92);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  box-shadow:0 20px 60px rgba(0,0,0,.5);
-  pointer-events:none;
-  transition:opacity .5s var(--ease),visibility .5s,transform .5s var(--ease);
-}
-.boot.done{opacity:0;visibility:hidden;transform:translateY(12px)}
-.no-js .boot{display:none}
-.boot-inner{width:100%;text-align:left}
-.boot-logo{
-  font-family:var(--pixel);font-weight:700;
-  font-size:1.1rem;letter-spacing:.16em;
-  color:var(--cyan);
-  text-shadow:0 0 24px rgba(84,225,255,.5);
-}
-.boot-log{
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--faint);
-  margin:.4rem 0 .7rem;min-height:1.2em;
-}
-.boot-bar{
-  height:4px;background:rgba(140,154,187,.14);
-  border-radius:99px;overflow:hidden;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)
-}
-.boot-bar i{
-  display:block;height:100%;width:0;
-  background:repeating-linear-gradient(90deg,var(--cyan) 0 8px,rgba(84,225,255,.45) 8px 12px);
-  transition:width .25s var(--ease-out)
-}
+  background:var(--cyan);
+  
+  transform-origin:left}
 
 /* ---------- HUD ---------- */
 .hud{
@@ -182,24 +120,19 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding:.85rem var(--pad);
   /* A real scrim: the bar sits over section headings, so it must separate
      them rather than fade into the page. */
-  background:linear-gradient(180deg,rgba(5,7,14,.96) 0%,rgba(5,7,14,.88) 62%,rgba(5,7,14,.72) 100%);
-  backdrop-filter:blur(16px) saturate(1.2);
-  -webkit-backdrop-filter:blur(16px) saturate(1.2);
-  border-bottom:1px solid var(--hair-soft);
-}
+  background:rgba(5,7,14,.97);
+  
+  border-bottom:1px solid var(--hair-soft)}
 .brand{
   display:inline-flex;align-items:center;gap:.65rem;
   font-family:var(--pixel);font-weight:700;
-  font-size:1.05rem;letter-spacing:.14em;
-}
+  font-size:1.05rem;letter-spacing:.14em}
 .brand-glyph{
   display:grid;grid-template-columns:repeat(2,7px);gap:2px;
   transform:rotate(45deg)
 }
 .brand-glyph i{width:7px;height:7px;background:var(--cyan)}
-.brand-glyph i:nth-child(2){background:var(--amber)}
-.brand-glyph i:nth-child(3){background:var(--magenta)}
-.brand-glyph i:nth-child(4){background:var(--faint)}
+.brand-glyph i:nth-child(3){background:var(--muted)}
 
 .hud-nav{display:flex;gap:clamp(.8rem,1.8vw,1.8rem)}
 .hud-nav a{
@@ -226,14 +159,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:flex;align-items:center;gap:.6rem;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
   color:var(--muted);text-transform:uppercase;
-  font-variant-numeric:tabular-nums;
-}
+  font-variant-numeric:tabular-nums}
 .led{
-  width:7px;height:7px;border-radius:2px;background:var(--green);
-  box-shadow:0 0 10px rgba(124,242,155,.8);
-  animation:led 2.4s steps(2,end) infinite;
+  width:7px;height:7px;border-radius:2px;background:var(--cyan)
 }
-@keyframes led{50%{opacity:.35}}
 
 .menu-toggle{display:none;width:44px;height:44px;position:relative;border-radius:12px}
 .menu-toggle span{
@@ -258,8 +187,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   /* Clip horizontally only. Clipping vertically cut the eyebrow and the top of
      the headline on short laptop windows; letting the hero grow and the page
      scroll is far better than hiding the copy. */
-  overflow-x:hidden;
-}
+  overflow-x:hidden}
 /* Row 1 holds the copy and the diorama, row 2 the manifest. Without this the
    legend's auto row grew past the viewport and pushed the headline up under
    the fixed HUD, clipping the eyebrow and the top of the display type. */
@@ -304,11 +232,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 @media (min-width:1180px){
   body.dossier-open .stage-canvas{
     transform:translateX(calc(-1 * min(260px, 24vw)));
-    transition:transform .6s var(--ease);
-  }
+    transition:transform .6s var(--ease)}
   body.dossier-open .stage-copy{
-    transition:opacity .4s var(--ease);
-  }
+    transition:opacity .4s var(--ease)}
 }
 
 .stage-canvas{
@@ -317,20 +243,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   height:100%;
   min-height:340px;
   border-radius:28px;
-  background:
-    radial-gradient(120% 90% at 50% 12%,rgba(84,225,255,.10),transparent 62%),
-    linear-gradient(180deg,rgba(12,17,32,.55),rgba(5,7,14,.15));
+  background:#0A0F1C;
   border:1px solid var(--hair-soft);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
-  overflow:hidden;
-}
-.stage-canvas::before,
-.stage-canvas::after{
-  content:'';position:absolute;width:26px;height:26px;z-index:3;
-  border:1px solid rgba(84,225,255,.5);pointer-events:none;
-}
-.stage-canvas::before{top:14px;left:14px;border-right:0;border-bottom:0}
-.stage-canvas::after{bottom:14px;right:14px;border-left:0;border-top:0}
+  
+  overflow:hidden}
 #atlas-canvas{
   /* Absolute, never in flow: a flowed canvas feeds its attribute height
      back into the grid row's min-content, and renderer.setSize() rewrites
@@ -340,8 +256,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   position:absolute;inset:0;width:100%;height:100%;display:block;
   image-rendering:pixelated;
   cursor:grab;
-  touch-action:pan-y;
-}
+  touch-action:pan-y}
 #atlas-canvas.dragging{cursor:grabbing}
 .stage-fallback{
   position:absolute;inset:0;display:none;
@@ -368,12 +283,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   text-transform:uppercase;color:var(--muted);
   border:1px solid var(--hair);border-radius:99px;
   padding:.45rem .95rem;
-  background:rgba(12,17,32,.6);
-}
-.eyebrow-dot{
-  width:6px;height:6px;background:var(--cyan);border-radius:1px;
-  box-shadow:0 0 10px var(--glow);
-}
+  background:rgba(12,17,32,.6)}
 
 .display{
   font-family:var(--pixel);font-weight:700;
@@ -382,8 +292,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-size:clamp(2.4rem,min(5.6vw,11vh),5.2rem);
   line-height:.94;letter-spacing:-.01em;
   margin:1rem 0 1.1rem;
-  text-transform:uppercase;
-}
+  text-transform:uppercase}
 
 /* The role, stated above the slogan. A recruiter needs "what job could this
    person do" before "what does this person build". */
@@ -415,12 +324,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      pixel face merges the glyphs into an unreadable smear — the word
      "SYSTEMS" was the thesis of the page and it could not be read. */
   -webkit-text-stroke:max(1px, .022em) rgba(222,232,248,.85);
-  paint-order:stroke fill;
-}
+  paint-order:stroke fill}
 .display .accent{
-  color:var(--cyan);
-  text-shadow:0 0 34px rgba(84,225,255,.32);
-}
+  color:var(--cyan)}
 
 .stage-lede{
   color:var(--muted);font-size:clamp(.86rem,min(1vw,1.9vh),.98rem);
@@ -437,24 +343,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:block;
   margin-top:.7rem;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--green);
+  text-transform:uppercase;color:var(--cyan);
   line-height:1.7
 }
 /* Inline, not a flex item. As a flex row the whole text block wrapped to its
    own line and the dot sat alone, reading as a stray bullet. */
-.stage-role-dot{
-  display:inline-block;vertical-align:middle;
-  width:7px;height:7px;border-radius:50%;
-  background:var(--green);
-  margin-right:.55rem;
-  box-shadow:0 0 0 3px rgba(124,242,155,.14),0 0 10px rgba(124,242,155,.6);
-  animation:pulse-dot 2.4s ease-in-out infinite
-}
-@keyframes pulse-dot{
-  0%,100%{box-shadow:0 0 0 3px rgba(124,242,155,.14),0 0 10px rgba(124,242,155,.55)}
-  50%{box-shadow:0 0 0 6px rgba(124,242,155,.05),0 0 14px rgba(124,242,155,.75)}
-}
-
 /* A visible way into the dossiers. The drawer was only reachable by
    discovering that a map landmark was clickable. */
 .stage-open{
@@ -477,7 +370,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   transform:translateY(-1px)
 }
 .stage-open button span{transition:transform .3s var(--ease)}
-.stage-open button:hover span{transform:translate(2px,-2px)}
+
 .stage-open>span{
   font-family:var(--mono);font-size:.84rem;line-height:1.55;
   color:var(--faint);letter-spacing:.02em;max-width:42ch
@@ -502,8 +395,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border-radius:14px;
   border:1px solid rgba(84,225,255,.28);
   background:rgba(8,12,23,.96);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  box-shadow:0 24px 60px rgba(0,0,0,.55);
   animation:scrim-in .22s var(--ease)
 }
 .stage-picker[hidden]{display:none}
@@ -557,13 +448,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .btn:hover{
   transform:translateY(-2px);
-  border-color:rgba(84,225,255,.45);
-}
-.btn:hover .btn-arrow{transform:translate(3px,-3px);background:rgba(84,225,255,.22)}
+  border-color:rgba(84,225,255,.45)}
+.btn:hover .btn-arrow{background:rgba(84,225,255,.22)}
 .btn:active{transform:translateY(0) scale(.98)}
 .btn-primary{
   background:var(--cyan);color:var(--void);border-color:transparent;
-  box-shadow:0 10px 40px rgba(84,225,255,.22)
 }
 .btn-primary .btn-arrow{background:rgba(5,7,14,.16);color:var(--void)}
 .btn-primary:hover .btn-arrow{background:rgba(5,7,14,.28)}
@@ -571,8 +460,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .stage-chips{
   display:flex;flex-wrap:wrap;gap:2rem;
   margin-top:1.4rem;padding-top:1rem;
-  border-top:1px solid var(--hair-soft);
-}
+  border-top:1px solid var(--hair-soft)}
 .stage-chips li{display:flex;flex-direction:column;gap:.15rem}
 .stage-chips b{
   font-family:var(--sans);font-weight:600;
@@ -620,26 +508,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
   text-transform:uppercase;color:var(--faint);
   display:flex;flex-wrap:wrap;gap:.9rem;
-  pointer-events:none;
-}
+  pointer-events:none}
 .stage-corner span{color:var(--muted)}
-/* The hint is the only instruction the map ever gives, so it needs to look
-   like a control cue rather than a caption. The pulsing dot is the cue. */
+/* The hint is the only instruction the map ever gives. Plain text, no dot,
+   no pulse — the map itself is the invitation. */
 .stage-corner .hint{
-  display:inline-flex;align-items:center;gap:.5rem;
   padding:.42rem .7rem;border-radius:99px;
   background:rgba(5,7,14,.7);border:1px solid var(--hair-soft);
-  color:var(--muted);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)
-}
-.stage-corner .hint::before{
-  content:'';width:7px;height:7px;border-radius:50%;flex:none;
-  background:var(--cyan);box-shadow:0 0 10px var(--glow);
-  animation:hint-pulse 2.2s var(--ease) infinite
-}
-@keyframes hint-pulse{
-  0%,100%{opacity:.45;transform:scale(.8)}
-  50%{opacity:1;transform:scale(1.15)}
-}
+  color:var(--muted)}
 
 .stage-legend{
   grid-column:1 / -1;grid-row:2;
@@ -650,8 +526,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border-top:1px solid var(--hair);
   /* The manifest sits below the fixed HUD. Jumping to it without this
      landed the section title underneath the header bar. */
-  scroll-margin-top:5.5rem;
-}
+  scroll-margin-top:5.5rem}
 .legend-head{
   display:flex;align-items:baseline;justify-content:space-between;
   gap:1rem;flex-wrap:wrap
@@ -671,10 +546,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .legend-list{
   display:grid;
-  /* Seven across in one row. A 4-column grid made the manifest two rows
-     tall, which overflowed the one-screen hero and clipped the headline. */
-  grid-template-columns:repeat(7,minmax(0,1fr));
-  gap:.55rem;
+  /* Four across. Seven across kept the manifest to one row but made the
+  cards 178px wide — the screenshot, name and stack were unreadable, which
+  defeated the point of the section. The hero grows, so two rows is fine. */
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:.8rem;
   align-items:stretch
 }
 .legend-list li{display:flex}
@@ -708,7 +584,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   filter:brightness(1.18) saturate(1.08);
   opacity:.95;transition:opacity .35s var(--ease),transform .5s var(--ease),filter .35s var(--ease)
 }
-.legend-list button:hover .legend-shot img{filter:brightness(1.32) saturate(1.15);opacity:1;transform:scale(1.04)}
+.legend-list button:hover .legend-shot img{filter:brightness(1.15);opacity:1}
 /* The caption sits BELOW the screenshot, in normal flow. It used to be an
    overlay on the image with the proof badge pinned to the top-right corner —
    and the badge painted straight over the project name (measured 19–54px of
@@ -771,29 +647,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .noscript-list a{color:var(--cyan);text-decoration:underline}
 
-/* ---------- ticker ---------- */
-.ticker{
-  border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);
-  background:var(--deep);
-  overflow:hidden;padding:.8rem 0;
-  /* Fade the edges so the marquee reads as text scrolling in and out, not as
-     a word sliced in half by the viewport. */
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
-  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)
-}
-.ticker-track{
-  display:flex;width:max-content;
-  animation:ticker 34s linear infinite
-}
-.ticker-track span{
-  font-family:var(--pixel);font-size:clamp(.9rem,1.8vw,1.3rem);
-  letter-spacing:.14em;text-transform:uppercase;
-  color:var(--faint);padding:0 1.6rem;
-  display:inline-flex;align-items:center;gap:1.6rem
-}
-.ticker-track span::after{content:'◆';color:var(--cyan);font-size:.6em}
-@keyframes ticker{to{transform:translateX(-50%)}}
-
 /* ---------- sections ---------- */
 .section{
   padding:clamp(4rem,8.5vh,7rem) var(--pad);
@@ -801,8 +654,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   position:relative;
   /* Anchor jumps must clear the fixed HUD, and a heading must never scroll
      up underneath it. */
-  scroll-margin-top:5.5rem;
-}
+  scroll-margin-top:5.5rem}
 .section-head{
   display:grid;grid-template-columns:auto minmax(0,1fr);
   gap:.4rem 1.4rem;align-items:end;
@@ -814,8 +666,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--sans);font-weight:600;
   font-size:clamp(2.4rem,5.4vw,4.4rem);line-height:.8;
   letter-spacing:-.04em;
-  color:transparent;-webkit-text-stroke:1.4px rgba(178,196,224,.42);
-}
+  color:transparent;-webkit-text-stroke:1.4px rgba(178,196,224,.42)}
 /* Typographic hierarchy: pixel type marks the ATLAS interface (the map, the
    HUD, the manifest, the terminal). Sora marks the EDITORIAL layer — the
    section headings and the prose a recruiter actually reads. Without this
@@ -847,23 +698,20 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   position:relative;
   padding:1.1rem 1.2rem 1.4rem;
   border-radius:var(--radius);
-  background:linear-gradient(160deg,rgba(18,26,46,.9),rgba(8,12,23,.9));
+  background:#0C1220;
   border:1px solid var(--hair);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+  
   transition:transform .5s var(--ease),border-color .4s var(--ease)
 }
-.rack:hover{transform:translateY(-6px);border-color:rgba(84,225,255,.35)}
+.rack:hover{border-color:rgba(84,225,255,.35)}
 .rack-face{
   display:flex;align-items:center;justify-content:space-between;
   padding-bottom:.9rem;margin-bottom:1.1rem;
-  border-bottom:1px solid var(--hair-soft);
-}
+  border-bottom:1px solid var(--hair-soft)}
 .rack-led{
-  width:8px;height:8px;border-radius:2px;background:var(--cyan);
-  box-shadow:0 0 10px var(--glow)
-}
-.rack-led.amber{background:var(--amber);box-shadow:0 0 10px rgba(255,182,92,.6)}
-.rack-led.magenta{background:var(--magenta);box-shadow:0 0 10px rgba(255,92,154,.6)}
+  width:8px;height:8px;border-radius:2px;background:var(--cyan)}
+.rack-led.amber{background:var(--cyan)}
+.rack-led.magenta{background:var(--ink)}
 .rack-code{
   font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;color:var(--faint)
 }
@@ -884,8 +732,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .rack-proof{
   display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;
   margin-top:1.15rem;padding-top:.9rem;
-  border-top:1px solid var(--hair-soft);
-}
+  border-top:1px solid var(--hair-soft)}
 .rack-proof span{
   font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;
   text-transform:uppercase;color:var(--faint);margin-right:.15rem
@@ -911,19 +758,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   position:relative;overflow:hidden;
   padding:1.5rem 1.4rem 3rem;
   border-radius:var(--radius);
-  background:
-    linear-gradient(180deg,rgba(18,26,46,.85),rgba(8,12,23,.92)),
-    repeating-linear-gradient(0deg,rgba(140,154,187,.05) 0 1px,transparent 1px 6px);
+  background:#0C1220;
   border:1px solid var(--hair);
   transition:transform .5s var(--ease),border-color .4s var(--ease)
 }
 .lab-unit::after{
   content:'';position:absolute;left:0;right:0;bottom:0;height:3px;
-  background:linear-gradient(90deg,var(--green),transparent);
+  background:var(--cyan);
   opacity:.5;transition:opacity .4s var(--ease)
 }
-.lab-unit:hover{transform:translateY(-6px);border-color:rgba(124,242,155,.32)}
-.lab-unit:hover::after{opacity:1}
+.lab-unit:hover{border-color:rgba(124,242,155,.32)}
+.lab-unit:hover::after{opacity:.9}
 .lab-unit header{
   display:flex;align-items:center;justify-content:space-between;
   gap:1rem;margin-bottom:.9rem
@@ -935,9 +780,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .status{
   display:inline-flex;align-items:center;gap:.45rem;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--green)
+  text-transform:uppercase;color:var(--cyan)
 }
-.status i{width:6px;height:6px;border-radius:1px;background:var(--green);box-shadow:0 0 8px rgba(124,242,155,.7)}
+.status i{width:6px;height:6px;border-radius:1px;background:var(--cyan)}
 .lab-unit p{color:var(--muted);font-size:.9rem;line-height:1.75}
 .lab-value{
   margin-top:.7rem;padding-top:.7rem;
@@ -960,11 +805,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:flex;flex-direction:column;
   border-radius:var(--radius);
   border:1px solid var(--hair);
-  background:
-    linear-gradient(180deg,rgba(10,16,30,.92),rgba(4,6,12,.96)),
-    repeating-linear-gradient(0deg,rgba(140,154,187,.05) 0 1px,transparent 1px 6px);
+  background:#0A0F1C;
   overflow:hidden;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 24px 60px rgba(0,0,0,.34)
 }
 .lab-panel-bar{
   display:flex;align-items:center;justify-content:space-between;gap:1rem;
@@ -973,11 +815,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;
   text-transform:uppercase;color:var(--faint)
 }
-.lab-panel-stat{display:inline-flex;align-items:center;gap:.45rem;color:var(--green)}
+.lab-panel-stat{display:inline-flex;align-items:center;gap:.45rem;color:var(--cyan)}
 .lab-panel-stat i{
-  width:6px;height:6px;border-radius:1px;background:var(--green);
-  box-shadow:0 0 8px rgba(124,242,155,.7)
-}
+  width:6px;height:6px;border-radius:1px;background:var(--cyan)}
 .lab-readout{
   margin:0;padding:.9rem 1rem;
   display:grid;grid-template-columns:1fr;
@@ -1021,14 +861,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   line-height:1.75;color:var(--ink);max-width:58ch;
   text-wrap:pretty;
   padding-left:2.2rem;
-  border-left:1px solid var(--hair);
-}
+  border-left:1px solid var(--hair)}
 .profile-lede::before{
   content:'◆';
   position:absolute;left:-.42em;top:.08em;
-  font-size:.62em;color:var(--cyan);
-  text-shadow:0 0 10px rgba(84,225,255,.6)
-}
+  font-size:.62em;color:var(--cyan)}
 .profile-lede strong{color:var(--cyan);font-weight:600}
 .profile-facts{
   margin-top:2.2rem;display:grid;gap:.1rem;
@@ -1077,9 +914,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding:1.6rem 1.5rem;
   border-radius:var(--radius);
   border:1px solid var(--hair);
-  background:linear-gradient(160deg,rgba(18,26,46,.92),rgba(8,12,23,.95));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
-}
+  background:#0C1220}
 
 /* The operator ID line. The card opened straight into the award, which read
    as a résumé row; the ID makes the person — name, callsign, status — the
@@ -1117,7 +952,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .profile-track::before{
   content:'';position:absolute;left:4px;top:6px;bottom:6px;width:1px;
-  background:linear-gradient(180deg,var(--cyan),rgba(84,225,255,.06))
+  background:var(--hair)
 }
 .profile-track li{
   position:relative;padding-left:1.4rem
@@ -1125,9 +960,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .track-node{
   position:absolute;left:0;top:.42em;
   width:9px;height:9px;border-radius:2px;
-  background:var(--void);border:1.5px solid var(--cyan);
-  box-shadow:0 0 8px rgba(84,225,255,.45)
-}
+  background:var(--void);border:1.5px solid var(--cyan)}
 .profile-track b{
   display:block;
   font-family:var(--pixel);font-size:.78rem;font-weight:700;
@@ -1158,9 +991,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .profile-status .status-dot{
   width:8px;height:8px;flex:none;margin-top:.4rem;border-radius:50%;
-  background:var(--green);
-  box-shadow:0 0 0 3px rgba(124,242,155,.16),0 0 12px rgba(124,242,155,.6)
-}
+  background:var(--cyan)}
 .profile-status b{
   display:block;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;
@@ -1172,7 +1003,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .profile-badge p{
   font-family:var(--pixel);font-weight:700;font-size:.95rem;
-  line-height:1.3;letter-spacing:.04em;color:var(--amber);
+  line-height:1.3;letter-spacing:.04em;color:var(--cyan);
   /* One credential line, not three broken fragments. */
   text-transform:uppercase
 }
@@ -1211,9 +1042,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:flex;flex-direction:column;
   padding:1.3rem 1.4rem;border-radius:var(--radius);
   border:1px solid var(--hair);
-  background:linear-gradient(160deg,rgba(18,26,46,.9),rgba(8,12,23,.92));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)
-}
+  background:#0C1220}
 .shell-reference-head{
   font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;
   text-transform:uppercase;color:var(--faint);
@@ -1246,7 +1075,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border-radius:var(--radius);
   border:1px solid var(--hair);
   background:rgba(4,6,12,.85);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 30px 80px rgba(0,0,0,.4);
   overflow:hidden
 }
 .terminal-bar{
@@ -1256,8 +1084,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;
   text-transform:uppercase;color:var(--faint)
 }
-.terminal-bar-meta{display:inline-flex;align-items:center;gap:.45rem;color:var(--green)}
-.terminal-bar-meta i{width:6px;height:6px;border-radius:1px;background:var(--green);box-shadow:0 0 8px rgba(124,242,155,.7)}
+.terminal-bar-meta{display:inline-flex;align-items:center;gap:.45rem;color:var(--cyan)}
+.terminal-bar-meta i{width:6px;height:6px;border-radius:1px;background:var(--cyan)}
 .terminal-body{
   padding:1.1rem 1.2rem;
   min-height:clamp(200px,26vh,260px);max-height:360px;overflow-y:auto;
@@ -1268,9 +1096,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .t-cmd{color:var(--ink)}
 .t-cmd::before{content:'$ ';color:var(--cyan)}
 .t-hi{color:var(--cyan)}
-.t-ok{color:var(--green)}
+.t-ok{color:var(--cyan)}
 .t-dim{color:var(--muted)}
-.t-amber{color:var(--amber)}
+.t-amber{color:var(--muted)}
 .terminal-input{
   display:flex;align-items:center;gap:.7rem;
   padding:.85rem 1.2rem;border-top:1px solid var(--hair-soft)
@@ -1294,22 +1122,19 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
   gap:clamp(2rem,5vw,5rem);
   align-items:start;
-  max-width:78rem;
-}
+  max-width:78rem}
 .contact-copy{max-width:40rem}
 .contact-position{
   font-size:clamp(1.05rem,1.6vw,1.35rem);
   line-height:1.6;color:var(--ink);font-weight:400;
-  letter-spacing:-.01em;text-wrap:pretty;
-}
+  letter-spacing:-.01em;text-wrap:pretty}
 .contact-position::first-line{color:var(--ink)}
 .contact-status{
   display:flex;align-items:flex-start;gap:.7rem;
   margin-top:1.4rem;
   font-family:var(--mono);font-size:.84rem;line-height:1.7;
-  letter-spacing:.02em;color:var(--muted);
-}
-.contact-status b{color:var(--green);font-weight:600}
+  letter-spacing:.02em;color:var(--muted)}
+.contact-status b{color:var(--ink);font-weight:600}
 .contact-status .status-dot{margin-top:.5rem;flex:none}
 .contact-mail{
   display:grid;
@@ -1319,20 +1144,16 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   column-gap:1rem;row-gap:.35rem;
   margin-top:2rem;padding:1.15rem 1.15rem 1.15rem 1.4rem;
   border:1px solid rgba(84,225,255,.3);border-radius:var(--radius);
-  background:linear-gradient(135deg,rgba(84,225,255,.10),rgba(84,225,255,.02));
-  box-shadow:0 18px 60px rgba(84,225,255,.10);
-  transition:transform .45s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease);
-}
+  background:rgba(84,225,255,.05);
+  transition:transform .45s var(--ease),border-color .35s var(--ease)}
 .contact-mail:hover{
   transform:translateY(-4px);
   border-color:rgba(84,225,255,.6);
-  box-shadow:0 24px 70px rgba(84,225,255,.18);
 }
 .contact-mail-label{
   grid-area:label;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--faint);
-}
+  text-transform:uppercase;color:var(--faint)}
 .contact-mail .btn-arrow{grid-area:arrow}
 /* A recruiter asks for the CV before they ask anything else, so the download
    sits directly under the email — not buried in the footer. */
@@ -1369,8 +1190,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--mono);font-weight:600;
   font-size:clamp(1rem,1.9vw,1.35rem);line-height:1.3;
   letter-spacing:.01em;color:var(--cyan);
-  overflow-wrap:anywhere;
-}
+  overflow-wrap:anywhere}
 .contact-payoff .channel-list{border-top:1px solid var(--hair)}
 .channel-list{max-width:78rem;border-top:1px solid var(--hair)}
 .channel-list a{
@@ -1417,7 +1237,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .dossier-scrim{
   position:fixed;inset:0;z-index:1250;
   background:rgba(3,5,10,.6);
-  backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
   animation:scrim-in .4s var(--ease)
 }
 .dossier-scrim[hidden]{display:none}
@@ -1427,16 +1246,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   width:min(480px,100vw);
   padding:clamp(1.6rem,3vw,2.4rem);
   overflow-y:auto;
-  background:linear-gradient(180deg,rgba(12,17,32,.97),rgba(5,7,14,.99));
+  background:#0B1120;
   border-left:1px solid var(--hair);
-  box-shadow:-40px 0 90px rgba(0,0,0,.55);
   transform:translateX(102%);
   /* 280ms, not 600ms. The drawer is a panel the visitor is waiting to read;
      a slow slide made a tap feel like nothing happened. */
   transition:transform .28s var(--ease);
   visibility:hidden;
-  will-change:transform;
-}
+  will-change:transform}
 .dossier.open{transform:none;visibility:visible}
 .dossier-close{
   position:absolute;top:1rem;right:1rem;
@@ -1445,7 +1262,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-size:.9rem;line-height:1;
   transition:background .3s var(--ease),color .3s var(--ease),transform .4s var(--ease)
 }
-.dossier-close:hover{background:rgba(255,92,154,.16);color:var(--magenta);transform:rotate(90deg)}
+.dossier-close:hover{background:rgba(140,154,187,.14);color:var(--ink)}
 .dossier-index{
   font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;
   color:var(--cyan);text-transform:uppercase
@@ -1462,14 +1279,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .dossier-shot{
   position:relative;border-radius:16px;overflow:hidden;
   border:1px solid var(--hair);background:#000;
-  aspect-ratio:16/10;
-}
+  aspect-ratio:16/10}
 .dossier-shot img{width:100%;height:100%;object-fit:cover;object-position:top left}
 .dossier-caption{
   margin-top:.6rem;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--faint);
-}
+  text-transform:uppercase;color:var(--faint)}
 .dossier-scan{
   position:absolute;inset:0;pointer-events:none;
   background:repeating-linear-gradient(0deg,rgba(5,7,14,.14) 0 1px,transparent 1px 4px);
@@ -1502,9 +1317,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .dossier-features i{
   width:6px;height:6px;margin-top:.55rem;flex:none;
-  background:var(--cyan);border-radius:1px;
-  box-shadow:0 0 8px var(--glow)
-}
+  background:var(--cyan);border-radius:1px}
 .dossier-stats{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
   gap:.6rem;margin-top:1.4rem
@@ -1533,28 +1346,25 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border:1px solid var(--hair);background:rgba(8,12,23,.7);
   transition:border-color .3s var(--ease),background .3s var(--ease),transform .4s var(--ease)
 }
-.dossier-links a:hover{border-color:rgba(84,225,255,.5);background:rgba(84,225,255,.08);transform:translateY(-2px)}
+.dossier-links a:hover{border-color:rgba(84,225,255,.5);background:rgba(84,225,255,.08)}
 .dossier-links a.primary{background:var(--cyan);color:var(--void);border-color:transparent}
 
 /* ---------- atlas labels ---------- */
 .atlas-labels{
-  position:absolute;inset:0;pointer-events:none;
-}
+  position:absolute;inset:0;pointer-events:none}
 .atlas-label{
   position:absolute;top:0;left:0;
   display:inline-flex;align-items:center;gap:.45rem;
   padding:.42rem .7rem;border-radius:8px;
   border:1px solid rgba(140,154,187,.26);
   background:rgba(5,7,14,.72);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
   font-family:var(--pixel);font-size:.68rem;letter-spacing:.07em;
   text-transform:uppercase;color:var(--ink);
   white-space:nowrap;pointer-events:auto;
   /* No transform transition: the transform is rewritten every frame to follow
      the orbiting camera, so transitioning it leaves the labels permanently
      trailing their target and visibly overlapping each other. */
-  transition:border-color .3s var(--ease),background .3s var(--ease);
-}
+  transition:border-color .3s var(--ease),background .3s var(--ease)}
 .atlas-label:hover{
   border-color:var(--cyan);
   background:rgba(84,225,255,.16);
@@ -1609,21 +1419,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 
 @media (max-width:860px){
-  /* The boot badge sits bottom-right, which on a phone is exactly where the
-     hero's CTA row and the "live store" proof link live. Move it to the top
-     under the HUD so it covers nothing anyone would tap. */
-  .boot{
-    right:auto;left:clamp(1rem,4vw,1.6rem);
-    bottom:auto;top:calc(var(--hud-h,62px) + .6rem);
-    width:min(200px,58vw);padding:.7rem .8rem;border-radius:14px
-  }
-  .boot-logo{font-size:.9rem}
-  .boot-log{font-size:.64rem;margin:.25rem 0 .45rem}
-  /* `.hud` has backdrop-filter, which makes it the containing block for any
+        /* `.hud` has backdrop-filter, which makes it the containing block for any
      fixed-position descendant — so the nav must NOT live inside `.hud` to
      cover the viewport. Move it to the body and keep the toggle in the header. */
   .hud{
-    backdrop-filter:none;-webkit-backdrop-filter:none;
     /* Fully opaque all the way down: a translucent bottom edge let section
        headings show through the bar on a phone. */
     background:rgba(5,7,14,.98);
@@ -1634,7 +1433,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
     flex-direction:column;justify-content:center;align-items:flex-start;
     gap:1.4rem;padding:0 var(--pad);
     background:rgba(5,7,14,.96);
-    backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
     opacity:0;visibility:hidden;
     /* Visibility flips instantly on open so the links are focusable right
        away, and only after the fade on close. */
@@ -1686,9 +1484,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
     position:sticky;top:.6rem;
     margin-left:auto;
     z-index:5;
-    background:rgba(8,12,23,.92);
-    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)
-  }
+    background:rgba(8,12,23,.92)}
   .profile-facts li{grid-template-columns:1fr;gap:.2rem}
   .profile-focus li{grid-template-columns:1fr;gap:.2rem}
   .profile-credentials>div{grid-template-columns:6.5rem minmax(0,1fr);gap:.6rem}

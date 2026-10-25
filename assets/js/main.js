@@ -1,5 +1,5 @@
 /* ============================================================
-   Site behaviour: boot sequence, HUD, dossier, terminal,
+   Site behaviour: HUD, dossier, terminal,
    reveal observer, clocks. No framework.
    ============================================================ */
 
@@ -8,41 +8,6 @@ import { PROJECTS, PROJECT_BY_ID, resolveProject, TERMINAL_COMMANDS } from './da
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-/* ---------- boot ---------- */
-
-function boot() {
-  const overlay = $('#boot');
-  const log = $('#boot-log');
-  const fill = $('#boot-fill');
-  if (!overlay) return Promise.resolve();
-
-  const steps = ['assembling atlas', 'placing landmarks', 'linking systems', 'ready'];
-  if (reducedMotion) {
-    overlay.classList.add('done');
-    return Promise.resolve();
-  }
-
-  // Fast. The badge is a status indicator, not a performance — every 130ms
-  // step added up to a visible pause on a slow machine, and the hero was
-  // readable the whole time.
-  const STEP = 70;
-
-  return new Promise((resolve) => {
-    let i = 0;
-    const tick = () => {
-      log.textContent = steps[i];
-      fill.style.width = `${((i + 1) / steps.length) * 100}%`;
-      i++;
-      if (i < steps.length) setTimeout(tick, STEP);
-      else setTimeout(() => {
-        overlay.classList.add('done');
-        resolve();
-      }, 120);
-    };
-    setTimeout(tick, 30);
-  });
-}
 
 /* ---------- clocks ---------- */
 
@@ -546,8 +511,6 @@ function terminal({ openDossier } = {}) {
   });
 }
 
-/* ---------- boot sequence ---------- */
-
 async function init() {
   document.documentElement.classList.remove('no-js');
 
@@ -640,12 +603,6 @@ async function init() {
       const fallback = $('.stage-fallback');
       if (fallback) fallback.style.display = 'flex';
     }
-    // The badge reports real load state, so it hides the moment the atlas
-    // exists — before the cosmetic step sequence. Waiting for the animation
-    // kept a "still assembling" chip on the hero for seconds after the page
-    // was already interactive.
-    $('#boot')?.classList.add('done');
-    await boot();
     // expose for smoke checks
     window.__atlas = { projects: PROJECTS, dossier: dossierPanel, atlas };
   };
