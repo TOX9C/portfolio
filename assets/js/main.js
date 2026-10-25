@@ -421,34 +421,6 @@ function dossier({ atlas: initialAtlas }) {
   };
 }
 
-
-/* ---------- theme preview (temporary) ----------
-   Applies ?theme=NAME, wires the switcher buttons, re-lights the 3D
-   ground/fog to match the page, and keeps <meta theme-color> in sync. */
-const THEMES = {
-  dark:  { ground: 0x05070e, label: 'Dark' },
-  pixel: { ground: 0xf2e9d8, label: 'Pixel' },
-  light: { ground: 0xfafaf7, label: 'Light' },
-  warm:  { ground: 0x191512, label: 'Warm' },
-  brutal:{ ground: 0xffffff, label: 'Brutal' }
-};
-
-function applyTheme(name) {
-  const t = THEMES[name] ? name : 'dark';
-  document.documentElement.setAttribute('data-theme', t);
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', `#${THEMES[t].ground.toString(16).padStart(6, '0')}`);
-  $$('.theme-switch button').forEach((b) => {
-    b.setAttribute('aria-pressed', String(b.dataset.setTheme === t));
-  });
-  window.__atlas?.atlas?.setGround?.(THEMES[t].ground);
-  try { history.replaceState(null, '', t === 'dark' ? location.pathname : `?theme=${t}`); } catch { /* file:// */ }
-}
-
-$$('.theme-switch button').forEach((b) => b.addEventListener('click', () => applyTheme(b.dataset.setTheme)));
-const initialTheme = new URLSearchParams(location.search).get('theme');
-if (initialTheme) applyTheme(initialTheme);
-else document.documentElement.setAttribute('data-theme', 'dark');
-
 async function init() {
   document.documentElement.classList.remove('no-js');
 
@@ -534,9 +506,9 @@ async function init() {
         onHover: (id) => atlas?.setHover(id)
       });
       dossierPanel.setAtlas(atlas);
-      // Apply the active theme's ground so a ?theme= first load matches.
-      const themeName = document.documentElement.getAttribute('data-theme');
-      if (themeName && THEMES[themeName]) atlas.setGround(THEMES[themeName].ground);
+      // The site is the pixel theme: a bright cream page, so the diorama's
+      // terrain, fog and lights are retinted for a light ground at build.
+      atlas.setGround(0xf2e9d8);
     } catch (error) {
       console.warn('atlas unavailable:', error);
       const fallback = $('.stage-fallback');

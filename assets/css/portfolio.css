@@ -31,105 +31,33 @@
 }
 
 :root{
-  /* ---- theme tokens ----
-     The whole palette is swappable: --bg is the page ground, --panel the
-     card surface, --ink the primary text, --accent the single color. Every
-     surface and border in the file reads from these, so a theme is just a
-     block of values. --line/--line-soft carry borders so light themes can
-     use dark rules instead of pale-white ones. */
-  --bg:#05070E;
-  --void:#05070E;
-  --deep:#080C17;
-  --panel:#0C1120;
-  --panel-2:#121A2E;
-  --ink:#EAF1FF;
-  --muted:#8C9ABB;
-  --faint:#7A88AA;
-  --accent:#54E1FF;
-  --cyan:#54E1FF;
-  --line:rgba(140,154,187,.16);
-  --line-soft:rgba(140,154,187,.08);
-  --hair:rgba(140,154,187,.16);
-  --hair-soft:rgba(140,154,187,.08);
-  --shadow:none;
-  --radius:22px;
+  /* ---- pixel-game palette ----
+     Cream paper ground, warm panels, near-black ink, one strong blue
+     accent, solid black rules, no radius. The whole file reads from these
+     tokens. --cyan is a legacy alias for --accent kept so the atlas and
+     older rules keep working. */
+  --bg:#F2E9D8;
+  --void:#F2E9D8;
+  --deep:#E8DCC4;
+  --panel:#FFF7E8;
+  --panel-2:#EBDFC8;
+  --ink:#1A1512;
+  --muted:#5C5348;
+  --faint:#8A7E6E;
+  --accent:#0E63B6;
+  --cyan:#0E63B6;
+  --line:#1A1512;
+  --line-soft:#1A1512;
+  --hair:#1A1512;
+  --hair-soft:#1A1512;
+  --shadow:4px 4px 0 rgba(26,21,18,.9);
+  --radius:0px;
   --pixel:'Pixelify',ui-monospace,monospace;
   --sans:'Sora',system-ui,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,monospace;
   --ease:cubic-bezier(.16,1,.3,1);
   --ease-out:cubic-bezier(.22,.61,.36,1);
   --pad:clamp(20px,5vw,88px)}
-
-/* ============ THEMES ============ */
-
-/* The default is the current dark site, kept as-is so nothing shifts
-   until a theme is chosen. */
-:root[data-theme="dark"]{
-  --bg:#05070E;--void:#05070E;--deep:#080C17;
-  --panel:#0C1120;--panel-2:#121A2E;
-  --ink:#EAF1FF;--muted:#8C9ABB;--faint:#7A88AA;
-  --accent:#54E1FF;--cyan:#54E1FF;
-  --line:rgba(140,154,187,.16);--line-soft:rgba(140,154,187,.08);
-  --hair:rgba(140,154,187,.16);--hair-soft:rgba(140,154,187,.08);
-  --radius:22px}
-
-/* Pixel-game: cream paper, chunky black borders, hard offset shadows.
-   Full commitment to the pixel brief — reads like a game cartridge. */
-:root[data-theme="pixel"]{
-  --bg:#F2E9D8;--void:#F2E9D8;--deep:#E8DCC4;
-  --panel:#FFF7E8;--panel-2:#EBDFC8;
-  --ink:#1A1512;--muted:#5C5348;--faint:#8A7E6E;
-  --accent:#0E63B6;--cyan:#0E63B6;
-  --line:#1A1512;--line-soft:#1A1512;
-  --hair:#1A1512;--hair-soft:#1A1512;
-  --radius:0px}
-
-/* Light editorial: white ground, near-black ink, restrained blue accent. */
-:root[data-theme="light"]{
-  --bg:#FAFAF7;--void:#FAFAF7;--deep:#F0F0EC;
-  --panel:#FFFFFF;--panel-2:#F4F4F0;
-  --ink:#121212;--muted:#5F6368;--faint:#80868B;
-  --accent:#0B57D0;--cyan:#0B57D0;
-  --line:rgba(18,18,18,.14);--line-soft:rgba(18,18,18,.08);
-  --hair:rgba(18,18,18,.14);--hair-soft:rgba(18,18,18,.08);
-  --radius:16px}
-
-/* Warm charcoal: dark but warm — no cyan-terminal vibe, single amber accent. */
-:root[data-theme="warm"]{
-  --bg:#191512;--void:#191512;--deep:#141110;
-  --panel:#221D19;--panel-2:#2A241F;
-  --ink:#F2E9DC;--muted:#A89A8A;--faint:#8A7E70;
-  --accent:#E8A64D;--cyan:#E8A64D;
-  --line:rgba(242,233,220,.16);--line-soft:rgba(242,233,220,.09);
-  --hair:rgba(242,233,220,.16);--hair-soft:rgba(242,233,220,.09);
-  --radius:16px}
-
-/* Brutalist: white, black type, no radius, exposed rules. */
-:root[data-theme="brutal"]{
-  --bg:#FFFFFF;--void:#FFFFFF;--deep:#F2F2F2;
-  --panel:#FFFFFF;--panel-2:#F2F2F2;
-  --ink:#000000;--muted:#333333;--faint:#666666;
-  --accent:#FF3B00;--cyan:#FF3B00;
-  --line:#000000;--line-soft:#000000;
-  --hair:#000000;--hair-soft:#000000;
-  --radius:0px}
-
-/* ---------- theme switcher (temporary preview tool) ---------- */
-.theme-switch{
-  position:fixed;left:12px;bottom:12px;z-index:3000;
-  display:flex;gap:6px;padding:6px;border-radius:10px;
-  background:var(--panel);border:1px solid var(--line)}
-.theme-switch button{
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;
-  padding:.45rem .7rem;border-radius:6px;cursor:pointer;
-  border:1px solid var(--line-soft);
-  background:transparent;color:var(--muted)}
-.theme-switch button[aria-pressed="true"]{
-  background:var(--accent);color:var(--bg);border-color:var(--accent)}
-:root[data-theme="pixel"] .theme-switch,
-:root[data-theme="brutal"] .theme-switch{border-radius:0}
-:root[data-theme="pixel"] .theme-switch button,
-:root[data-theme="brutal"] .theme-switch button{border-radius:0}
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -348,7 +276,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:grid;place-items:center;
   opacity:.85;
   transition:opacity .6s var(--ease)
-}
+  box-shadow:var(--shadow)}
 .atlas-placeholder svg{width:min(78%,360px);height:auto}
 .stage-canvas.atlas-live .atlas-placeholder{opacity:0;pointer-events:none}
 
@@ -468,10 +396,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   flex:none;
   padding:.8rem .9rem .9rem;
   border-radius:14px;
-  border:1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+  border:2px solid var(--line);
   background:var(--panel);
   animation:scrim-in .22s var(--ease)
-}
+  box-shadow:var(--shadow)}
 .stage-picker[hidden]{display:none}
 .stage-picker-label{
   font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;
@@ -509,14 +437,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--pixel);font-size:.88rem;letter-spacing:.08em;
   text-transform:uppercase;
   padding:.85rem 1rem .85rem 1.4rem;
-  border-radius:99px;
-  border:1px solid var(--hair);
-  background:color-mix(in srgb, var(--panel-2) 70.0%, transparent);
-  transition:transform .45s var(--ease),border-color .35s var(--ease),background .35s var(--ease)
+  border-radius:0;
+  border:2px solid var(--line);
+  background:var(--panel);
+  box-shadow:4px 4px 0 var(--line);
+  transition:transform .12s var(--ease),box-shadow .12s var(--ease)
 }
+/* Press-to-depress: the offset shadow collapses on hover, like a key. */
+.btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--line)}
 .btn-arrow{
   display:grid;place-items:center;
-  width:30px;height:30px;border-radius:99px;
+  width:30px;height:30px;border-radius:0;
   background:var(--line);
   font-size:.9rem;
   transition:transform .45s var(--ease),background .35s var(--ease)
@@ -527,7 +458,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .btn:hover .btn-arrow{background:color-mix(in srgb, var(--accent) 28%, transparent)}
 .btn:active{transform:translateY(0) scale(.98)}
 .btn-primary{
-  background:var(--cyan);color:var(--void);border-color:transparent;
+  background:var(--accent);color:#FFF7E8;border-color:var(--line)
 }
 .btn-primary .btn-arrow{background:color-mix(in srgb, var(--bg) 16.0%, transparent);color:var(--void)}
 .btn-primary:hover .btn-arrow{background:color-mix(in srgb, var(--bg) 28.000000000000004%, transparent)}
@@ -634,11 +565,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   width:100%;height:100%;text-align:left;
   display:flex;flex-direction:column;
   padding:0;border-radius:12px;
-  border:1px solid var(--hair-soft);
+  border:2px solid var(--line);
   background:color-mix(in srgb, var(--panel) 55%, transparent);
   overflow:hidden;
   transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease)
-}
+  box-shadow:var(--shadow)}
 .legend-list button:hover{
   background:color-mix(in srgb, var(--accent) 14%, transparent);
   border-color:color-mix(in srgb, var(--accent) 45%, var(--line));
@@ -764,10 +695,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding:1.1rem 1.2rem 1.4rem;
   border-radius:var(--radius);
   background:var(--panel);
-  border:1px solid var(--hair);
+  border:2px solid var(--line);
   
   transition:transform .5s var(--ease),border-color .4s var(--ease)
-}
+  box-shadow:var(--shadow)}
 .rack:hover{border-color:color-mix(in srgb, var(--accent) 45%, var(--line))}
 .rack h3{
   font-family:var(--sans);font-weight:600;
@@ -813,9 +744,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding:1.5rem 1.4rem 3rem;
   border-radius:var(--radius);
   background:var(--panel);
-  border:1px solid var(--hair);
+  border:2px solid var(--line);
   transition:transform .5s var(--ease),border-color .4s var(--ease)
-}
+  box-shadow:var(--shadow)}
 .lab-unit::after{
   content:'';position:absolute;left:0;right:0;bottom:0;height:3px;
   background:var(--cyan);
@@ -854,10 +785,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .lab-panel{
   display:flex;flex-direction:column;
   border-radius:var(--radius);
-  border:1px solid var(--hair);
+  border:2px solid var(--line);
   background:var(--panel);
   overflow:hidden;
-}
+  box-shadow:var(--shadow)}
 .lab-panel-bar{
   display:flex;align-items:center;justify-content:space-between;gap:1rem;
   padding:.7rem 1rem;
@@ -963,8 +894,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   position:relative;
   padding:1.6rem 1.5rem;
   border-radius:var(--radius);
-  border:1px solid var(--hair);
-  background:var(--panel)}
+  border:2px solid var(--line);
+  background:var(--panel)
+  box-shadow:var(--shadow)}
 
 /* The operator ID line. The card opened straight into the award, which read
    as a résumé row; the ID makes the person — name, callsign, status — the
@@ -1108,9 +1040,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   align-items:center;
   column-gap:1rem;row-gap:.35rem;
   margin-top:2rem;padding:1.15rem 1.15rem 1.15rem 1.4rem;
-  border:1px solid color-mix(in srgb, var(--accent) 45%, var(--line));border-radius:var(--radius);
+  border:2px solid var(--line);border-radius:var(--radius);
   background:color-mix(in srgb, var(--accent) 8%, transparent);
-  transition:transform .45s var(--ease),border-color .35s var(--ease)}
+  transition:transform .45s var(--ease),border-color .35s var(--ease)
+  box-shadow:var(--shadow)}
 .contact-mail:hover{
   transform:translateY(-4px);
   border-color:color-mix(in srgb, var(--accent) 65%, var(--line));
@@ -1129,10 +1062,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   align-items:center;
   column-gap:1rem;row-gap:.3rem;
   margin-top:.7rem;padding:.95rem 1.15rem .95rem 1.4rem;
-  border:1px solid var(--hair);border-radius:var(--radius);
+  border:2px solid var(--line);border-radius:var(--radius);
   background:color-mix(in srgb, var(--panel) 55.00000000000001%, transparent);
   transition:transform .4s var(--ease),border-color .35s var(--ease),background .35s var(--ease)
-}
+  box-shadow:var(--shadow)}
 .contact-resume:hover{
   transform:translateY(-3px);
   border-color:color-mix(in srgb, var(--accent) 55%, var(--line));
@@ -1165,7 +1098,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding:1.35rem .4rem;
   border-bottom:1px solid var(--hair-soft);
   transition:background .4s var(--ease),padding .4s var(--ease)
-}
+  box-shadow:var(--shadow)}
 .channel-list a:hover{
   background:color-mix(in srgb, var(--accent) 8%, transparent);
   padding-left:1.1rem;padding-right:1.1rem
@@ -1212,13 +1145,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding:clamp(1.6rem,3vw,2.4rem);
   overflow-y:auto;
   background:var(--panel);
-  border-left:1px solid var(--hair);
+  border-left:2px solid var(--line);
   transform:translateX(102%);
   /* 280ms, not 600ms. The drawer is a panel the visitor is waiting to read;
      a slow slide made a tap feel like nothing happened. */
   transition:transform .28s var(--ease);
   visibility:hidden;
-  will-change:transform}
+  will-change:transform
+  box-shadow:var(--shadow)}
 .dossier.open{transform:none;visibility:visible}
 .dossier-close{
   position:absolute;top:1rem;right:1rem;
