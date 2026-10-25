@@ -1,9 +1,9 @@
 /* ============================================================
-   Site behaviour: HUD, dossier, terminal,
+   Site behaviour: HUD, dossier,
    reveal observer, clocks. No framework.
    ============================================================ */
 
-import { PROJECTS, PROJECT_BY_ID, resolveProject, TERMINAL_COMMANDS } from './data.js';
+import { PROJECTS, PROJECT_BY_ID } from './data.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -64,7 +64,6 @@ function manifest({ onOpen, onHover }) {
       <span class="legend-shot"><img src="${thumb}" alt="${p.images[0].alt}" loading="lazy" width="480" height="270"></span>
       <span class="legend-text">
         <span class="legend-head">
-          <span class="legend-key">${p.index}</span>
           <span class="legend-proof" aria-hidden="true">${p.stats[0].value}</span>
         </span>
         <span class="legend-name">${p.name}</span>
@@ -113,9 +112,7 @@ function trapFocus(panel, event) {
 //
 // `inert` is inherited, so an exempt subtree cannot live inside an inerted
 // container. When `exempt` is given, the container is left alone and its
-// children are inerted one by one, skipping the exempt branch. The terminal's
-// section (#shell) is exempt while a dossier is open: the terminal is a
-// second door into the same dossiers and has to stay usable.
+// children are inerted one by one, skipping the exempt branch.
 function setBackgroundInert(inert, { keepHeader = false, exempt = [] } = {}) {
   const targets = keepHeader ? [$('#main'), $('.footer')] : [$('#main'), $('.hud'), $('.footer')];
   if (!inert) {
@@ -149,7 +146,7 @@ function reveals() {
   // The hero manifest is above-the-fold content on most screens. Hiding it
   // behind a scroll reveal removed the portfolio's table of contents from
   // the first screen entirely on shorter viewports.
-  const targets = $$('.section-head, .rack, .lab-unit, .profile-lede, .profile-facts, .profile-card, .terminal, .channel-list a');
+  const targets = $$('.section-head, .rack, .lab-unit, .profile-lede, .profile-facts, .profile-card, .channel-list a');
   targets.forEach((el) => el.classList.add('rv'));
 
   const show = (el) => {
@@ -323,7 +320,6 @@ function dossier({ atlas: initialAtlas }) {
   let lastFocus = null;
 
   const fill = (project) => {
-    $('#dossier-index').textContent = `SYS-${project.index}`;
     $('#dossier-title').textContent = project.name;
     $('#dossier-tag').textContent = project.tag;
 
@@ -383,14 +379,11 @@ function dossier({ atlas: initialAtlas }) {
     panel.setAttribute('aria-hidden', 'false');
     document.body.classList.add('is-locked');
     document.body.classList.add('dossier-open');
-    // The terminal stays live — it is a second door into the same dossiers.
-    setBackgroundInert(true, { exempt: [$('#shell')] });
+    setBackgroundInert(true);
     if (scrim) scrim.hidden = false;
-    // Only take focus if it is not already somewhere usable. Stealing focus
-    // from the terminal field made the next command land on the close
-    // button and vanish — and the trailing Enter closed the drawer.
+    // Only take focus if it is not already somewhere usable.
     const active = document.activeElement;
-    if (!panel.contains(active) && active !== $('#terminal-field')) closeBtn.focus();
+    if (!panel.contains(active)) closeBtn.focus();
     atlas?.focus(id);
   };
 
@@ -416,7 +409,7 @@ function dossier({ atlas: initialAtlas }) {
   document.addEventListener('keydown', (e) => {
     if (!panel.classList.contains('open')) return;
     if (e.key === 'Escape') close();
-    else if (e.target !== $('#terminal-field')) trapFocus(panel, e);
+    else trapFocus(panel, e);
   });
 
   return {
@@ -428,88 +421,33 @@ function dossier({ atlas: initialAtlas }) {
   };
 }
 
-/* ---------- terminal ---------- */
 
-function terminal({ openDossier } = {}) {
-  const body = $('#terminal-body');
-  const form = $('#terminal-form');
-  const field = $('#terminal-field');
-  if (!body || !form || !field) return;
-  // Command history, as in a real shell: ArrowUp/ArrowDown walk it, a fresh
-  // command resets the pointer.
-  const history = [];
-  let histAt = -1;
-  field.addEventListener('keydown', (e) => {
-    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
-    if (!history.length) return;
-    e.preventDefault();
-    histAt = e.key === 'ArrowUp'
-      ? Math.max(0, histAt - 1)
-      : Math.min(history.length - 1, histAt + 1);
-    field.value = history[histAt];
+/* ---------- theme preview (temporary) ----------
+   Applies ?theme=NAME, wires the switcher buttons, re-lights the 3D
+   ground/fog to match the page, and keeps <meta theme-color> in sync. */
+const THEMES = {
+  dark:  { ground: 0x05070e, label: 'Dark' },
+  pixel: { ground: 0xf2e9d8, label: 'Pixel' },
+  light: { ground: 0xfafaf7, label: 'Light' },
+  warm:  { ground: 0x191512, label: 'Warm' },
+  brutal:{ ground: 0xffffff, label: 'Brutal' }
+};
+
+function applyTheme(name) {
+  const t = THEMES[name] ? name : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', `#${THEMES[t].ground.toString(16).padStart(6, '0')}`);
+  $$('.theme-switch button').forEach((b) => {
+    b.setAttribute('aria-pressed', String(b.dataset.setTheme === t));
   });
-
-  const write = (text, cls = 't-dim') => {
-    const line = document.createElement('div');
-    line.className = cls;
-    line.textContent = text;
-    body.appendChild(line);
-    body.scrollTop = body.scrollHeight;
-  };
-
-  write('Personal Systems Atlas — type "help" for commands.', 't-hi');
-  write('7 systems mapped · Baghdad clock live · session online', 't-dim');
-  write('', 't-dim');
-  write('SYS  NAME                TYPE', 't-ok');
-  PROJECTS.forEach((p) => {
-    write(`${p.index}  ${p.name.padEnd(20, ' ')} ${p.tag}`, 't-dim');
-  });
-  write('', 't-dim');
-  write('run "help" for commands · "dossier 1" to inspect one', 't-hi');
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const raw = field.value.trim();
-    field.value = '';
-    if (history[history.length - 1] !== raw) history.push(raw);
-    histAt = history.length;
-    write(raw, 't-cmd');
-    const cmd = raw.toLowerCase();
-
-    if (cmd === 'clear') {
-      body.innerHTML = '';
-      write('log cleared.', 't-dim');
-      return;
-    }
-
-    // `dossier <id>` opens the same panel the map does — the terminal and the
-    // atlas are two doors into the same seven projects.
-    const [verb, arg] = cmd.split(/\s+/);
-    if (verb === 'dossier') {
-      const project = resolveProject(arg);
-      if (!project) {
-        write(`unknown system: ${arg || '(none)'}. try: dossier 1, dossier athenas, dossier football`, 't-amber');
-        return;
-      }
-      write(`opening ${project.name.toLowerCase()} dossier...`, 't-ok');
-      openDossier?.(project.id);
-      return;
-    }
-
-    const entry = TERMINAL_COMMANDS[cmd];
-    if (!entry) {
-      write(`command not found: ${cmd}. try "help"`, 't-amber');
-      return;
-    }
-    entry.lines.forEach((line) => {
-      const cls = line.trim().startsWith('available') ? 't-hi'
-        : /\[running\]/.test(line) ? 't-ok'
-        : /^ {2}[a-z]/.test(line) ? 't-hi'
-        : 't-dim';
-      write(line, cls);
-    });
-  });
+  window.__atlas?.atlas?.setGround?.(THEMES[t].ground);
+  try { history.replaceState(null, '', t === 'dark' ? location.pathname : `?theme=${t}`); } catch { /* file:// */ }
 }
+
+$$('.theme-switch button').forEach((b) => b.addEventListener('click', () => applyTheme(b.dataset.setTheme)));
+const initialTheme = new URLSearchParams(location.search).get('theme');
+if (initialTheme) applyTheme(initialTheme);
+else document.documentElement.setAttribute('data-theme', 'dark');
 
 async function init() {
   document.documentElement.classList.remove('no-js');
@@ -540,7 +478,7 @@ async function init() {
   if (picker && pickerList && pickerBtn) {
     pickerList.innerHTML = PROJECTS.map((p) => `
       <li><button type="button" data-project="${p.id}">
-        <b>${p.index}</b><span>${p.name}</span><i aria-hidden="true">↗</i>
+        <span>${p.name}</span><i aria-hidden="true">↗</i>
       </button></li>`).join('');
     const setPicker = (open) => {
       picker.hidden = !open;
@@ -582,9 +520,7 @@ async function init() {
     });
   }
 
-  terminal({ openDossier });
-
-  // The manifest, the terminal and the dossiers are wired up before the 3D
+  // The manifest and the dossiers are wired up before the 3D
   // atlas loads. Three.js is ~380KB and its import blocks the main thread;
   // awaiting it first left the whole page inert for seconds on a slow
   // machine. The site now works while the diorama is still assembling.
@@ -598,6 +534,9 @@ async function init() {
         onHover: (id) => atlas?.setHover(id)
       });
       dossierPanel.setAtlas(atlas);
+      // Apply the active theme's ground so a ?theme= first load matches.
+      const themeName = document.documentElement.getAttribute('data-theme');
+      if (themeName && THEMES[themeName]) atlas.setGround(THEMES[themeName].ground);
     } catch (error) {
       console.warn('atlas unavailable:', error);
       const fallback = $('.stage-fallback');
@@ -610,6 +549,7 @@ async function init() {
   // Yield first so the first paint lands before the import starts.
   requestAnimationFrame(() => requestAnimationFrame(loadAtlas));
 }
+
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init, { once: true });

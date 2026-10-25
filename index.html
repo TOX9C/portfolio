@@ -31,12 +31,11 @@
     <span>TOX9C</span>
   </a>
   <nav class="hud-nav" id="hud-nav" aria-label="Primary">
-    <a href="#atlas"><em>01</em>Atlas</a>
-    <a href="#stack"><em>02</em>Stack</a>
-    <a href="#lab"><em>03</em>Lab</a>
-    <a href="#profile"><em>04</em>Profile</a>
-    <a href="#shell"><em>05</em>Shell</a>
-    <a href="#contact"><em>06</em>Contact</a>
+    <a href="#atlas">Atlas</a>
+    <a href="#stack">Stack</a>
+    <a href="#lab">Lab</a>
+    <a href="#profile">Profile</a>
+    <a href="#contact">Contact</a>
   </nav>
   <div class="hud-readout">
     <span class="led" aria-hidden="true"></span>
@@ -50,7 +49,7 @@
 
 <main id="main">
 
-  <!-- 01 / ATLAS -->
+  <!-- ATLAS -->
   <section class="stage" id="atlas" aria-labelledby="atlas-title">
     <div class="stage-canvas">
       <div class="atlas-placeholder" aria-hidden="true">
@@ -67,12 +66,6 @@
             <circle cx="120" cy="110" r="7"/>
             <circle cx="200" cy="130" r="7"/>
             <circle cx="280" cy="70" r="7"/>
-          </g>
-          <g fill="rgba(140,154,187,.4)" font-family="monospace" font-size="8" letter-spacing="1">
-            <text x="40" y="196" text-anchor="middle">01</text>
-            <text x="120" y="92" text-anchor="middle">02</text>
-            <text x="200" y="156" text-anchor="middle">03</text>
-            <text x="280" y="52" text-anchor="middle">04</text>
           </g>
         </svg>
       </div>
@@ -154,34 +147,29 @@
     </noscript>
   </section>
 
-  <!-- 02 / STACK -->
+  <!-- STACK -->
   <section class="section" id="stack" aria-labelledby="stack-title">
     <div class="section-head">
-      <p class="section-index">02</p>
       <h2 id="stack-title">The stack</h2>
       <p class="section-note">Four workbenches. Everything below is already in use on shipped work.</p>
     </div>
     <div class="rack-grid">
       <article class="rack">
-        <div class="rack-face"><span class="rack-led" aria-hidden="true"></span><span class="rack-code">MOD-01</span></div>
         <h3>Frontend</h3>
         <ul class="tag-list"><li>Next.js</li><li>React</li><li>TypeScript</li><li>Tailwind</li></ul>
         <p class="rack-proof"><span>shipped on</span><b>E-Commerce</b><b>Social</b><b>CashPilot</b></p>
       </article>
       <article class="rack">
-        <div class="rack-face"><span class="rack-led" aria-hidden="true"></span><span class="rack-code">MOD-02</span></div>
         <h3>Backend</h3>
         <ul class="tag-list"><li>Node.js</li><li>Express</li><li>PostgreSQL</li><li>Prisma</li></ul>
         <p class="rack-proof"><span>shipped on</span><b>Social</b><b>CashPilot</b><b>E-Commerce</b></p>
       </article>
       <article class="rack">
-        <div class="rack-face"><span class="rack-led amber" aria-hidden="true"></span><span class="rack-code">MOD-03</span></div>
         <h3>AI & systems</h3>
         <ul class="tag-list"><li>Python</li><li>XGBoost</li><li>Rust</li><li>Tauri</li></ul>
         <p class="rack-proof"><span>shipped on</span><b>Athenas Core</b><b>Football Predictor</b><b>OsSecurity</b></p>
       </article>
       <article class="rack">
-        <div class="rack-face"><span class="rack-led magenta" aria-hidden="true"></span><span class="rack-code">MOD-04</span></div>
         <h3>Infrastructure</h3>
         <ul class="tag-list"><li>Docker</li><li>Tailscale</li><li>Pi-hole</li><li>Jellyfin</li></ul>
         <p class="rack-proof"><span>runs in</span><b>home lab</b><b>3 services live</b></p>
@@ -189,10 +177,9 @@
     </div>
   </section>
 
-  <!-- 03 / LAB -->
+  <!-- LAB -->
   <section class="section" id="lab" aria-labelledby="lab-title">
     <div class="section-head">
-      <p class="section-index">03</p>
       <h2 id="lab-title">Home lab</h2>
       <p class="section-note">“Why rent infrastructure when you can run your own?”</p>
     </div>
@@ -201,19 +188,16 @@
         <header><h3>Jellyfin</h3><span class="status"><i aria-hidden="true"></i>running</span></header>
         <p>Media server, self-hosted streaming, zero subscriptions.</p>
         <p class="lab-value"><span>replaces</span>subscription streaming</p>
-        <span class="lab-meta">UNIT-01 · STREAM</span>
       </article>
       <article class="lab-unit">
         <header><h3>Pi-hole</h3><span class="status"><i aria-hidden="true"></i>running</span></header>
         <p>Network-wide DNS ad blocker for every device on the network.</p>
         <p class="lab-value"><span>blocks</span>ads before they load</p>
-        <span class="lab-meta">UNIT-02 · FILTER</span>
       </article>
       <article class="lab-unit">
         <header><h3>Tailscale</h3><span class="status"><i aria-hidden="true"></i>running</span></header>
         <p>Mesh VPN — secure access to the home cloud from anywhere.</p>
         <p class="lab-value"><span>reaches</span>the cloud from anywhere</p>
-        <span class="lab-meta">UNIT-03 · MESH</span>
       </article>
       <div class="lab-panel">
         <div class="lab-panel-bar">
@@ -236,10 +220,9 @@
     </div>
   </section>
 
-  <!-- 04 / PROFILE -->
+  <!-- PROFILE -->
   <section class="section" id="profile" aria-labelledby="profile-title">
     <div class="section-head">
-      <p class="section-index">04</p>
       <h2 id="profile-title">Profile</h2>
       <p class="section-note">Student, engineer, systems operator.</p>
     </div>
@@ -340,46 +323,10 @@
     </div>
   </section>
 
-  <!-- 05 / SHELL -->
-  <section class="section" id="shell" aria-labelledby="shell-title">
-    <div class="section-head">
-      <p class="section-index">05</p>
-      <h2 id="shell-title">Shell</h2>
-      <p class="section-note">A real terminal. Try <code>help</code>.</p>
-    </div>
-    <div class="shell-grid">
-      <div class="terminal" id="terminal">
-        <div class="terminal-bar">
-          <span>tox9c@atlas: ~</span>
-          <span class="terminal-bar-meta"><i aria-hidden="true"></i>session live</span>
-        </div>
-        <div class="terminal-body" id="terminal-body" role="log" aria-live="polite"></div>
-        <form class="terminal-input" id="terminal-form">
-          <label class="sr-only" for="terminal-field">Terminal command</label>
-          <span class="terminal-prompt" aria-hidden="true">$</span>
-          <input id="terminal-field" type="text" autocomplete="off" spellcheck="false" placeholder="type a command — try 'help'"/>
-        </form>
-      </div>
-      <aside class="shell-reference">
-        <p class="shell-reference-head">Command reference</p>
-        <dl>
-          <div><dt>whoami</dt><dd>identity & credentials</dd></div>
-          <div><dt>projects</dt><dd>all seven systems</dd></div>
-          <div><dt>dossier <n></dt><dd>open a system — try <code>1</code> or <code>football</code></dd></div>
-          <div><dt>skills</dt><dd>the stack</dd></div>
-          <div><dt>lab</dt><dd>home server services</dd></div>
-          <div><dt>contact</dt><dd>channels & email</dd></div>
-          <div><dt>clear</dt><dd>wipe this log</dd></div>
-        </dl>
-        <p class="shell-reference-note">The terminal and the atlas are two doors into the same seven projects.</p>
-      </aside>
-    </div>
-  </section>
 
-  <!-- 06 / CONTACT -->
+  <!-- CONTACT -->
   <section class="section section-contact" id="contact" aria-labelledby="contact-title">
     <div class="section-head">
-      <p class="section-index">06</p>
       <h2 id="contact-title">Open a channel</h2>
       <p class="section-note">Open to internships & junior roles.</p>
     </div>
@@ -426,7 +373,6 @@
 <div class="dossier-scrim" id="dossier-scrim" hidden></div>
 <aside class="dossier" id="dossier" role="dialog" aria-modal="true" aria-labelledby="dossier-title" aria-hidden="true">
   <button class="dossier-close" id="dossier-close" type="button" aria-label="Close dossier">✕</button>
-  <p class="dossier-index" id="dossier-index">SYS-01</p>
   <h2 id="dossier-title" class="dossier-title">Athenas Core</h2>
   <p class="dossier-tag" id="dossier-tag"></p>
   <div class="dossier-shot">
@@ -442,6 +388,15 @@
   <div class="dossier-links" id="dossier-links"></div>
 </aside>
 
+
+<!-- Theme switcher: temporary, for choosing the direction. Not part of the final site. -->
+<div class="theme-switch" role="group" aria-label="Theme preview">
+  <button data-set-theme="dark" type="button">Dark</button>
+  <button data-set-theme="pixel" type="button">Pixel</button>
+  <button data-set-theme="light" type="button">Light</button>
+  <button data-set-theme="warm" type="button">Warm</button>
+  <button data-set-theme="brutal" type="button">Brutal</button>
+</div>
 <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>

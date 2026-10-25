@@ -31,30 +31,108 @@
 }
 
 :root{
-  --void:#05070E;
+  /* ---- theme tokens ----
+     The whole palette is swappable: --bg is the page ground, --panel the
+     card surface, --ink the primary text, --accent the single color. Every
+     surface and border in the file reads from these, so a theme is just a
+     block of values. --line/--line-soft carry borders so light themes can
+     use dark rules instead of pale-white ones. */
+  --bg:var(--bg);
+  --void:var(--bg);
   --deep:#080C17;
   --panel:#0C1120;
   --panel-2:#121A2E;
   --ink:#EAF1FF;
   --muted:#8C9ABB;
-  /* #7A88AA = 4.89:1 on panel, 5.68:1 on void — clears WCAG AA (4.5:1) with
-     margin on every surface. The old #6E7C9E passed on void but fell to
-     4.16:1 on the panel cards. */
   --faint:#7A88AA;
+  --accent:#54E1FF;
   --cyan:#54E1FF;
   --amber:#FFB65C;
   --magenta:#FF5C9A;
   --green:#7CF29B;
-  --hair:rgba(140,154,187,.16);
-  --hair-soft:rgba(140,154,187,.08);
-  --glow:rgba(84,225,255,.34);
+  --line:var(--line);
+  --line-soft:var(--line-soft);
+  --hair:var(--line);
+  --hair-soft:var(--line-soft);
+  --shadow:none;
+  --radius:22px;
   --pixel:'Pixelify',ui-monospace,monospace;
   --sans:'Sora',system-ui,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,monospace;
   --ease:cubic-bezier(.16,1,.3,1);
   --ease-out:cubic-bezier(.22,.61,.36,1);
-  --pad:clamp(20px,5vw,88px);
+  --pad:clamp(20px,5vw,88px)}
+
+/* ============ THEMES ============ */
+
+/* The default is the current dark site, kept as-is so nothing shifts
+   until a theme is chosen. */
+:root[data-theme="dark"]{
+  --bg:var(--bg);--void:var(--bg);--deep:#080C17;
+  --panel:#0C1120;--panel-2:#121A2E;
+  --ink:#EAF1FF;--muted:#8C9ABB;--faint:#7A88AA;
+  --accent:#54E1FF;--cyan:#54E1FF;
+  --line:var(--line);--line-soft:var(--line-soft);
+  --hair:var(--line);--hair-soft:var(--line-soft);
   --radius:22px}
+
+/* Pixel-game: cream paper, chunky black borders, hard offset shadows.
+   Full commitment to the pixel brief — reads like a game cartridge. */
+:root[data-theme="pixel"]{
+  --bg:#F2E9D8;--void:#F2E9D8;--deep:#E8DCC4;
+  --panel:#FFF7E8;--panel-2:#EBDFC8;
+  --ink:#1A1512;--muted:#5C5348;--faint:#8A7E6E;
+  --accent:#0E63B6;--cyan:#0E63B6;
+  --line:#1A1512;--line-soft:#1A1512;
+  --hair:#1A1512;--hair-soft:#1A1512;
+  --radius:0px}
+
+/* Light editorial: white ground, near-black ink, restrained blue accent. */
+:root[data-theme="light"]{
+  --bg:#FAFAF7;--void:#FAFAF7;--deep:#F0F0EC;
+  --panel:#FFFFFF;--panel-2:#F4F4F0;
+  --ink:#121212;--muted:#5F6368;--faint:#80868B;
+  --accent:#0B57D0;--cyan:#0B57D0;
+  --line:rgba(18,18,18,.14);--line-soft:rgba(18,18,18,.08);
+  --hair:rgba(18,18,18,.14);--hair-soft:rgba(18,18,18,.08);
+  --radius:16px}
+
+/* Warm charcoal: dark but warm — no cyan-terminal vibe, single amber accent. */
+:root[data-theme="warm"]{
+  --bg:#191512;--void:#191512;--deep:#141110;
+  --panel:#221D19;--panel-2:#2A241F;
+  --ink:#F2E9DC;--muted:#A89A8A;--faint:#8A7E70;
+  --accent:#E8A64D;--cyan:#E8A64D;
+  --line:rgba(242,233,220,.16);--line-soft:rgba(242,233,220,.09);
+  --hair:rgba(242,233,220,.16);--hair-soft:rgba(242,233,220,.09);
+  --radius:16px}
+
+/* Brutalist: white, black type, no radius, exposed rules. */
+:root[data-theme="brutal"]{
+  --bg:#FFFFFF;--void:#FFFFFF;--deep:#F2F2F2;
+  --panel:#FFFFFF;--panel-2:#F2F2F2;
+  --ink:#000000;--muted:#333333;--faint:#666666;
+  --accent:#FF3B00;--cyan:#FF3B00;
+  --line:#000000;--line-soft:#000000;
+  --hair:#000000;--hair-soft:#000000;
+  --radius:0px}
+
+/* ---------- theme switcher (temporary preview tool) ---------- */
+.theme-switch{
+  position:fixed;left:12px;bottom:12px;z-index:3000;
+  display:flex;gap:6px;padding:6px;border-radius:10px;
+  background:var(--panel);border:1px solid var(--line)}
+.theme-switch button{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;
+  padding:.45rem .7rem;border-radius:6px;cursor:pointer;
+  border:1px solid var(--line-soft);
+  background:transparent;color:var(--muted)}
+.theme-switch button[aria-pressed="true"]{
+  background:var(--accent);color:var(--bg);border-color:var(--accent)}
+:root[data-theme="pixel"] .theme-switch,
+:root[data-theme="brutal"] .theme-switch{border-radius:0}
+:root[data-theme="pixel"] .theme-switch button,
+:root[data-theme="brutal"] .theme-switch button{border-radius:0}
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -105,7 +183,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 /* ---------- progress ---------- */
 .scroll-progress{
   position:fixed;top:0;left:0;right:0;height:2px;z-index:1200;
-  background:rgba(140,154,187,.10)}
+  background:var(--line-soft)}
 .scroll-progress i{
   display:block;height:100%;width:0;
   background:var(--cyan);
@@ -120,7 +198,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding:.85rem var(--pad);
   /* A real scrim: the bar sits over section headings, so it must separate
      them rather than fade into the page. */
-  background:rgba(5,7,14,.97);
+  background:color-mix(in srgb, var(--bg) 97.0%, transparent);
   
   border-bottom:1px solid var(--hair-soft)}
 .brand{
@@ -243,7 +321,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   height:100%;
   min-height:340px;
   border-radius:28px;
-  background:#0A0F1C;
+  background:var(--panel);
   border:1px solid var(--hair-soft);
   
   overflow:hidden}
@@ -283,7 +361,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   text-transform:uppercase;color:var(--muted);
   border:1px solid var(--hair);border-radius:99px;
   padding:.45rem .95rem;
-  background:rgba(12,17,32,.6)}
+  background:color-mix(in srgb, var(--panel) 60%, transparent)}
 
 .display{
   font-family:var(--pixel);font-weight:700;
@@ -338,7 +416,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .stage-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.1rem}
 
 /* The availability status. A recruiter needs "who wants what" on the first
-   screen — it was buried in the terminal, the résumé and the contact section. */
+   screen — it was buried below the fold. */
 .stage-role{
   display:block;
   margin-top:.7rem;
@@ -360,13 +438,13 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--mono);font-size:.76rem;font-weight:600;
   letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);
   padding:.4rem .75rem;border-radius:8px;
-  border:1px solid rgba(84,225,255,.3);
-  background:rgba(84,225,255,.08);
+  border:1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  background:color-mix(in srgb, var(--accent) 12%, transparent);
   cursor:pointer;
   transition:background .3s var(--ease),border-color .3s var(--ease),transform .3s var(--ease)
 }
 .stage-open button:hover{
-  background:rgba(84,225,255,.16);border-color:rgba(84,225,255,.55);
+  background:color-mix(in srgb, var(--accent) 20%, transparent);border-color:color-mix(in srgb, var(--accent) 60%, var(--line));
   transform:translateY(-1px)
 }
 .stage-open button span{transition:transform .3s var(--ease)}
@@ -393,8 +471,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   flex:none;
   padding:.8rem .9rem .9rem;
   border-radius:14px;
-  border:1px solid rgba(84,225,255,.28);
-  background:rgba(8,12,23,.96);
+  border:1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+  background:var(--panel);
   animation:scrim-in .22s var(--ease)
 }
 .stage-picker[hidden]{display:none}
@@ -409,12 +487,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .stage-picker button{
   width:100%;display:flex;align-items:center;gap:.45rem;
   padding:.38rem .5rem;border-radius:8px;
-  border:1px solid var(--hair);background:rgba(140,154,187,.05);
+  border:1px solid var(--hair);background:var(--line-soft);
   cursor:pointer;text-align:left;
   transition:border-color .25s var(--ease),background .25s var(--ease)
 }
 .stage-picker button:hover{
-  border-color:rgba(84,225,255,.5);background:rgba(84,225,255,.1)
+  border-color:color-mix(in srgb, var(--accent) 55%, var(--line));background:color-mix(in srgb, var(--accent) 14%, transparent)
 }
 .stage-picker button b{
   font-family:var(--mono);font-size:.68rem;font-weight:600;
@@ -436,26 +514,26 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding:.85rem 1rem .85rem 1.4rem;
   border-radius:99px;
   border:1px solid var(--hair);
-  background:rgba(12,17,32,.7);
+  background:color-mix(in srgb, var(--panel-2) 70.0%, transparent);
   transition:transform .45s var(--ease),border-color .35s var(--ease),background .35s var(--ease)
 }
 .btn-arrow{
   display:grid;place-items:center;
   width:30px;height:30px;border-radius:99px;
-  background:rgba(140,154,187,.14);
+  background:var(--line);
   font-size:.9rem;
   transition:transform .45s var(--ease),background .35s var(--ease)
 }
 .btn:hover{
   transform:translateY(-2px);
-  border-color:rgba(84,225,255,.45)}
-.btn:hover .btn-arrow{background:rgba(84,225,255,.22)}
+  border-color:color-mix(in srgb, var(--accent) 55%, var(--line))}
+.btn:hover .btn-arrow{background:color-mix(in srgb, var(--accent) 28%, transparent)}
 .btn:active{transform:translateY(0) scale(.98)}
 .btn-primary{
   background:var(--cyan);color:var(--void);border-color:transparent;
 }
-.btn-primary .btn-arrow{background:rgba(5,7,14,.16);color:var(--void)}
-.btn-primary:hover .btn-arrow{background:rgba(5,7,14,.28)}
+.btn-primary .btn-arrow{background:color-mix(in srgb, var(--bg) 16.0%, transparent);color:var(--void)}
+.btn-primary:hover .btn-arrow{background:color-mix(in srgb, var(--bg) 28.000000000000004%, transparent)}
 
 .stage-chips{
   display:flex;flex-wrap:wrap;gap:2rem;
@@ -486,12 +564,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:inline-flex;align-items:baseline;gap:.45rem;
   padding:.4rem .7rem;border-radius:9px;
   border:1px solid var(--hair);
-  background:rgba(12,17,32,.5);
+  background:color-mix(in srgb, var(--panel-2) 50.0%, transparent);
   transition:border-color .3s var(--ease),background .3s var(--ease)
 }
 .stage-proof a:hover{
-  border-color:rgba(84,225,255,.45);
-  background:rgba(84,225,255,.08)
+  border-color:color-mix(in srgb, var(--accent) 55%, var(--line));
+  background:color-mix(in srgb, var(--accent) 12%, transparent)
 }
 .stage-proof b{
   font-family:var(--pixel);font-size:.72rem;font-weight:700;
@@ -514,7 +592,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
    no pulse — the map itself is the invitation. */
 .stage-corner .hint{
   padding:.42rem .7rem;border-radius:99px;
-  background:rgba(5,7,14,.7);border:1px solid var(--hair-soft);
+  background:color-mix(in srgb, var(--bg) 70%, transparent);border:1px solid var(--hair-soft);
   color:var(--muted)}
 
 .stage-legend{
@@ -560,13 +638,13 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:flex;flex-direction:column;
   padding:0;border-radius:12px;
   border:1px solid var(--hair-soft);
-  background:rgba(12,17,32,.55);
+  background:color-mix(in srgb, var(--panel) 55%, transparent);
   overflow:hidden;
   transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease)
 }
 .legend-list button:hover{
-  background:rgba(84,225,255,.1);
-  border-color:rgba(84,225,255,.38);
+  background:color-mix(in srgb, var(--accent) 14%, transparent);
+  border-color:color-mix(in srgb, var(--accent) 45%, var(--line));
   transform:translateY(-2px)
 }
 /* The real screenshot is what makes the manifest a portfolio rather than a
@@ -601,15 +679,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:flex;align-items:center;justify-content:space-between;
   gap:.4rem;min-width:0
 }
-.legend-key{
-  font-family:var(--mono);font-size:.72rem;color:var(--cyan);
-  letter-spacing:.04em;flex:none
-}
 /* The hard number, on the card. A recruiter sees the proof without opening
    the drawer, which is what makes the manifest evidence and not decoration. */
 .legend-proof{
   padding:.12rem .38rem;border-radius:6px;
-  background:rgba(84,225,255,.1);border:1px solid rgba(84,225,255,.3);
+  background:color-mix(in srgb, var(--accent) 14%, transparent);border:1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
   font-family:var(--mono);font-size:.64rem;font-weight:600;
   letter-spacing:.03em;color:var(--cyan);
   white-space:nowrap;flex:none
@@ -661,16 +735,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   margin-bottom:clamp(2.4rem,5vw,4rem);
   max-width:78rem
 }
-.section-index{
-  grid-row:1 / span 2;
-  font-family:var(--sans);font-weight:600;
-  font-size:clamp(2.4rem,5.4vw,4.4rem);line-height:.8;
-  letter-spacing:-.04em;
-  color:transparent;-webkit-text-stroke:1.4px rgba(178,196,224,.42)}
 /* Typographic hierarchy: pixel type marks the ATLAS interface (the map, the
-   HUD, the manifest, the terminal). Sora marks the EDITORIAL layer — the
+   HUD and the manifest). Sora marks the EDITORIAL layer — the
    section headings and the prose a recruiter actually reads. Without this
-   split the whole page reads as one terminal and the hero loses its impact. */
+   split the whole page reads as one texture and the hero loses its impact. */
 .section-head h2{
   font-family:var(--sans);font-weight:600;
   font-size:clamp(1.9rem,3.9vw,3.2rem);line-height:1.02;
@@ -698,23 +766,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   position:relative;
   padding:1.1rem 1.2rem 1.4rem;
   border-radius:var(--radius);
-  background:#0C1220;
+  background:var(--panel);
   border:1px solid var(--hair);
   
   transition:transform .5s var(--ease),border-color .4s var(--ease)
 }
-.rack:hover{border-color:rgba(84,225,255,.35)}
-.rack-face{
-  display:flex;align-items:center;justify-content:space-between;
-  padding-bottom:.9rem;margin-bottom:1.1rem;
-  border-bottom:1px solid var(--hair-soft)}
-.rack-led{
-  width:8px;height:8px;border-radius:2px;background:var(--cyan)}
-.rack-led.amber{background:var(--cyan)}
-.rack-led.magenta{background:var(--ink)}
-.rack-code{
-  font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;color:var(--faint)
-}
+.rack:hover{border-color:color-mix(in srgb, var(--accent) 45%, var(--line))}
 .rack h3{
   font-family:var(--sans);font-weight:600;
   font-size:1.3rem;letter-spacing:-.015em;
@@ -725,7 +782,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
   padding:.32rem .7rem;border-radius:99px;
   border:1px solid var(--hair);color:var(--muted);
-  background:rgba(5,7,14,.5)
+  background:color-mix(in srgb, var(--bg) 50.0%, transparent)
 }
 
 /* Which shipped systems each workbench actually produced — proof, not a skills widget. */
@@ -740,7 +797,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .rack-proof b{
   font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.04em;
   color:var(--cyan);padding:.22rem .5rem;border-radius:6px;
-  background:rgba(84,225,255,.09);border:1px solid rgba(84,225,255,.18)
+  background:color-mix(in srgb, var(--accent) 12%, transparent);border:1px solid color-mix(in srgb, var(--accent) 22%, transparent)
 }
 
 /* ---------- lab ---------- */
@@ -758,7 +815,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   position:relative;overflow:hidden;
   padding:1.5rem 1.4rem 3rem;
   border-radius:var(--radius);
-  background:#0C1220;
+  background:var(--panel);
   border:1px solid var(--hair);
   transition:transform .5s var(--ease),border-color .4s var(--ease)
 }
@@ -794,10 +851,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--mono);font-size:.68rem;font-weight:400;
   letter-spacing:.16em;text-transform:uppercase;color:var(--faint)
 }
-.lab-meta{
-  position:absolute;bottom:1rem;left:1.4rem;
-  font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;color:var(--faint)
-}
 
 /* The service monitor. It is the one readout on the site that looks like a
    machine reporting on itself, which is exactly what a home lab is. */
@@ -805,7 +858,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:flex;flex-direction:column;
   border-radius:var(--radius);
   border:1px solid var(--hair);
-  background:#0A0F1C;
+  background:var(--panel);
   overflow:hidden;
 }
 .lab-panel-bar{
@@ -889,8 +942,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .profile-focus{
   margin-top:1.8rem;padding:1.1rem 1.2rem;
   border-radius:16px;
-  background:rgba(84,225,255,.05);
-  border:1px solid rgba(84,225,255,.18)
+  background:color-mix(in srgb, var(--accent) 8%, transparent);
+  border:1px solid color-mix(in srgb, var(--accent) 22%, transparent)
 }
 .profile-focus-label{
   font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;
@@ -914,7 +967,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding:1.6rem 1.5rem;
   border-radius:var(--radius);
   border:1px solid var(--hair);
-  background:#0C1220}
+  background:var(--panel)}
 
 /* The operator ID line. The card opened straight into the award, which read
    as a résumé row; the ID makes the person — name, callsign, status — the
@@ -928,8 +981,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   width:44px;height:44px;flex:none;
   display:grid;place-items:center;
   border-radius:12px;
-  background:rgba(84,225,255,.08);
-  border:1px solid rgba(84,225,255,.25)
+  background:color-mix(in srgb, var(--accent) 12%, transparent);
+  border:1px solid color-mix(in srgb, var(--accent) 30%, transparent)
 }
 .profile-id-glyph svg{width:26px;height:26px}
 .profile-id-text{display:flex;flex-direction:column;min-width:0}
@@ -975,7 +1028,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .profile-badge{
   display:flex;align-items:center;gap:1rem;
   padding:1.1rem;border-radius:16px;
-  background:rgba(5,7,14,.6);border:1px solid var(--hair-soft);
+  background:color-mix(in srgb, var(--bg) 60.0%, transparent);border:1px solid var(--hair-soft);
   margin-bottom:1.1rem
 }
 .badge-pixel{
@@ -986,8 +1039,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:flex;align-items:flex-start;gap:.7rem;
   padding:.95rem 1.1rem;margin-bottom:1.1rem;
   border-radius:14px;
-  background:rgba(84,225,255,.06);
-  border:1px solid rgba(84,225,255,.2)
+  background:color-mix(in srgb, var(--accent) 9%, transparent);
+  border:1px solid color-mix(in srgb, var(--accent) 25%, transparent)
 }
 .profile-status .status-dot{
   width:8px;height:8px;flex:none;margin-top:.4rem;border-radius:50%;
@@ -1030,91 +1083,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   letter-spacing:.02em;color:var(--faint)
 }
 
-/* ---------- terminal ---------- */
-/* The terminal beside its command reference: one lone band left a third of the
-   section empty and gave a first-time visitor no way to know what to type. */
-.shell-grid{
-  display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
-  gap:clamp(1rem,2vw,1.6rem);
-  max-width:78rem;align-items:stretch
-}
-.shell-reference{
-  display:flex;flex-direction:column;
-  padding:1.3rem 1.4rem;border-radius:var(--radius);
-  border:1px solid var(--hair);
-  background:#0C1220}
-.shell-reference-head{
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--faint);
-  padding-bottom:.7rem;margin-bottom:.2rem;
-  border-bottom:1px solid var(--hair-soft)
-}
-.shell-reference dl{flex:1}
-.shell-reference dl>div{
-  display:grid;grid-template-columns:8.5rem minmax(0,1fr);
-  gap:.8rem;padding:.62rem 0;
-  border-bottom:1px solid var(--hair-soft)
-}
-.shell-reference dt{
-  font-family:var(--mono);font-size:.78rem;font-weight:600;
-  color:var(--cyan);letter-spacing:.02em
-}
-.shell-reference dt code{
-  font-family:var(--mono);font-size:inherit;color:var(--cyan);
-  background:none;padding:0
-}
-.shell-reference dd{
-  margin:0;color:var(--muted);font-size:.84rem;line-height:1.4
-}
-.shell-reference-note{
-  margin-top:1rem;
-  font-family:var(--sans);font-size:.82rem;line-height:1.55;color:var(--faint)
-}
-.terminal{
-  max-width:78rem;
-  border-radius:var(--radius);
-  border:1px solid var(--hair);
-  background:rgba(4,6,12,.85);
-  overflow:hidden
-}
-.terminal-bar{
-  display:flex;align-items:center;justify-content:space-between;gap:1rem;
-  padding:.7rem 1.1rem;
-  border-bottom:1px solid var(--hair-soft);
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--faint)
-}
-.terminal-bar-meta{display:inline-flex;align-items:center;gap:.45rem;color:var(--cyan)}
-.terminal-bar-meta i{width:6px;height:6px;border-radius:1px;background:var(--cyan)}
-.terminal-body{
-  padding:1.1rem 1.2rem;
-  min-height:clamp(200px,26vh,260px);max-height:360px;overflow-y:auto;
-  font-family:var(--mono);font-size:.74rem;line-height:1.75;
-  scrollbar-width:thin;scrollbar-color:var(--faint) transparent
-}
-.terminal-body div{white-space:pre-wrap;word-break:break-word}
-.t-cmd{color:var(--ink)}
-.t-cmd::before{content:'$ ';color:var(--cyan)}
-.t-hi{color:var(--cyan)}
-.t-ok{color:var(--cyan)}
-.t-dim{color:var(--muted)}
-.t-amber{color:var(--muted)}
-.terminal-input{
-  display:flex;align-items:center;gap:.7rem;
-  padding:.85rem 1.2rem;border-top:1px solid var(--hair-soft)
-}
-.terminal-prompt{color:var(--cyan);font-family:var(--mono)}
-.terminal-input input{
-  flex:1;min-width:0;background:none;border:none;
-  color:var(--ink);font-family:var(--mono);font-size:.74rem
-}
-/* The global :focus-visible rule is (0,1,0); this selector is (0,1,1) and would
-   outrank it, so the ring has to be restated here. */
-.terminal-input input:focus-visible{
-  outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px
-}
-.terminal-input input::placeholder{color:var(--faint)}
-
 /* ---------- contact ---------- */
 .section-contact{padding-bottom:clamp(4rem,8vh,7rem)}
 .contact-payoff{
@@ -1143,12 +1111,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   align-items:center;
   column-gap:1rem;row-gap:.35rem;
   margin-top:2rem;padding:1.15rem 1.15rem 1.15rem 1.4rem;
-  border:1px solid rgba(84,225,255,.3);border-radius:var(--radius);
-  background:rgba(84,225,255,.05);
+  border:1px solid color-mix(in srgb, var(--accent) 45%, var(--line));border-radius:var(--radius);
+  background:color-mix(in srgb, var(--accent) 8%, transparent);
   transition:transform .45s var(--ease),border-color .35s var(--ease)}
 .contact-mail:hover{
   transform:translateY(-4px);
-  border-color:rgba(84,225,255,.6);
+  border-color:color-mix(in srgb, var(--accent) 65%, var(--line));
 }
 .contact-mail-label{
   grid-area:label;
@@ -1165,13 +1133,13 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   column-gap:1rem;row-gap:.3rem;
   margin-top:.7rem;padding:.95rem 1.15rem .95rem 1.4rem;
   border:1px solid var(--hair);border-radius:var(--radius);
-  background:rgba(8,12,23,.55);
+  background:color-mix(in srgb, var(--panel) 55.00000000000001%, transparent);
   transition:transform .4s var(--ease),border-color .35s var(--ease),background .35s var(--ease)
 }
 .contact-resume:hover{
   transform:translateY(-3px);
-  border-color:rgba(84,225,255,.45);
-  background:rgba(84,225,255,.06)
+  border-color:color-mix(in srgb, var(--accent) 55%, var(--line));
+  background:color-mix(in srgb, var(--accent) 9%, transparent)
 }
 .contact-resume-label{
   grid-area:label;
@@ -1202,7 +1170,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   transition:background .4s var(--ease),padding .4s var(--ease)
 }
 .channel-list a:hover{
-  background:rgba(84,225,255,.05);
+  background:color-mix(in srgb, var(--accent) 8%, transparent);
   padding-left:1.1rem;padding-right:1.1rem
 }
 .channel-list span{
@@ -1246,7 +1214,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   width:min(480px,100vw);
   padding:clamp(1.6rem,3vw,2.4rem);
   overflow-y:auto;
-  background:#0B1120;
+  background:var(--panel);
   border-left:1px solid var(--hair);
   transform:translateX(102%);
   /* 280ms, not 600ms. The drawer is a panel the visitor is waiting to read;
@@ -1262,11 +1230,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-size:.9rem;line-height:1;
   transition:background .3s var(--ease),color .3s var(--ease),transform .4s var(--ease)
 }
-.dossier-close:hover{background:rgba(140,154,187,.14);color:var(--ink)}
-.dossier-index{
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;
-  color:var(--cyan);text-transform:uppercase
-}
+.dossier-close:hover{background:var(--line);color:var(--ink)}
 .dossier-title{
   font-family:var(--pixel);font-weight:700;
   font-size:clamp(1.7rem,4vw,2.6rem);line-height:1;letter-spacing:.02em;
@@ -1287,7 +1251,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   text-transform:uppercase;color:var(--faint)}
 .dossier-scan{
   position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(0deg,rgba(5,7,14,.14) 0 1px,transparent 1px 4px);
+  background:repeating-linear-gradient(0deg,color-mix(in srgb, var(--bg) 14.000000000000002%, transparent) 0 1px,transparent 1px 4px);
   opacity:.4
 }
 .dossier-thumbs{display:flex;gap:.5rem;margin-top:.6rem;flex-wrap:wrap}
@@ -1308,7 +1272,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .dossier-features{
   margin-top:1.2rem;display:grid;gap:.55rem;
   padding:1rem 1.1rem;border-radius:14px;
-  border:1px solid var(--hair-soft);background:rgba(8,12,23,.55)
+  border:1px solid var(--hair-soft);background:color-mix(in srgb, var(--panel) 55.00000000000001%, transparent)
 }
 .dossier-features li{
   display:grid;grid-template-columns:auto minmax(0,1fr);gap:.7rem;
@@ -1324,7 +1288,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .dossier-stats li{
   padding:.8rem .9rem;border-radius:14px;
-  border:1px solid var(--hair);background:rgba(8,12,23,.7)
+  border:1px solid var(--hair);background:color-mix(in srgb, var(--panel) 70.0%, transparent)
 }
 .dossier-stats b{
   display:block;font-family:var(--sans);font-weight:600;
@@ -1343,10 +1307,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--pixel);font-size:.78rem;letter-spacing:.08em;
   text-transform:uppercase;
   padding:.65rem 1rem;border-radius:99px;
-  border:1px solid var(--hair);background:rgba(8,12,23,.7);
+  border:1px solid var(--hair);background:color-mix(in srgb, var(--panel) 70.0%, transparent);
   transition:border-color .3s var(--ease),background .3s var(--ease),transform .4s var(--ease)
 }
-.dossier-links a:hover{border-color:rgba(84,225,255,.5);background:rgba(84,225,255,.08)}
+.dossier-links a:hover{border-color:color-mix(in srgb, var(--accent) 55%, var(--line));background:color-mix(in srgb, var(--accent) 12%, transparent)}
 .dossier-links a.primary{background:var(--cyan);color:var(--void);border-color:transparent}
 
 /* ---------- atlas labels ---------- */
@@ -1356,8 +1320,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   position:absolute;top:0;left:0;
   display:inline-flex;align-items:center;gap:.45rem;
   padding:.45rem .75rem;border-radius:8px;
-  border:1px solid rgba(140,154,187,.26);
-  background:rgba(5,7,14,.85);
+  border:1px solid var(--line);
+  background:color-mix(in srgb, var(--bg) 85%, transparent);
   font-family:var(--pixel);font-size:.78rem;letter-spacing:.05em;
   text-transform:uppercase;color:var(--ink);
   white-space:nowrap;pointer-events:auto;
@@ -1407,8 +1371,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .legend-list{grid-template-columns:repeat(auto-fit,minmax(158px,1fr))}
   .profile-grid{grid-template-columns:1fr}
   .contact-payoff{grid-template-columns:1fr;gap:2.4rem}
-  .shell-grid{grid-template-columns:1fr}
-  /* The monitor spans the full width below the three service cards. */
+    /* The monitor spans the full width below the three service cards. */
   .lab-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
   .lab-panel{grid-column:1 / -1}
 }
@@ -1421,14 +1384,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .hud{
     /* Fully opaque all the way down: a translucent bottom edge let section
        headings show through the bar on a phone. */
-    background:rgba(5,7,14,.98);
+    background:var(--bg);
     border-bottom:1px solid var(--hair-soft)
   }
   .hud-nav{
     position:fixed;inset:0;
     flex-direction:column;justify-content:center;align-items:flex-start;
     gap:1.4rem;padding:0 var(--pad);
-    background:rgba(5,7,14,.96);
+    background:color-mix(in srgb, var(--bg) 96%, transparent);
     opacity:0;visibility:hidden;
     /* Visibility flips instantly on open so the links are focusable right
        away, and only after the fade on close. */
@@ -1480,7 +1443,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
     position:sticky;top:.6rem;
     margin-left:auto;
     z-index:5;
-    background:rgba(8,12,23,.92)}
+    background:color-mix(in srgb, var(--panel) 92%, transparent)}
   .profile-facts li{grid-template-columns:1fr;gap:.2rem}
   .profile-focus li{grid-template-columns:1fr;gap:.2rem}
   .profile-credentials>div{grid-template-columns:6.5rem minmax(0,1fr);gap:.6rem}
@@ -1513,30 +1476,23 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .contact-payoff{gap:1.8rem}
   /* Metadata is supporting text on desktop but becomes the primary content
      on a phone, where there is no second column to lean on. */
-  .legend-key,.legend-name,.legend-tag{font-size:.78rem}
-  .profile-status b,.profile-card-note{font-size:.76rem}
+    .profile-status b,.profile-card-note{font-size:.76rem}
   .profile-badge p{font-size:.82rem}
   .section{padding-left:20px;padding-right:20px}
   .stage{padding-left:20px;padding-right:20px}
-  .terminal-body{font-size:.72rem}
 }
 
 /* ---------- phone legibility ----------
    Measured on a 390px viewport: section notes rendered at 11.5px, the
-   terminal field at 11.8px in a 16px-tall box, the footer link at 16px.
-   Below ~13px a phone screen stops being readable at a glance, and a
-   16px-tall input is unusable with a thumb. These are the smallest text
-   and tap targets on the page, so they are the ones to fix. */
+   footer link at 16px tall.
+   Below ~13px a phone screen stops being readable at a glance. These are
+   the smallest text and tap targets on the page. */
 @media (max-width:640px){
   .section-note{font-size:.82rem;letter-spacing:.08em;line-height:1.5}
   .eyebrow{font-size:.78rem}
   .stage-role-line{font-size:.76rem}
   .stage-chips span{font-size:.68rem}
   .stage-corner{font-size:.78rem}
-  .terminal-body{font-size:.82rem;line-height:1.7}
-  .terminal-input{padding:1rem 1.2rem}
-  .terminal-bar{font-size:.78rem}
-  .shell-reference dt,.shell-reference dd{font-size:.82rem}
   .footer{font-size:.8rem}
   .footer a{padding:.6rem 0;display:inline-block}
   .atlas-label{font-size:.74rem;padding:.5rem .75rem}
@@ -1547,12 +1503,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .hud-nav a{font-size:clamp(1.8rem,8vw,2.6rem)}
   .contact-mail-addr{font-size:.98rem}
 
-  /* WCAG 2.5.5 wants 44px. These were all under: the terminal field was
-     16px tall, "open a dossier" 35px, the footer link 16px, the atlas
-     landmarks 31px. */
+  /* WCAG 2.5.5 wants 44px. */
   .menu-toggle{width:44px;height:44px}
   .dossier-close{width:44px;height:44px}
-  .terminal-input input{min-height:24px;font-size:1rem}
   .stage-open button{min-height:44px;padding:.55rem .9rem}
   .footer a{min-height:44px;display:inline-flex;align-items:center}
   .atlas-label{min-height:40px;align-items:center}

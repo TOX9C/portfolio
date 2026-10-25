@@ -54,9 +54,18 @@ function box(color, w, h, d, x, y, z, emissive = 0) {
 /* ---------- island ---------- */
 
 function buildIsland(group) {
+  // Collected so setGround can retint the whole terrain for a theme.
+  const groundMats = [];
+  const groundMat = (color) => {
+    const m = new THREE.MeshLambertMaterial({ color });
+    groundMats.push(m);
+    return m;
+  };
+  group.userData.groundMats = groundMats;
+
   const top = new THREE.Mesh(
     new THREE.BoxGeometry(24, 1.6, 17),
-    new THREE.MeshLambertMaterial({ color: PALETTE.base })
+    groundMat(PALETTE.base)
   );
   top.position.y = -0.8;
   group.add(top);
@@ -64,7 +73,7 @@ function buildIsland(group) {
   // soil rim
   const rim = new THREE.Mesh(
     new THREE.BoxGeometry(25, 0.6, 18),
-    new THREE.MeshLambertMaterial({ color: PALETTE.baseEdge })
+    groundMat(PALETTE.baseEdge)
   );
   rim.position.y = -0.3;
   group.add(rim);
@@ -81,9 +90,7 @@ function buildIsland(group) {
     const h = 0.18 + rand() * 0.24;
     const tile = new THREE.Mesh(
       new THREE.BoxGeometry(0.9 + rand() * 1.5, h, 0.9 + rand() * 1.5),
-      new THREE.MeshLambertMaterial({
-        color: rand() > 0.72 ? PALETTE.grass : PALETTE.ground
-      })
+      groundMat(rand() > 0.72 ? PALETTE.grass : PALETTE.ground)
     );
     tile.position.set(x, h / 2, z);
     tile.rotation.y = Math.round(rand() * 4) * (Math.PI / 2);
@@ -97,7 +104,7 @@ function buildIsland(group) {
     const depth = 0.8 + rand() * 2.4;
     const shard = new THREE.Mesh(
       new THREE.ConeGeometry(0.34 + rand() * 0.3, depth, 4),
-      new THREE.MeshLambertMaterial({ color: 0x101a2e })
+      groundMat(0x101a2e)
     );
     shard.position.set(x, -1.6 - depth / 2, z);
     shard.rotation.y = rand() * Math.PI;
@@ -438,7 +445,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     // The visible chip can be demoted to a bare number on a phone, which
     // leaves a screen reader announcing "03" with no project name.
     el.setAttribute('aria-label', `Open ${group.userData.project.name} dossier`);
-    el.innerHTML = `<span class="atlas-label-key">${group.userData.project.index}</span><span class="atlas-label-name">${group.userData.project.name}</span>`;
+    el.innerHTML = `<span class="atlas-label-name">${group.userData.project.name}</span>`;
     // Open on pointerdown, not click. The label is rewritten every frame to
     // follow the orbiting camera, so by the time a `click` fires the element
     // has moved out from under the pointer and the browser cancels the
@@ -918,6 +925,30 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
         halo.material.opacity = active ? 0.7 : (compact ? 0.1 : 0.2);
         group.scale.setScalar(active ? 1.12 : 1);
       }
+    },
+    // Theme support: the island terrain, fog and lights retint to match the
+    // page ground. Light themes get a brighter terrain, stronger key light
+    // and no stars; dark themes keep the night sky.
+    setGround(hex) {
+      const light = new THREE.Color(hex).getHSL({}).l > 0.5;
+      const TERRAIN = light
+        ? { base: 0xd8c9a8, edge: 0xbfae8c, tile: 0xc4b28e, grass: 0x9fb06a, fog: hex }
+        : { base: PALETTE.base, edge: PALETTE.baseEdge, tile: PALETTE.ground, grass: PALETTE.grass, fog: hex };
+      const mats = world.userData.groundMats || [];
+      if (mats.length) {
+        mats[0].color.set(TERRAIN.base);
+        if (mats[1]) mats[1].color.set(TERRAIN.edge);
+        for (let i = 2; i < mats.length; i++) {
+          // tiles alternate grass/ground; shards keep a deep tone
+          mats[i].color.set(i % 3 === 0 ? TERRAIN.grass : TERRAIN.tile);
+        }
+      }
+      scene.fog.color.set(TERRAIN.fog);
+      key.intensity = light ? 1.6 : 1.25;
+      rim.intensity = light ? 0.4 : 0.9;
+      stars.material.opacity = light ? 0 : 0.4;
+      renderer.setClearColor(hex, 0);
+      startLoop();
     },
     // Called when a dossier closes. The camera had glided toward that
     // landmark and stayed there, which left the map zoomed into one spot
