@@ -550,11 +550,6 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   // swap, a resize, a viewport-class change. The frame loop uses it to skip
   // the expensive declutter when the camera has settled.
   let labelsDirty = true;
-  // The diorama sways gently to feel alive. While the pointer is over the
-  // map the sway freezes at its current angle so the landmarks hold still and
-  // a tap lands where the eye expects.
-  let pointerOver = false;
-  let swayHold = 0;
 
   const onPointerDown = (e) => {
     dragging = true;
@@ -636,13 +631,6 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   canvas.addEventListener('pointercancel', onPointerCancel);
   canvas.addEventListener('pointerleave', () => { hovered = null; onHover?.(null); });
   canvas.addEventListener('wheel', onWheel, { passive: false });
-  // The sway freeze listens on the whole panel, not the canvas: the landmark
-  // labels are HTML elements floating above the canvas, and a pointer over a
-  // label is not over the canvas itself.
-  const panel = canvas.parentElement;
-  panel.addEventListener('pointerenter', () => { pointerOver = true; swayHold = world.rotation.y; });
-  panel.addEventListener('pointerleave', () => { pointerOver = false; });
-
   /* ---------- resize ---------- */
 
   const resize = () => {
@@ -745,14 +733,11 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
 
     placeCamera(distance, azimuth, polar);
 
-    // Reduced motion: the scene must hold still, not drift. The gentle sway
-    // also freezes while the pointer is over the map — the labels follow the
-    // sway every frame, so a landmark under the cursor kept sliding away
-    // between the browser's click locate and its dispatch, and taps missed.
-    // A still map on hover is also simply nicer to aim at.
+    // Reduced motion: the scene must hold still, not drift. The idle sway is
+    // removed entirely — every label is a stationary target. The diorama
+    // still lives through the spinning rings, drifting stars and hover
+    // billboards; what it no longer does is move the things people tap.
     if (!reducedMotion) {
-      const sway = pointerOver ? swayHold : Math.sin(elapsed * 0.08) * 0.06;
-      world.rotation.y = sway;
       stars.rotation.y = elapsed * 0.006;
     }
 
@@ -928,6 +913,25 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
         halo.material.opacity = active ? 0.7 : (compact ? 0.1 : 0.2);
         group.scale.setScalar(active ? 1.12 : 1);
       }
+    },
+    // Called when a dossier closes. The camera had glided toward that
+    // landmark and stayed there, which left the map zoomed into one spot
+    // with some landmarks off-canvas. Return to the home framing — but
+    // snapped, not glided: a glide declutters the labels for its whole
+    // duration and a click aimed during it lands on a moving target.
+    release() {
+      const h0 = homeCamera();
+      userAdjusted = false;
+      zoom = 1;
+      targetAzimuth = azimuth = h0.azimuth;
+      targetPolar = polar = h0.polar;
+      const d0 = fitDistance(h0.azimuth, h0.polar);
+      baseDistance = d0;
+      targetDistance = distance = d0 * zoom;
+      // No labelsDirty: the snap does not move the labels, and forcing a
+      // declutter pass briefly flips every label to aria-hidden — a keyboard
+      // user tabbing back to the map in that instant found nothing.
+      startLoop();
     },
     destroy() {
       cancelAnimationFrame(raf);

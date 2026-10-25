@@ -441,6 +441,9 @@ function dossier({ atlas: initialAtlas }) {
     if (lastFocus instanceof HTMLElement && lastFocus.isConnected) {
       lastFocus.focus();
     }
+    // The atlas glided toward this project's landmark while the drawer was
+    // open; leave the map where the visitor left it rather than mid-glide.
+    atlas?.release();
   };
 
   closeBtn.addEventListener('click', close);
