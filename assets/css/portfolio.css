@@ -658,7 +658,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .legend-head h2{
   font-family:var(--pixel);font-weight:700;
-  font-size:clamp(.95rem,1.3vw,1.15rem);letter-spacing:.05em;
+  /* A step above the eyebrow it used to match — at 15px it read as a
+     caption while its five sibling section headings render at 30px. The
+     manifest is the hero's second row, so it stays compact, but it is a
+     heading and now looks like one. */
+  font-size:clamp(1.25rem,2.2vw,1.7rem);letter-spacing:.05em;
   text-transform:uppercase
 }
 .legend-head p{
@@ -1733,20 +1737,20 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
    and tap targets on the page, so they are the ones to fix. */
 @media (max-width:640px){
   .section-note{font-size:.82rem;letter-spacing:.08em;line-height:1.5}
-  .eyebrow{font-size:.72rem}
+  .eyebrow{font-size:.78rem}
   .stage-role-line{font-size:.76rem}
   .stage-chips span{font-size:.68rem}
   .stage-corner{font-size:.78rem}
   .terminal-body{font-size:.82rem;line-height:1.7}
   .terminal-input{padding:1rem 1.2rem}
-  .terminal-input input{font-size:.88rem}
   .terminal-bar{font-size:.78rem}
   .shell-reference dt,.shell-reference dd{font-size:.82rem}
   .footer{font-size:.8rem}
   .footer a{padding:.6rem 0;display:inline-block}
   .atlas-label{font-size:.74rem;padding:.5rem .75rem}
   .atlas-label-key{font-size:.78rem}
-  .stage-proof a{font-size:.78rem;padding:.5rem .7rem}
+  .stage-proof b{font-size:.8rem}
+  .stage-proof a{font-size:.8rem;padding:.5rem .7rem}
   .legend-list .legend-shot{height:72px}
   .hud-nav a{font-size:clamp(1.8rem,8vw,2.6rem)}
   .contact-mail-addr{font-size:.98rem}
@@ -1834,7 +1838,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
     padding-top:clamp(4.4rem,8vh,5.2rem);
     gap:.9rem
   }
-  .eyebrow{padding:.28rem .6rem;font-size:.66rem}
+  .eyebrow{padding:.32rem .7rem;font-size:.76rem}
   .stage-role-line{font-size:.7rem;margin-top:.35rem}
   /* The headline is the first screen's whole statement on a phone. 37px read
      as a caption; ~54px fills the 350px column and makes it a headline.
