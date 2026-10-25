@@ -476,7 +476,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .stage-open button span{transition:transform .3s var(--ease)}
 .stage-open button:hover span{transform:translate(2px,-2px)}
 .stage-open>span{
-  font-family:var(--mono);font-size:.72rem;line-height:1.5;
+  font-family:var(--mono);font-size:.84rem;line-height:1.55;
   color:var(--faint);letter-spacing:.02em;max-width:42ch
 }
 
@@ -608,7 +608,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .stage-proof a:hover b{color:var(--cyan)}
 .stage-proof span{
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.04em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.03em;
   color:var(--faint);line-height:1.4
 }
 
@@ -739,11 +739,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   overflow:hidden;overflow-wrap:anywhere
 }
 .legend-tag{
-  font-family:var(--mono);font-size:.7rem;letter-spacing:.02em;
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.01em;
   text-transform:none;color:var(--muted);
-  /* Wraps instead of clipping: "multi-agent desktop …" tells a visitor
-     nothing, and on a phone the card has room for the full phrase. */
-  line-height:1.4;overflow-wrap:anywhere;
+  line-height:1.45;overflow-wrap:anywhere;
   display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
   overflow:hidden
 }
@@ -752,7 +750,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
    Three lines: OsSecurity's stack is a three-item sentence and was clipped
    mid-word at two. */
 .legend-stack{
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.03em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.02em;
   text-transform:uppercase;color:var(--faint);
   line-height:1.4;overflow:hidden;
   display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
@@ -821,9 +819,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   letter-spacing:-.025em;text-transform:none;
   color:var(--ink)
 }
+/* The reading tier. .72rem (11.5px) mono read as fine print against an
+   80px headline — the scale ratio was dramatic but the body floor was
+   timid. Section intros and hint lines are sentences, not labels, so they
+   get a real reading size. Labels and codes stay small. */
 .section-note{
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--faint)
+  font-family:var(--mono);font-size:.86rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint);
+  line-height:1.6
 }
 
 /* ---------- stack racks ---------- */
@@ -1185,8 +1188,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   color:var(--ink)
 }
 .profile-card-note{
-  font-family:var(--mono);font-size:.72rem;line-height:1.9;
-  letter-spacing:.04em;color:var(--faint)
+  font-family:var(--mono);font-size:.84rem;line-height:1.75;
+  letter-spacing:.02em;color:var(--faint)
 }
 
 /* ---------- terminal ---------- */
@@ -1296,8 +1299,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .contact-status{
   display:flex;align-items:flex-start;gap:.7rem;
   margin-top:1.4rem;
-  font-family:var(--mono);font-size:.72rem;line-height:1.7;
-  letter-spacing:.04em;color:var(--muted);
+  font-family:var(--mono);font-size:.84rem;line-height:1.7;
+  letter-spacing:.02em;color:var(--muted);
 }
 .contact-status b{color:var(--green);font-weight:600}
 .contact-status .status-dot{margin-top:.5rem;flex:none}
@@ -1349,7 +1352,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .contact-resume-note{
   grid-area:note;
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;color:var(--faint)
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;color:var(--faint)
 }
 .contact-resume .btn-arrow{grid-area:arrow}
 .contact-mail-addr{
