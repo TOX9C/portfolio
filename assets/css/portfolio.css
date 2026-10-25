@@ -332,11 +332,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .stage-canvas::before{top:14px;left:14px;border-right:0;border-bottom:0}
 .stage-canvas::after{bottom:14px;right:14px;border-left:0;border-top:0}
 #atlas-canvas{
-  width:100%;height:100%;display:block;
+  /* Absolute, never in flow: a flowed canvas feeds its attribute height
+     back into the grid row's min-content, and renderer.setSize() rewrites
+     that attribute on every resize — a feedback loop that once grew the
+     hero to millions of pixels. Pinning it to the panel breaks the cycle
+     for good; the panel itself sizes the grid. */
+  position:absolute;inset:0;width:100%;height:100%;display:block;
   image-rendering:pixelated;
   cursor:grab;
-  /* pan-y keeps vertical page scroll working on touch while still letting a
-     horizontal drag orbit the diorama. */
   touch-action:pan-y;
 }
 #atlas-canvas.dragging{cursor:grabbing}
