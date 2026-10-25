@@ -1355,22 +1355,18 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .atlas-label{
   position:absolute;top:0;left:0;
   display:inline-flex;align-items:center;gap:.45rem;
-  padding:.42rem .7rem;border-radius:8px;
+  padding:.45rem .75rem;border-radius:8px;
   border:1px solid rgba(140,154,187,.26);
-  background:rgba(5,7,14,.72);
-  font-family:var(--pixel);font-size:.68rem;letter-spacing:.07em;
+  background:rgba(5,7,14,.85);
+  font-family:var(--pixel);font-size:.78rem;letter-spacing:.05em;
   text-transform:uppercase;color:var(--ink);
   white-space:nowrap;pointer-events:auto;
   /* No transform transition: the transform is rewritten every frame to follow
      the orbiting camera, so transitioning it leaves the labels permanently
      trailing their target and visibly overlapping each other. */
-  transition:border-color .3s var(--ease),background .3s var(--ease)}
+  transition:border-color .2s var(--ease),background .2s var(--ease)}
 .atlas-label:hover{
   border-color:var(--cyan);
-  background:rgba(84,225,255,.16);
-  /* `scale` is independent of the inline transform that positions the label,
-     so hovering must not use transform here or the label jumps to the corner. */
-  scale:1.06;
   z-index:5
 }
 .atlas-label-key{
