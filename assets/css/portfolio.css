@@ -37,8 +37,8 @@
      surface and border in the file reads from these, so a theme is just a
      block of values. --line/--line-soft carry borders so light themes can
      use dark rules instead of pale-white ones. */
-  --bg:var(--bg);
-  --void:var(--bg);
+  --bg:#05070E;
+  --void:#05070E;
   --deep:#080C17;
   --panel:#0C1120;
   --panel-2:#121A2E;
@@ -47,13 +47,10 @@
   --faint:#7A88AA;
   --accent:#54E1FF;
   --cyan:#54E1FF;
-  --amber:#FFB65C;
-  --magenta:#FF5C9A;
-  --green:#7CF29B;
-  --line:var(--line);
-  --line-soft:var(--line-soft);
-  --hair:var(--line);
-  --hair-soft:var(--line-soft);
+  --line:rgba(140,154,187,.16);
+  --line-soft:rgba(140,154,187,.08);
+  --hair:rgba(140,154,187,.16);
+  --hair-soft:rgba(140,154,187,.08);
   --shadow:none;
   --radius:22px;
   --pixel:'Pixelify',ui-monospace,monospace;
@@ -68,12 +65,12 @@
 /* The default is the current dark site, kept as-is so nothing shifts
    until a theme is chosen. */
 :root[data-theme="dark"]{
-  --bg:var(--bg);--void:var(--bg);--deep:#080C17;
+  --bg:#05070E;--void:#05070E;--deep:#080C17;
   --panel:#0C1120;--panel-2:#121A2E;
   --ink:#EAF1FF;--muted:#8C9ABB;--faint:#7A88AA;
   --accent:#54E1FF;--cyan:#54E1FF;
-  --line:var(--line);--line-soft:var(--line-soft);
-  --hair:var(--line);--hair-soft:var(--line-soft);
+  --line:rgba(140,154,187,.16);--line-soft:rgba(140,154,187,.08);
+  --hair:rgba(140,154,187,.16);--hair-soft:rgba(140,154,187,.08);
   --radius:22px}
 
 /* Pixel-game: cream paper, chunky black borders, hard offset shadows.
