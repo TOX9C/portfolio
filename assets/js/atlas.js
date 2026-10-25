@@ -10,11 +10,16 @@ import { PROJECTS } from './data.js';
 const VOXEL = 1;
 
 const PALETTE = {
-  base: 0x0c1120,
-  baseEdge: 0x1a2540,
-  ground: 0x141d33,
-  grass: 0x1c3a4a,
-  stone: 0x27334f,
+  /* The first pass was tuned on a bright screen and read as dark gray
+     masses on the page's near-black ground — pixel-sampling measured a
+     median luminance of 17/255 for the whole diorama. The structures are
+     the centerpiece, not the void around them, so every base tone is
+     lifted and the lights pushed until the models pop against #05070E. */
+  base: 0x18213a,
+  baseEdge: 0x2a3a5e,
+  ground: 0x1f2c48,
+  grass: 0x27506a,
+  stone: 0x3a4a70,
   glass: 0x54e1ff,
   amber: 0xffb65c,
   magenta: 0xff5c9a,
@@ -364,14 +369,14 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 200);
   camera.position.set(0, 12, 26);
 
-  scene.add(new THREE.HemisphereLight(0x9fd8ff, 0x0a0f1c, 1.35));
-  const key = new THREE.DirectionalLight(0xffffff, 1.15);
+  scene.add(new THREE.HemisphereLight(0x9fd8ff, 0x1a2540, 2.1));
+  const key = new THREE.DirectionalLight(0xffffff, 1.6);
   key.position.set(10, 18, 12);
   scene.add(key);
-  const rim = new THREE.DirectionalLight(0x54e1ff, 0.75);
+  const rim = new THREE.DirectionalLight(0x54e1ff, 1.2);
   rim.position.set(-12, 6, -10);
   scene.add(rim);
-  const warm = new THREE.PointLight(0xffb65c, 28, 46);
+  const warm = new THREE.PointLight(0xffb65c, 38, 46);
   warm.position.set(6, 4, 10);
   scene.add(warm);
 
