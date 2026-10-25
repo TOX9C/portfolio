@@ -467,6 +467,19 @@ function terminal({ openDossier } = {}) {
   const form = $('#terminal-form');
   const field = $('#terminal-field');
   if (!body || !form || !field) return;
+  // Command history, as in a real shell: ArrowUp/ArrowDown walk it, a fresh
+  // command resets the pointer.
+  const history = [];
+  let histAt = -1;
+  field.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+    if (!history.length) return;
+    e.preventDefault();
+    histAt = e.key === 'ArrowUp'
+      ? Math.max(0, histAt - 1)
+      : Math.min(history.length - 1, histAt + 1);
+    field.value = history[histAt];
+  });
 
   const write = (text, cls = 't-dim') => {
     const line = document.createElement('div');
@@ -490,8 +503,8 @@ function terminal({ openDossier } = {}) {
     e.preventDefault();
     const raw = field.value.trim();
     field.value = '';
-    if (!raw) return;
-
+    if (history[history.length - 1] !== raw) history.push(raw);
+    histAt = history.length;
     write(raw, 't-cmd');
     const cmd = raw.toLowerCase();
 

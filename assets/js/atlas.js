@@ -550,6 +550,11 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   // swap, a resize, a viewport-class change. The frame loop uses it to skip
   // the expensive declutter when the camera has settled.
   let labelsDirty = true;
+  // The diorama sways gently to feel alive. While the pointer is over the
+  // map the sway freezes at its current angle so the landmarks hold still and
+  // a tap lands where the eye expects.
+  let pointerOver = false;
+  let swayHold = 0;
 
   const onPointerDown = (e) => {
     dragging = true;
@@ -631,6 +636,12 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   canvas.addEventListener('pointercancel', onPointerCancel);
   canvas.addEventListener('pointerleave', () => { hovered = null; onHover?.(null); });
   canvas.addEventListener('wheel', onWheel, { passive: false });
+  // The sway freeze listens on the whole panel, not the canvas: the landmark
+  // labels are HTML elements floating above the canvas, and a pointer over a
+  // label is not over the canvas itself.
+  const panel = canvas.parentElement;
+  panel.addEventListener('pointerenter', () => { pointerOver = true; swayHold = world.rotation.y; });
+  panel.addEventListener('pointerleave', () => { pointerOver = false; });
 
   /* ---------- resize ---------- */
 
@@ -734,9 +745,14 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
 
     placeCamera(distance, azimuth, polar);
 
-    // Reduced motion: the scene must hold still, not drift.
+    // Reduced motion: the scene must hold still, not drift. The gentle sway
+    // also freezes while the pointer is over the map — the labels follow the
+    // sway every frame, so a landmark under the cursor kept sliding away
+    // between the browser's click locate and its dispatch, and taps missed.
+    // A still map on hover is also simply nicer to aim at.
     if (!reducedMotion) {
-      world.rotation.y = Math.sin(elapsed * 0.08) * 0.06;
+      const sway = pointerOver ? swayHold : Math.sin(elapsed * 0.08) * 0.06;
+      world.rotation.y = sway;
       stars.rotation.y = elapsed * 0.006;
     }
 
@@ -803,8 +819,6 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       el.tabIndex = onScreen ? 0 : -1;
       el.setAttribute('aria-hidden', String(!onScreen));
     }
-
-    if (!cameraMoved) return;
 
     // Declutter: on narrow canvases the full names cover the models and collide.
     // Phones get a numbered chip only — the manifest directly below carries the
