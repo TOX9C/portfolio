@@ -102,103 +102,91 @@ const SCREEN_HOVER_SCALE = 1.35;
 // one before it — bottom-up, no gaps, no intersections. `y` cursor in
 // buildLandmark walks up by each layer's height only.
 const MODEL_LAYERS = {
+  // Iconic voxel silhouettes built with named anchors: a part either follows
+  // the stack cursor (default) or rests on a named layer via `on:`. No
+  // hand-computed heights — the floating bugs came from exactly that.
   owl: [
-    // One clean bottom-up owl: plinth, body, wings as part of the body
-    // width, head, brow, eyes, beak. Every layer rests on the last.
-    { w: 3.0, h: 0.5, d: 2.2, c: 0x8a7e6e },          // plinth
-    { w: 3.2, h: 2.4, d: 1.8, c: 0x0a4a8f },          // body incl. wings
-    { w: 2.4, h: 0.4, d: 1.6, c: 0x0e63b6 },          // chest
-    { w: 2.8, h: 1.2, d: 1.9, c: 0x0e63b6 },          // head
-    { w: 3.0, h: 0.25, d: 2.0, c: 0x0a4a8f },         // brow (top 4.87)
-    { w: 0.5, h: 0.22, d: 0.22, x: -0.6, z: 1.0, base: 4.87, c: 0xffffff },  // eye L
-    { w: 0.5, h: 0.22, d: 0.22, x: 0.6, z: 1.0, base: 4.87, c: 0xffffff },   // eye R
-    { w: 0.45, h: 0.45, d: 0.45, z: 1.1, base: 4.87, c: 0xe8b84d }           // beak
+    { id: 'plinth', w: 3.4, h: 0.6, d: 2.6, c: 0x8a7e6e },
+    { id: 'body', w: 3.6, h: 2.2, d: 2.4, c: 0x0e63b6 },
+    { id: 'head', w: 3.0, h: 1.4, d: 2.2, c: 0x0e63b6 },
+    { id: 'brow', w: 3.2, h: 0.35, d: 2.3, c: 0x0a4a8f },
+    // eyes sit on the brow; pupils flush in front of the whites
+    { w: 0.9, h: 0.5, d: 0.3, x: -0.75, z: 1.15, on: 'brow', c: 0xffffff },
+    { w: 0.4, h: 0.5, d: 0.31, x: -0.75, z: 1.16, on: 'brow', c: 0x1a1512 },
+    { w: 0.9, h: 0.5, d: 0.3, x: 0.75, z: 1.15, on: 'brow', c: 0xffffff },
+    { w: 0.4, h: 0.5, d: 0.31, x: 0.75, z: 1.16, on: 'brow', c: 0x1a1512 },
+    // beak on the head front, below the brow overhang
+    { w: 0.6, h: 0.6, d: 0.5, z: 1.25, on: 'head', c: 0xe8b84d }
   ],
   store: [
-    // step
-    { w: 4.6, h: 0.3, d: 3.4, c: 0xa89a7a },
-    // walls
-    { w: 4.0, h: 2.4, d: 3.0, c: 0xc9744f },
-    // awning band
-    { w: 4.4, h: 0.4, d: 3.3, c: 0xe8b84d },
-    // roof
-    { w: 4.2, h: 0.4, d: 3.2, c: 0x8f4a30 },
-    // sign block on the roof
-    { w: 2.2, h: 0.35, c: 0x0e63b6 }
+    { id: 'step', w: 4.8, h: 0.35, d: 3.4, c: 0xa89a7a },
+    { id: 'walls', w: 4.4, h: 2.6, d: 3.2, c: 0xc9744f },
+    { id: 'awning', w: 4.8, h: 0.45, d: 3.5, c: 0xe8b84d },
+    { id: 'roof', w: 4.6, h: 0.45, d: 3.4, c: 0x8f4a30 },
+    { w: 2.6, h: 0.5, d: 0.5, on: 'roof', c: 0x0e63b6 }
   ],
   antenna: [
-    // base
-    { w: 2.0, h: 0.5, d: 2.0, c: 0x8a7e6e },
-    // mast
-    { w: 0.6, h: 4.6, d: 0.6, c: 0x2a3550 },
-    // lower crossbar
-    { w: 3.4, h: 0.25, d: 0.25, tall: 2.6, c: 0x0e63b6 },
-    // upper crossbar
-    { w: 2.4, h: 0.25, d: 0.25, tall: 3.4, c: 0x0e63b6 },
-    // beacon cap
-    { w: 0.4, h: 0.4, d: 0.4, tall: 5.0, c: 0xffffff }
+    { id: 'base', w: 2.4, h: 0.6, d: 2.4, c: 0x8a7e6e },
+    { id: 'lower', w: 1.6, h: 1.8, d: 1.6, c: 0x2a3550 },
+    { id: 'bar1', w: 3.6, h: 0.35, d: 0.35, c: 0x0e63b6 },
+    { id: 'upper', w: 1.0, h: 1.6, d: 1.0, c: 0x2a3550 },
+    { id: 'bar2', w: 2.6, h: 0.35, d: 0.35, c: 0x0e63b6 },
+    { w: 0.6, h: 0.6, d: 0.6, on: 'bar2', c: 0xff5c5c }
   ],
   vault: [
-    // feet
-    { w: 3.0, h: 0.25, d: 2.3, c: 0x2a3550 },
-    // body
-    { w: 3.2, h: 3.0, d: 2.5, c: 0x3a4a70 },
-    // door face plate
-    { w: 2.6, h: 2.6, d: 0.2, z: 1.3, tall: 0.25, c: 0x4a5a80 },
-    // dial ring
-    { w: 1.2, h: 1.2, d: 0.15, z: 1.45, tall: 0.7, c: 0x0e63b6 },
+    { id: 'plinth', w: 3.6, h: 0.4, d: 2.6, c: 0x2a3550 },
+    { id: 'body', w: 3.6, h: 3.2, d: 2.8, c: 0x3a4a70 },
+    // door plate on the plinth, against the body front
+    { id: 'door', w: 2.8, h: 2.8, d: 0.35, z: 1.45, on: 'plinth', c: 0x4a5a80 },
+    // dial centered on the door
+    { w: 1.6, h: 1.6, d: 0.25, z: 1.7, on: 'plinth', c: 0x0e63b6 },
     // gold bars on the roof
-    { w: 1.8, h: 0.3, d: 0.9, c: 0xe8b84d },
-    { w: 1.2, h: 0.3, d: 0.8, c: 0xe8b84d }
+    { id: 'gold1', w: 2.0, h: 0.4, d: 1.0, on: 'body', c: 0xe8b84d },
+    { w: 1.4, h: 0.4, d: 0.9, on: 'gold1', c: 0xe8b84d }
   ],
   radar: [
-    // base
-    { w: 2.4, h: 0.4, d: 1.8, c: 0x2a3550 },
-    // tower
-    { w: 0.6, h: 2.2, d: 0.6, c: 0x3a4a70 },
-    // yoke
-    { w: 1.2, h: 0.4, d: 0.7, c: 0x2a3550 },
-    // dish: a shallow tilted box reads cleaner than an open sphere
-    { w: 2.6, h: 0.5, d: 2.0, c: 0x0e63b6 },
-    // feed horn
-    { w: 0.2, h: 0.2, d: 0.9, z: 0.4, c: 0xffffff }
+    { id: 'base', w: 3.0, h: 0.5, d: 2.2, c: 0x2a3550 },
+    { id: 'column', w: 1.2, h: 2.4, d: 1.2, c: 0x3a4a70 },
+    // dish slab spans the column top, slightly overhanging both sides
+    { id: 'dish', w: 3.2, h: 0.6, d: 2.6, on: 'column', c: 0x0e63b6 },
+    // feed horn stands on the dish's back edge
+    { w: 0.8, h: 0.8, d: 0.4, z: 1.5, on: 'dish', c: 0xffffff }
   ],
   shield: [
-    // plinth
-    { w: 2.2, h: 0.5, d: 1.6, c: 0x8a7e6e },
-    // stand
-    { w: 0.6, h: 2.6, d: 0.6, c: 0x2a3550 },
-    // shield face (a tall slab)
-    { w: 2.6, h: 2.8, d: 0.5, tall: 1.4, c: 0x0e63b6 },
-    // lock plate centered on the face
-    { w: 0.8, h: 0.8, d: 0.15, z: 0.35, c: 0xe8b84d }
+    { id: 'plinth', w: 2.6, h: 0.6, d: 1.8, c: 0x8a7e6e },
+    { id: 'stand', w: 1.0, h: 2.2, d: 1.0, c: 0x2a3550 },
+    // shield face on the stand
+    { id: 'face', w: 3.0, h: 3.0, d: 0.6, on: 'stand', c: 0x0e63b6 },
+    // gold lock on the face front (face d .6 -> front at z .3; lock sticks out)
+    { w: 1.0, h: 1.0, d: 0.25, z: 0.41, on: 'stand', c: 0xe8b84d }
   ],
   pitch: [
-    // grass slab, then everything stands ON it (base 0.3) explicitly.
-    { w: 5.0, h: 0.3, d: 3.4, c: 0x4a8f4e },
-    // goal left: posts stand on the slab top (0.42), crossbar on the posts (1.42)
-    { w: 0.12, h: 1.0, d: 0.12, x: -2.2, z: -1.0, base: 0.42, c: 0xffffff },
-    { w: 0.12, h: 1.0, d: 0.12, x: -2.2, z: 1.0, base: 0.42, c: 0xffffff },
-    { w: 0.12, h: 0.12, d: 2.12, x: -2.2, z: 0, base: 1.42, c: 0xffffff },
-    // goal right
-    { w: 0.12, h: 1.0, d: 0.12, x: 2.2, z: -1.0, base: 0.42, c: 0xffffff },
-    { w: 0.12, h: 1.0, d: 0.12, x: 2.2, z: 1.0, base: 0.42, c: 0xffffff },
-    { w: 0.12, h: 0.12, d: 2.12, x: 2.2, z: 0, base: 1.42, c: 0xffffff },
-    // ball at the centre spot
-    { w: 0.4, h: 0.4, d: 0.4, z: 0.4, base: 0.42, c: 0xffffff },
-    // scoreboard stands on the back edge (top 1.52), board on the stands
-    { w: 0.4, h: 1.1, d: 0.4, x: -0.8, z: -1.55, base: 0.42, c: 0x2a3550 },
-    { w: 0.4, h: 1.1, d: 0.4, x: 0.8, z: -1.55, base: 0.42, c: 0x2a3550 },
-    { w: 2.4, h: 0.9, d: 0.25, z: -1.55, base: 1.52, c: 0x0e63b6 }
+    { id: 'pitch', w: 5.2, h: 0.4, d: 3.6, c: 0x4a8f4e },
+    // goals stand on the pitch
+    { w: 0.16, h: 1.2, d: 0.16, x: -2.4, z: -1.1, on: 'pitch', c: 0xffffff },
+    { w: 0.16, h: 1.2, d: 0.16, x: -2.4, z: 1.1, on: 'pitch', c: 0xffffff },
+    // crossbar: needs a posts-top anchor; use a zero-height marker layer
+    { id: 'lpost', w: 0.16, h: 1.2, d: 0.16, x: -2.4, z: 0, on: 'pitch', c: 0xffffff },
+    { w: 0.16, h: 0.16, d: 2.36, x: -2.4, on: 'lpost', c: 0xffffff },
+    { w: 0.16, h: 1.2, d: 0.16, x: 2.4, z: -1.1, on: 'pitch', c: 0xffffff },
+    { w: 0.16, h: 1.2, d: 0.16, x: 2.4, z: 1.1, on: 'pitch', c: 0xffffff },
+    { id: 'rpost', w: 0.16, h: 1.2, d: 0.16, x: 2.4, z: 0, on: 'pitch', c: 0xffffff },
+    { w: 0.16, h: 0.16, d: 2.36, x: 2.4, on: 'rpost', c: 0xffffff },
+    // ball
+    { w: 0.5, h: 0.5, d: 0.5, z: 0.3, on: 'pitch', c: 0xffffff },
+    // scoreboard legs then board
+    { id: 'sleg', w: 0.5, h: 1.3, d: 0.5, x: -0.9, z: -1.65, on: 'pitch', c: 0x2a3550 },
+    { w: 0.5, h: 1.3, d: 0.5, x: 0.9, z: -1.65, on: 'pitch', c: 0x2a3550 },
+    { w: 2.8, h: 1.0, d: 0.3, z: -1.65, on: 'sleg', c: 0x0e63b6 }
   ]
 };
 
-const LANDMARK_TOP = { owl: 4.8, store: 3.3, antenna: 6.0, vault: 3.9, radar: 4.2, shield: 4.6, pitch: 2.6 };
+const LANDMARK_TOP = { owl: 5.17, store: 4.47, antenna: 5.42, vault: 4.52, radar: 4.42, shield: 5.92, pitch: 2.82 };
 
 const screenTop = (landmark) =>
   (LANDMARK_TOP[landmark] ?? 3.2) + SCREEN_POST + SCREEN_H + 0.24;
 
-function buildScreen(project, color) {
+function buildScreen(project, color, postLen = SCREEN_POST) {
   const group = new THREE.Group();
   const W = SCREEN_W;
   const H = SCREEN_H;
@@ -242,10 +230,10 @@ function buildScreen(project, color) {
   // the post lands exactly on the model's top.
   const bottom = -H / 2 - 0.12;
   const post = new THREE.Mesh(
-    new THREE.BoxGeometry(0.1, SCREEN_POST, 0.1),
+    new THREE.BoxGeometry(0.1, postLen, 0.1),
     new THREE.MeshLambertMaterial({ color: 0x1a2540 })
   );
-  post.position.y = bottom - SCREEN_POST / 2;
+  post.position.y = bottom - postLen / 2;
   group.add(post);
 
   return group;
@@ -263,28 +251,46 @@ function buildLandmark(project, color) {
   // floats and nothing intersects. One readable silhouette per project.
   const layers = MODEL_LAYERS[project.landmark] ?? [];
   let y = 0.12; // top of the plot tile
+  const tops = {}; // layer.id -> its top y, for `on:` anchoring
   for (const layer of layers) {
     const m = new THREE.Mesh(
       new THREE.BoxGeometry(layer.w, layer.h, layer.d),
       new THREE.MeshLambertMaterial({ color: layer.c })
     );
-    const baseY = layer.base !== undefined ? layer.base : y;
+    // `on: id` rests this part on top of a named layer — never a hand-set
+    // magic number, which is how the floating regressions crept in.
+    const baseY = layer.on !== undefined && tops[layer.on] !== undefined
+      ? tops[layer.on]
+      : y;
     m.position.set(layer.x ?? 0, baseY + layer.h / 2, layer.z ?? 0);
     g.add(m);
-    y += layer.h;
-    if (layer.tall) y = Math.max(y, layer.tall);
+    y = baseY + layer.h;
+    if (layer.id) tops[layer.id] = y;
   }
 
-  // A flat square plot tile the model sits on. The old round cylinder pads
-  // never joined with the square model bases — corners hung over the rim
-  // and read as floating. A flat square sits flush by construction.
+  // A plot plate flush with the deck: 0.16 thick, centred so its top face
+  // sits 0.04 above the island surface. Two flat surfaces at exactly the
+  // same height z-fight and flickered while orbiting; the small offset
+  // keeps a single visible top face.
   const plot = new THREE.Mesh(
-    new THREE.BoxGeometry(6.4, 0.12, 4.6),
+    new THREE.BoxGeometry(6.4, 0.16, 4.6),
     new THREE.MeshLambertMaterial({ color: 0xcbba96 })
   );
-  plot.position.y = 0.06;
+  plot.position.y = 0.04;
   g.add(plot);
 
+  // The project's real screenshot, raised above the model on a post that
+  // pivots at the model's top so it always faces the camera without tearing
+  // loose. (This mount was lost in the model rebuild; the screens vanished.)
+  const base = LANDMARK_TOP[project.landmark] ?? 3.2;
+  const screen = buildScreen(project, color, SCREEN_POST);
+  const pivot = new THREE.Group();
+  pivot.position.set(0, base, 0);
+  screen.position.set(0, SCREEN_POST + SCREEN_H / 2 + 0.12, 0);
+  pivot.add(screen);
+  g.add(pivot);
+  g.userData.screen = screen;
+  g.userData.screenPivot = pivot;
 
   g.userData.color = color;
   return g;
