@@ -64,7 +64,7 @@ function buildIsland(group) {
   group.userData.groundMats = groundMats;
 
   const top = new THREE.Mesh(
-    new THREE.BoxGeometry(24, 1.6, 17),
+    new THREE.BoxGeometry(30, 1.6, 21),
     groundMat(PALETTE.base)
   );
   top.position.y = -0.8;
@@ -72,40 +72,14 @@ function buildIsland(group) {
 
   // soil rim
   const rim = new THREE.Mesh(
-    new THREE.BoxGeometry(25, 0.6, 18),
+    new THREE.BoxGeometry(31, 0.6, 22),
     groundMat(PALETTE.baseEdge)
   );
   rim.position.y = -0.3;
   group.add(rim);
 
-  // grass tiles with a deterministic scattered pattern
-  let seed = 7;
-  const rand = () => {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / 233280;
-  };
-  // Grass tufts, margins only. They used to scatter across the whole deck
-  // and grew up through the landmark bases — tiles poking through models
-  // at every junction. The landmarks get clear ground.
-  const inMargin = (x, z) => Math.abs(x) > 10.6 || z < -7.1 || z > 6.2;
-  let placed = 0;
-  let guard = 0;
-  while (placed < 40 && guard < 400) {
-    guard++;
-    const x = -11.5 + rand() * 23;
-    const z = -8 + rand() * 15.5;
-    if (!inMargin(x, z)) continue;
-    const h = 0.18 + rand() * 0.24;
-    const tile = new THREE.Mesh(
-      new THREE.BoxGeometry(0.9 + rand() * 1.5, h, 0.9 + rand() * 1.5),
-      groundMat(rand() > 0.72 ? PALETTE.grass : PALETTE.ground)
-    );
-    tile.position.set(x, h / 2, z);
-    tile.rotation.y = Math.round(rand() * 4) * (Math.PI / 2);
-    group.add(tile);
-    placed++;
-  }
-
+  // A clean flat deck. The scattered grass-tuft boxes ran right up to the
+  // landmark plots and read as junk on the floor; the island is now bare.
 }
 
 /* ---------- landmarks ---------- */
@@ -222,7 +196,6 @@ function buildLandmark(project, color) {
       halo.rotation.x = Math.PI / 2;
       halo.position.y = 4.8;
       add(halo);
-      g.userData.spin = halo;
       break;
     }
     case 'store': {
@@ -259,7 +232,6 @@ function buildLandmark(project, color) {
       const sign = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.35, 0.16), new THREE.MeshBasicMaterial({ color }));
       sign.position.set(0, 3.1, 0);
       add(sign);
-      g.userData.spin = sign;
       break;
     }
     case 'antenna': {
@@ -293,8 +265,6 @@ function buildLandmark(project, color) {
         ring.position.y = 5.9;
         ring.userData.phase = i * 0.7;
         add(ring);
-        g.userData.rings = g.userData.rings || [];
-        g.userData.rings.push(ring);
       }
       break;
     }
@@ -336,7 +306,6 @@ function buildLandmark(project, color) {
         ingot.position.set(0, 3.5 + i * 0.28, 0);
         add(ingot);
       }
-      g.userData.spin = dial;
       break;
     }
     case 'radar': {
@@ -369,7 +338,6 @@ function buildLandmark(project, color) {
       sweep.rotation.x = -Math.PI / 2;
       sweep.position.y = 0.45;
       add(sweep);
-      g.userData.spin = sweep;
       break;
     }
     case 'shield': {
@@ -396,7 +364,6 @@ function buildLandmark(project, color) {
       const lock = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.1, 6, 14), new THREE.MeshBasicMaterial({ color: 0x7cf29b }));
       lock.position.set(0, 1.6, 0.3);
       add(lock);
-      g.userData.spin = shield;
       break;
     }
     default: {
@@ -449,7 +416,6 @@ function buildLandmark(project, color) {
       const ball = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.42), new THREE.MeshLambertMaterial({ color: 0xffffff }));
       ball.position.set(0, 0.6, 0);
       add(ball);
-      g.userData.spin = ball;
     }
   }
 
@@ -533,14 +499,18 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   scene.add(stars);
 
   // landmarks
+  // Seven plots in three staggered rows, sized so the 6.4 x 4.6 plots
+  // never overlap and never leave the island. Nothing sits on the orbit
+  // target (0, 0, 0) any more — the pitch used to sit exactly there, so
+  // the whole map read as "orbiting the football predictor".
   const layout = [
-    [-7.4, 0, -4.4],
-    [0, 0, -6.4],
-    [7.4, 0, -4.4],
-    [-7.4, 0, 3.6],
-    [0, 0, 5.8],
-    [7.4, 0, 3.6],
-    [0, 0, 0]
+    [-8.0, 0, -6.2],  // owl
+    [ 0.0, 0, -6.2],  // store
+    [ 8.0, 0, -6.2],  // antenna
+    [-8.8, 0,  0.0],  // vault
+    [ 8.8, 0,  0.0],  // radar
+    [-8.0, 0,  6.2],  // shield
+    [ 8.0, 0,  6.2]   // pitch
   ];
   const landmarks = [];
   PROJECTS.forEach((project, i) => {
@@ -605,8 +575,8 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     const p = group.position;
     FIT_POINTS.push(new THREE.Vector3(p.x, 0, p.z));
   }
-  const ISLAND_HALF_W = 12;
-  const ISLAND_HALF_D = 8.5;
+  const ISLAND_HALF_W = 15;
+  const ISLAND_HALF_D = 10.5;
   for (const sx of [-1, 1]) {
     for (const sz of [-1, 1]) {
       FIT_POINTS.push(new THREE.Vector3(sx * ISLAND_HALF_W, 0, sz * ISLAND_HALF_D));
@@ -868,18 +838,10 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     }
 
     for (const group of landmarks) {
-      const spin = group.userData.spin;
-      if (spin && !reducedMotion) {
-        if (spin.geometry.type === 'RingGeometry') spin.rotation.z = elapsed * 0.9;
-        else spin.rotation.y = elapsed * 0.8;
-      }
-      if (group.userData.rings && !reducedMotion) {
-        group.userData.rings.forEach((ring, i) => {
-          const t = (elapsed * 0.8 + ring.userData.phase) % 2.4;
-          ring.scale.setScalar(0.6 + t * 0.8);
-          ring.material.opacity = Math.max(0, 0.55 - t * 0.22);
-        });
-      }
+      // No in-model animation. The spinning dials, sweeping dishes, pulsing
+      // rings and rolling ball all moved without regard for the geometry
+      // around them and read as broken. The models are static; the only
+      // motion on the map is the camera and the drifting stars.
       // The hovered landmark's billboard grows so its screenshot can actually be
       // read. This is the payoff interaction: hover to inspect, click to open.
       const screen = group.userData.screen;
@@ -1031,6 +993,9 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   startLoop();
 
   return {
+    // Debug/verification hook: exposes the scene graph so an automated
+    // audit can walk the meshes and measure grounding and intersections.
+    getScene() { return { THREE, scene, world, landmarks }; },
     focus(id) {
       const group = landmarks.find((l) => l.userData.project.id === id);
       if (!group) return;
