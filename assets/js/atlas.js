@@ -84,9 +84,17 @@ function buildIsland(group) {
     seed = (seed * 9301 + 49297) % 233280;
     return seed / 233280;
   };
-  for (let i = 0; i < 58; i++) {
-    const x = -10.5 + rand() * 21;
-    const z = -7 + rand() * 14;
+  // Grass tufts, margins only. They used to scatter across the whole deck
+  // and grew up through the landmark bases — tiles poking through models
+  // at every junction. The landmarks get clear ground.
+  const inMargin = (x, z) => Math.abs(x) > 10.6 || z < -7.1 || z > 6.2;
+  let placed = 0;
+  let guard = 0;
+  while (placed < 40 && guard < 400) {
+    guard++;
+    const x = -11.5 + rand() * 23;
+    const z = -8 + rand() * 15.5;
+    if (!inMargin(x, z)) continue;
     const h = 0.18 + rand() * 0.24;
     const tile = new THREE.Mesh(
       new THREE.BoxGeometry(0.9 + rand() * 1.5, h, 0.9 + rand() * 1.5),
@@ -95,21 +103,9 @@ function buildIsland(group) {
     tile.position.set(x, h / 2, z);
     tile.rotation.y = Math.round(rand() * 4) * (Math.PI / 2);
     group.add(tile);
+    placed++;
   }
 
-  // underside crystals — depth below the island
-  for (let i = 0; i < 26; i++) {
-    const x = -10 + rand() * 20;
-    const z = -6.5 + rand() * 13;
-    const depth = 0.8 + rand() * 2.4;
-    const shard = new THREE.Mesh(
-      new THREE.ConeGeometry(0.34 + rand() * 0.3, depth, 4),
-      groundMat(0x101a2e)
-    );
-    shard.position.set(x, -1.6 - depth / 2, z);
-    shard.rotation.y = rand() * Math.PI;
-    group.add(shard);
-  }
 }
 
 /* ---------- landmarks ---------- */
@@ -457,13 +453,6 @@ function buildLandmark(project, color) {
     }
   }
 
-  // ground pad under each landmark
-  const pad = new THREE.Mesh(
-    new THREE.CylinderGeometry(3.1, 3.3, 0.16, 16),
-    new THREE.MeshLambertMaterial({ color: 0xd8c9a8 })
-  );
-  pad.position.y = 0.08;
-  g.add(pad);
 
   // The project's real screenshot, raised above the model on a post.
   const base = LANDMARK_TOP[project.landmark] ?? 3.2;
@@ -479,14 +468,16 @@ function buildLandmark(project, color) {
   g.userData.screen = screen;
   g.userData.screenPivot = pivot;
 
-  const halo = new THREE.Mesh(
-    new THREE.RingGeometry(3.2, 3.45, 32),
-    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.2, side: THREE.DoubleSide })
+  // A flat square plot tile the model sits on. The old round cylinder pads
+  // never joined with the square model bases — corners hung over the rim
+  // and read as floating. A flat square sits flush by construction.
+  const plot = new THREE.Mesh(
+    new THREE.BoxGeometry(6.4, 0.12, 4.6),
+    new THREE.MeshLambertMaterial({ color: 0xcbba96 })
   );
-  halo.rotation.x = -Math.PI / 2;
-  halo.position.y = 0.16;
-  g.add(halo);
-  g.userData.halo = halo;
+  plot.position.y = 0.06;
+  g.add(plot);
+
 
   g.userData.color = color;
   return g;
@@ -802,13 +793,6 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     for (const group of landmarks) {
       const screen = group.userData.screen;
       if (screen) screen.visible = !compact;
-      // The halos read as huge concentric circles on a phone because the camera
-      // pulls back to fit the whole island. Shrink and fade them there.
-      const halo = group.userData.halo;
-      if (halo) {
-        halo.scale.setScalar(compact ? 0.52 : 1);
-        halo.material.opacity = compact ? 0.1 : 0.2;
-      }
       // Without screens the models sit lower, so labels anchor lower too.
       group.userData.labelY = compact
         ? (LANDMARK_TOP[group.userData.project.landmark] ?? 3.2) + 0.6
@@ -1058,11 +1042,10 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       startLoop();
     },
     setHover(id) {
+      // The hover feedback is the landmark growing, no ground halo needed.
       for (const group of landmarks) {
         const active = group.userData.project.id === id;
-        const halo = group.userData.halo;
-        halo.material.opacity = active ? 0.7 : (compact ? 0.1 : 0.2);
-        group.scale.setScalar(active ? 1.12 : 1);
+        group.scale.setScalar(active ? 1.1 : 1);
       }
     },
     // Theme support: the island terrain, fog and lights retint to match the
