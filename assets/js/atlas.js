@@ -98,6 +98,101 @@ const SCREEN_HOVER_SCALE = 1.35;
 
 // Height each landmark's own geometry reaches, so the screenshot billboard can
 // be mounted just above it and the label anchor just above that.
+// Flush voxel stacks for the seven landmarks. Rule: every layer rests on the
+// one before it — bottom-up, no gaps, no intersections. `y` cursor in
+// buildLandmark walks up by each layer's height only.
+const MODEL_LAYERS = {
+  owl: [
+    // One clean bottom-up owl: plinth, body, wings as part of the body
+    // width, head, brow, eyes, beak. Every layer rests on the last.
+    { w: 3.0, h: 0.5, d: 2.2, c: 0x8a7e6e },          // plinth
+    { w: 3.2, h: 2.4, d: 1.8, c: 0x0a4a8f },          // body incl. wings
+    { w: 2.4, h: 0.4, d: 1.6, c: 0x0e63b6 },          // chest
+    { w: 2.8, h: 1.2, d: 1.9, c: 0x0e63b6 },          // head
+    { w: 3.0, h: 0.25, d: 2.0, c: 0x0a4a8f },         // brow (top 4.87)
+    { w: 0.5, h: 0.22, d: 0.22, x: -0.6, z: 1.0, base: 4.87, c: 0xffffff },  // eye L
+    { w: 0.5, h: 0.22, d: 0.22, x: 0.6, z: 1.0, base: 4.87, c: 0xffffff },   // eye R
+    { w: 0.45, h: 0.45, d: 0.45, z: 1.1, base: 4.87, c: 0xe8b84d }           // beak
+  ],
+  store: [
+    // step
+    { w: 4.6, h: 0.3, d: 3.4, c: 0xa89a7a },
+    // walls
+    { w: 4.0, h: 2.4, d: 3.0, c: 0xc9744f },
+    // awning band
+    { w: 4.4, h: 0.4, d: 3.3, c: 0xe8b84d },
+    // roof
+    { w: 4.2, h: 0.4, d: 3.2, c: 0x8f4a30 },
+    // sign block on the roof
+    { w: 2.2, h: 0.35, c: 0x0e63b6 }
+  ],
+  antenna: [
+    // base
+    { w: 2.0, h: 0.5, d: 2.0, c: 0x8a7e6e },
+    // mast
+    { w: 0.6, h: 4.6, d: 0.6, c: 0x2a3550 },
+    // lower crossbar
+    { w: 3.4, h: 0.25, d: 0.25, tall: 2.6, c: 0x0e63b6 },
+    // upper crossbar
+    { w: 2.4, h: 0.25, d: 0.25, tall: 3.4, c: 0x0e63b6 },
+    // beacon cap
+    { w: 0.4, h: 0.4, d: 0.4, tall: 5.0, c: 0xffffff }
+  ],
+  vault: [
+    // feet
+    { w: 3.0, h: 0.25, d: 2.3, c: 0x2a3550 },
+    // body
+    { w: 3.2, h: 3.0, d: 2.5, c: 0x3a4a70 },
+    // door face plate
+    { w: 2.6, h: 2.6, d: 0.2, z: 1.3, tall: 0.25, c: 0x4a5a80 },
+    // dial ring
+    { w: 1.2, h: 1.2, d: 0.15, z: 1.45, tall: 0.7, c: 0x0e63b6 },
+    // gold bars on the roof
+    { w: 1.8, h: 0.3, d: 0.9, c: 0xe8b84d },
+    { w: 1.2, h: 0.3, d: 0.8, c: 0xe8b84d }
+  ],
+  radar: [
+    // base
+    { w: 2.4, h: 0.4, d: 1.8, c: 0x2a3550 },
+    // tower
+    { w: 0.6, h: 2.2, d: 0.6, c: 0x3a4a70 },
+    // yoke
+    { w: 1.2, h: 0.4, d: 0.7, c: 0x2a3550 },
+    // dish: a shallow tilted box reads cleaner than an open sphere
+    { w: 2.6, h: 0.5, d: 2.0, c: 0x0e63b6 },
+    // feed horn
+    { w: 0.2, h: 0.2, d: 0.9, z: 0.4, c: 0xffffff }
+  ],
+  shield: [
+    // plinth
+    { w: 2.2, h: 0.5, d: 1.6, c: 0x8a7e6e },
+    // stand
+    { w: 0.6, h: 2.6, d: 0.6, c: 0x2a3550 },
+    // shield face (a tall slab)
+    { w: 2.6, h: 2.8, d: 0.5, tall: 1.4, c: 0x0e63b6 },
+    // lock plate centered on the face
+    { w: 0.8, h: 0.8, d: 0.15, z: 0.35, c: 0xe8b84d }
+  ],
+  pitch: [
+    // grass slab, then everything stands ON it (base 0.3) explicitly.
+    { w: 5.0, h: 0.3, d: 3.4, c: 0x4a8f4e },
+    // goal left: posts stand on the slab top (0.42), crossbar on the posts (1.42)
+    { w: 0.12, h: 1.0, d: 0.12, x: -2.2, z: -1.0, base: 0.42, c: 0xffffff },
+    { w: 0.12, h: 1.0, d: 0.12, x: -2.2, z: 1.0, base: 0.42, c: 0xffffff },
+    { w: 0.12, h: 0.12, d: 2.12, x: -2.2, z: 0, base: 1.42, c: 0xffffff },
+    // goal right
+    { w: 0.12, h: 1.0, d: 0.12, x: 2.2, z: -1.0, base: 0.42, c: 0xffffff },
+    { w: 0.12, h: 1.0, d: 0.12, x: 2.2, z: 1.0, base: 0.42, c: 0xffffff },
+    { w: 0.12, h: 0.12, d: 2.12, x: 2.2, z: 0, base: 1.42, c: 0xffffff },
+    // ball at the centre spot
+    { w: 0.4, h: 0.4, d: 0.4, z: 0.4, base: 0.42, c: 0xffffff },
+    // scoreboard stands on the back edge (top 1.52), board on the stands
+    { w: 0.4, h: 1.1, d: 0.4, x: -0.8, z: -1.55, base: 0.42, c: 0x2a3550 },
+    { w: 0.4, h: 1.1, d: 0.4, x: 0.8, z: -1.55, base: 0.42, c: 0x2a3550 },
+    { w: 2.4, h: 0.9, d: 0.25, z: -1.55, base: 1.52, c: 0x0e63b6 }
+  ]
+};
+
 const LANDMARK_TOP = { owl: 4.8, store: 3.3, antenna: 6.0, vault: 3.9, radar: 4.2, shield: 4.6, pitch: 2.6 };
 
 const screenTop = (landmark) =>
@@ -163,276 +258,22 @@ function buildLandmark(project, color) {
 
   const add = (mesh) => g.add(mesh);
 
-  switch (project.landmark) {
-    case 'owl': {
-      // Athenas — the owl mascot on a book plinth, in voxels.
-      const plinthMat = new THREE.MeshLambertMaterial({ color: 0x3a4a70 });
-      const plinth = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.7, 2.0), plinthMat);
-      plinth.position.y = 0.35;
-      add(plinth);
-      const body = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.8, 1.6), mat);
-      body.position.y = 2.9;
-      add(body);
-      add(voxel(0x111a2b, -0.6, 3.9, 0.85));
-      add(voxel(0x111a2b, 0.6, 3.9, 0.85));
-      const eyeMat = new THREE.MeshBasicMaterial({ color: 0x54e1ff });
-      const eyeGeo = new THREE.BoxGeometry(0.5, 0.5, 0.3);
-      const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
-      eyeL.position.set(-0.55, 4.05, 0.86);
-      const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
-      eyeR.position.set(0.55, 4.05, 0.86);
-      add(eyeL, eyeR);
-      add(voxel(0xeaf1ff, 0, 3.35, 0.9, 0.4));
-      const wingL = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2, 1.4), mat);
-      wingL.position.set(-1.6, 2.7, 0);
-      wingL.rotation.z = 0.2;
-      const wingR = wingL.clone();
-      wingR.position.x = 1.6;
-      wingR.rotation.z = -0.2;
-      add(wingL, wingR);
-      add(voxel(0x1a2540, -0.6, 1.2, 0.3, 0.5));
-      add(voxel(0x1a2540, 0.6, 1.2, 0.3, 0.5));
-      const halo = new THREE.Mesh(new THREE.TorusGeometry(1.9, 0.12, 6, 16), glow);
-      halo.rotation.x = Math.PI / 2;
-      halo.position.y = 4.8;
-      add(halo);
-      break;
-    }
-    case 'store': {
-      // E-Commerce — a complete little shopfront: warm walls, striped
-      // awning, glass display window, open door, and a sign on the roof.
-      const wallMat = new THREE.MeshLambertMaterial({ color: 0xc9744f });
-      const walls = new THREE.Mesh(new THREE.BoxGeometry(4, 2.4, 3), wallMat);
-      walls.position.y = 1.2;
-      add(walls);
-      const roofMat = new THREE.MeshLambertMaterial({ color: 0x8f4a30 });
-      const roof = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.4, 3.2), roofMat);
-      roof.position.y = 2.6;
-      add(roof);
-      // striped awning over the window
-      for (let i = 0; i < 5; i++) {
-        const awn = box(i % 2 ? 0xfaf3e0 : color, 0.8, 0.35, 3.4, -1.6 + i * 0.8, 2.15, 0.2);
-        awn.rotation.x = -0.18;
-        add(awn);
-      }
-      // glass display window
-      const glass = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.3, 0.1), new THREE.MeshBasicMaterial({ color: 0xbfe8ff }));
-      glass.position.set(-0.7, 0.9, 1.52);
-      add(glass);
-      // door
-      const door = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.5, 0.12), new THREE.MeshLambertMaterial({ color: 0x6b3520 }));
-      door.position.set(1.2, 0.78, 1.52);
-      add(door);
-      // goods in the window
-      for (let i = 0; i < 3; i++) {
-        const item = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.3), new THREE.MeshLambertMaterial({ color: 0xe8b84d }));
-        item.position.set(-1.5 + i * 0.8, 0.7, 1.4);
-        add(item);
-      }
-      const sign = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.35, 0.16), new THREE.MeshBasicMaterial({ color }));
-      sign.position.set(0, 3.1, 0);
-      add(sign);
-      break;
-    }
-    case 'antenna': {
-      // Social — a broadcast tower that reads as one: concrete base,
-      // lattice mast, antenna crossbars, beacon, pulsing signal rings.
-      const towerBase = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.5, 1.4), new THREE.MeshLambertMaterial({ color: 0x3a4a70 }));
-      towerBase.position.y = 0.25;
-      add(towerBase);
-      const mast = new THREE.Mesh(new THREE.BoxGeometry(0.6, 5.0, 0.6), new THREE.MeshLambertMaterial({ color: 0x2a3550 }));
-      mast.position.y = 2.9;
-      add(mast);
-      // lattice braces
-      for (let i = 0; i < 3; i++) {
-        const brace = new THREE.Mesh(new THREE.BoxGeometry(1.0 - i * 0.25, 0.12, 1.0 - i * 0.25), new THREE.MeshLambertMaterial({ color: 0x3a4a70 }));
-        brace.position.y = 1.4 + i * 1.4;
-        add(brace);
-      }
-      const cross1 = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.25, 0.25), new THREE.MeshLambertMaterial({ color }));
-      cross1.position.y = 4.9;
-      add(cross1);
-      const cross2 = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.25, 0.25), new THREE.MeshLambertMaterial({ color }));
-      cross2.position.y = 4.3;
-      add(cross2);
-      const beacon = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-      beacon.position.y = 5.6;
-      add(beacon);
-      const ringMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.5 });
-      for (let i = 0; i < 3; i++) {
-        const ring = new THREE.Mesh(new THREE.TorusGeometry(1.1 + i * 0.75, 0.07, 5, 20), ringMat.clone());
-        ring.rotation.x = Math.PI / 2;
-        ring.position.y = 5.9;
-        ring.userData.phase = i * 0.7;
-        add(ring);
-      }
-      break;
-    }
-    case 'vault': {
-      // CashPilot — a safe that reads as a safe: thick body on short feet,
-      // heavy door, dial, handle, and a gold bar stack on top.
-      const bodyMat = new THREE.MeshLambertMaterial({ color: 0x3a4a70 });
-      const body = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.2, 2.6), bodyMat);
-      body.position.y = 1.7;
-      add(body);
-      // feet
-      for (const x of [-1.2, 1.2]) for (const z of [-0.9, 0.9]) {
-        const foot = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.2, 0.5), new THREE.MeshLambertMaterial({ color: 0x2a3550 }));
-        foot.position.set(x, 0.1, z);
-        add(foot);
-      }
-      // door frame
-      const frame = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.8, 0.25), new THREE.MeshLambertMaterial({ color: 0x2a3550 }));
-      frame.position.set(0, 1.7, 1.38);
-      add(frame);
-      // door face
-      const face = new THREE.Mesh(new THREE.BoxGeometry(2.5, 2.5, 0.16), new THREE.MeshLambertMaterial({ color: 0x4a5a80 }));
-      face.position.set(0, 1.7, 1.52);
-      add(face);
-      const dial = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.15, 6, 16), new THREE.MeshBasicMaterial({ color }));
-      dial.position.set(0, 1.75, 1.62);
-      add(dial);
-      const dialHub = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.14), new THREE.MeshBasicMaterial({ color }));
-      dialHub.position.set(0, 1.75, 1.66);
-      add(dialHub);
-      const bar = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.14, 0.14), new THREE.MeshBasicMaterial({ color }));
-      bar.position.set(0, 1.0, 1.66);
-      bar.rotation.z = 0.4;
-      add(bar);
-      // gold bars stacked on the roof
-      const gold = new THREE.MeshLambertMaterial({ color: 0xe8b84d });
-      for (let i = 0; i < 3; i++) {
-        const ingot = new THREE.Mesh(new THREE.BoxGeometry(0.9 - i * 0.15, 0.3, 0.5), gold);
-        ingot.position.set(0, 3.5 + i * 0.28, 0);
-        add(ingot);
-      }
-      break;
-    }
-    case 'radar': {
-      // PriceHawk — a tracking station that actually holds together:
-      // wide base slab, tapered tower, yoke, tilted dish, one sweep.
-      const baseSlab = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.4, 1.8), new THREE.MeshLambertMaterial({ color: 0x2a3550 }));
-      baseSlab.position.y = 0.2;
-      add(baseSlab);
-      const tower = new THREE.Mesh(new THREE.BoxGeometry(0.5, 2.0, 0.5), new THREE.MeshLambertMaterial({ color: 0x3a4a70 }));
-      tower.position.y = 1.4;
-      add(tower);
-      const yoke = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.4, 0.6), new THREE.MeshLambertMaterial({ color: 0x2a3550 }));
-      yoke.position.y = 2.5;
-      add(yoke);
-      const dish = new THREE.Mesh(
-        new THREE.SphereGeometry(1.5, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2.4),
-        new THREE.MeshLambertMaterial({ color, side: THREE.DoubleSide })
-      );
-      dish.position.y = 3.1;
-      dish.rotation.x = Math.PI + 0.5;
-      add(dish);
-      const feed = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 1.0), new THREE.MeshBasicMaterial({ color }));
-      feed.position.set(0, 3.35, 0.6);
-      feed.rotation.x = 0.5;
-      add(feed);
-      const sweep = new THREE.Mesh(
-        new THREE.RingGeometry(1.5, 1.9, 24, 1, 0, Math.PI / 2),
-        new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.3, side: THREE.DoubleSide })
-      );
-      sweep.rotation.x = -Math.PI / 2;
-      sweep.position.y = 0.45;
-      add(sweep);
-      break;
-    }
-    case 'shield': {
-      // OsSecurity — a guardian shield on a solid plinth and stand.
-      const plinth = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.6, 1.4), new THREE.MeshLambertMaterial({ color: 0x3a4a70 }));
-      plinth.position.y = 0.3;
-      add(plinth);
-      const stand = new THREE.Mesh(new THREE.BoxGeometry(0.5, 3.0, 0.5), new THREE.MeshLambertMaterial({ color: 0x2a3550 }));
-      stand.position.y = 1.9;
-      add(stand);
-      const shieldShape = new THREE.Shape();
-      shieldShape.moveTo(-1.4, 0.9);
-      shieldShape.lineTo(1.4, 0.9);
-      shieldShape.lineTo(1.4, -0.4);
-      shieldShape.quadraticCurveTo(1.2, -1.7, 0, -2.2);
-      shieldShape.quadraticCurveTo(-1.2, -1.7, -1.4, -0.4);
-      shieldShape.closePath();
-      const shield = new THREE.Mesh(
-        new THREE.ExtrudeGeometry(shieldShape, { depth: 0.4, bevelEnabled: false }),
-        new THREE.MeshLambertMaterial({ color })
-      );
-      shield.position.set(0, 3.6, 0.25);
-      add(shield);
-      const lock = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.1, 6, 14), new THREE.MeshBasicMaterial({ color: 0x7cf29b }));
-      lock.position.set(0, 1.6, 0.3);
-      add(lock);
-      break;
-    }
-    default: {
-      // Football Predictor — a complete miniature pitch.
-      // Bright grass, white lines, real goals with crossbars, a scoreboard
-      // standing on two legs at the touchline, and the ball on the spot.
-      const PITCH_W = 5, PITCH_H = 3.4;
-      // grass slab
-      add(box(0x4a8f4e, PITCH_W, 0.3, PITCH_H, 0, 0.15, 0));
-      // mowed stripes for texture
-      for (let i = 0; i < 5; i++) {
-        add(box(i % 2 ? 0x559a58 : 0x458549, PITCH_W / 5 - 0.06, 0.05, PITCH_H - 0.1, -PITCH_W/2 + PITCH_W/10 + i * PITCH_W/5, 0.32, 0));
-      }
-      // touchline
-      add(box(0xffffff, PITCH_W - 0.2, 0.06, 0.06, 0, 0.36, PITCH_H/2 - 0.12));
-      add(box(0xffffff, PITCH_W - 0.2, 0.06, 0.06, 0, 0.36, -PITCH_H/2 + 0.12));
-      add(box(0xffffff, 0.06, 0.06, PITCH_H - 0.2, PITCH_W/2 - 0.12, 0.36, 0));
-      add(box(0xffffff, 0.06, 0.06, PITCH_H - 0.2, -PITCH_W/2 + 0.12, 0.36, 0));
-      // centre circle
-      const centre = new THREE.Mesh(new THREE.RingGeometry(0.5, 0.6, 20), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, side: THREE.DoubleSide }));
-      centre.rotation.x = -Math.PI / 2;
-      centre.position.y = 0.37;
-      add(centre);
-      // goals — two posts + crossbar each, standing ON the goal line
-      const postMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
-      for (const sideX of [-PITCH_W/2 + 0.5, PITCH_W/2 - 0.5]) {
-        for (const z of [-1.1, 1.1]) {
-          const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.0, 0.12), postMat);
-          post.position.set(sideX, 0.86, z);
-          add(post);
-        }
-        const barMesh = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 2.32), postMat);
-        barMesh.position.set(sideX, 1.36, 0);
-        add(barMesh);
-      }
-      // scoreboard on legs, behind the touchline
-      const legMat = new THREE.MeshLambertMaterial({ color: 0x2a3550 });
-      for (const x of [-0.8, 0.8]) {
-        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.5, 0.22), legMat);
-        leg.position.set(x, 1.0, -PITCH_H/2 - 0.5);
-        add(leg);
-      }
-      const board = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.9, 0.24), new THREE.MeshLambertMaterial({ color: 0x1a2540 }));
-      board.position.set(0, 2.15, -PITCH_H/2 - 0.5);
-      add(board);
-      const boardFace = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.6, 0.1), new THREE.MeshBasicMaterial({ color }));
-      boardFace.position.set(0, 2.15, -PITCH_H/2 - 0.36);
-      add(boardFace);
-      // ball at the centre spot
-      const ball = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.42), new THREE.MeshLambertMaterial({ color: 0xffffff }));
-      ball.position.set(0, 0.6, 0);
-      add(ball);
-    }
+  // Every model is a flush voxel stack: each layer rests exactly on the
+  // one below it (y grows only by each layer's own height), so nothing
+  // floats and nothing intersects. One readable silhouette per project.
+  const layers = MODEL_LAYERS[project.landmark] ?? [];
+  let y = 0.12; // top of the plot tile
+  for (const layer of layers) {
+    const m = new THREE.Mesh(
+      new THREE.BoxGeometry(layer.w, layer.h, layer.d),
+      new THREE.MeshLambertMaterial({ color: layer.c })
+    );
+    const baseY = layer.base !== undefined ? layer.base : y;
+    m.position.set(layer.x ?? 0, baseY + layer.h / 2, layer.z ?? 0);
+    g.add(m);
+    y += layer.h;
+    if (layer.tall) y = Math.max(y, layer.tall);
   }
-
-
-  // The project's real screenshot, raised above the model on a post.
-  const base = LANDMARK_TOP[project.landmark] ?? 3.2;
-  const screen = buildScreen(project, color);
-  // The pivot sits at the post foot — the point where the post meets the
-  // model — so turning the screen toward the camera keeps it anchored
-  // instead of swinging around its own centre and tearing loose.
-  const pivot = new THREE.Group();
-  pivot.position.set(0, base, 0);
-  screen.position.set(0, SCREEN_POST + SCREEN_H / 2 + 0.12, 0);
-  pivot.add(screen);
-  g.add(pivot);
-  g.userData.screen = screen;
-  g.userData.screenPivot = pivot;
 
   // A flat square plot tile the model sits on. The old round cylinder pads
   // never joined with the square model bases — corners hung over the rim
@@ -993,9 +834,6 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   startLoop();
 
   return {
-    // Debug/verification hook: exposes the scene graph so an automated
-    // audit can walk the meshes and measure grounding and intersections.
-    getScene() { return { THREE, scene, world, landmarks }; },
     focus(id) {
       const group = landmarks.find((l) => l.userData.project.id === id);
       if (!group) return;
