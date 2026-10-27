@@ -1514,6 +1514,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
     padding-top:clamp(4.4rem,8vh,5.2rem);
     gap:.9rem
   }
+  /* At 320-360px the hard 4px offset shadows on full-width cards paint
+     past the viewport edge and inflate the scroll width. Clip the paint. */
+  html,body{overflow-x:clip}
   .eyebrow{padding:.32rem .7rem;font-size:.76rem}
   .stage-role-line{font-size:.7rem;margin-top:.35rem}
   /* The headline is the first screen's whole statement on a phone. 37px read
