@@ -155,8 +155,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   transition:transform .45s var(--ease)
 }
 .hud-nav a:hover{color:var(--ink)}
-.hud-nav a:hover::after,.hud-nav a.active::after{transform:scaleX(1)}
-.hud-nav a.active{color:var(--cyan)}
+.hud-nav a:hover::after,.hud-nav a.active::after,.hud-nav a[aria-current]::after{transform:scaleX(1)}
+.hud-nav a.active,.hud-nav a[aria-current]{color:var(--cyan)}
 
 .hud-readout{
   display:flex;align-items:center;gap:.6rem;
@@ -449,6 +449,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:grid;place-items:center;
   width:30px;height:30px;border-radius:0;
   background:var(--line);
+  /* The pixel face has no arrow glyphs — inheriting it rendered solid black
+     tofu boxes in every CTA. The mono stack does have them. */
+  font-family:var(--mono);
   font-size:.9rem;
   transition:transform .45s var(--ease),background .35s var(--ease)
 }
