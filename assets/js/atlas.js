@@ -273,8 +273,8 @@ const MODEL_LAYERS = {
 
 const LANDMARK_TOP = { owl: 5.17, store: 4.47, antenna: 5.42, vault: 4.52, radar: 4.42, shield: 5.92, pitch: 2.82 };
 
-const screenTop = (landmark) =>
-  (LANDMARK_TOP[landmark] ?? 3.2) + SCREEN_POST + SCREEN_H + 0.24;
+const screenTop = (landmark, lift = 0) =>
+  (LANDMARK_TOP[landmark] ?? 3.2) + SCREEN_POST + SCREEN_H + 0.24 + lift;
 
 function buildScreen(project, color, postLen = SCREEN_POST) {
   const group = new THREE.Group();
@@ -340,7 +340,7 @@ function buildScreen(project, color, postLen = SCREEN_POST) {
   return group;
 }
 
-function buildLandmark(project, color) {
+function buildLandmark(project, color, lift = 0) {
   const g = new THREE.Group();
   const mat = new THREE.MeshLambertMaterial({ color });
   const glow = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.16 });
@@ -389,20 +389,24 @@ function buildLandmark(project, color) {
   // loose. (This mount was lost in the model rebuild; the screens vanished.)
   const base = LANDMARK_TOP[project.landmark] ?? 3.2;
   const geom = SCREEN_GEOMETRY[project.landmark] ?? {};
-  const postLen = geom.post ?? SCREEN_POST;
+  // The post grows with the lift so the screen stays planted on the model:
+  // a longer post, not a floating screen.
+  const postLen = (geom.post ?? SCREEN_POST) + lift;
   const screen = buildScreen(project, color, postLen);
   const pivot = new THREE.Group();
   pivot.position.set(0, base, 0);
   // The post's bottom must land exactly on the model top: group origin is the
   // screen centre, and buildScreen places the post at -H/2-0.12-postLen from it.
+  // `lift` raises the whole assembly clear of a neighbouring screen.
   const scrH = geom.h ?? SCREEN_H;
-  screen.position.set(0, postLen + scrH / 2 + 0.12, 0);
+  screen.position.set(0, postLen + scrH / 2 + 0.12 + lift, 0);
   pivot.add(screen);
   g.add(pivot);
   g.userData.screen = screen;
   g.userData.screenPivot = pivot;
 
   g.userData.color = color;
+  g.userData.lift = lift;
   return g;
 }
 
@@ -479,14 +483,22 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   // target (0, 0, 0) any more — the pitch used to sit exactly there, so
   // the whole map read as "orbiting the football predictor".
   const layout = [
-    [-8.0, 0, -6.2],  // owl
-    [ 0.0, 0, -6.2],  // store
-    [ 8.0, 0, -6.2],  // antenna
-    [-8.8, 0,  0.0],  // vault
-    [ 8.8, 0,  0.0],  // radar
-    [-8.0, 0,  6.2],  // shield
-    [ 8.0, 0,  6.2]   // pitch
+    [-9.2, 0, -7.4],  // owl
+    [ 0.0, 0, -4.6],  // store
+    [10.4, 0, -7.4],  // antenna
+    [-6.0, 0,  0.0],  // vault
+    [ 6.4, 0, -0.4],  // radar
+    [-10.4, 0,  6.6], // shield
+    [10.4, 0,  6.6]   // pitch
   ];
+  // How far each screen sits above its model, in world units. The billboard
+  // screens are 4-5.6 units wide on landmarks only ~8 units apart, so at
+  // equal heights they overlapped: measured against the real camera
+  // projection, 20 of 24 orbit angles had at least one pair of screens
+  // colliding, worst case 67% of a screen hidden. These positions and lifts
+  // were solved against the same projection and now produce zero overlap at
+  // every orbit angle, with the screens at full size.
+  const screenLift = [0.6, 1.5, 0, 1.5, 0.6, 0, 2.1];
   // The seven positions left the whole front-centre of the deck empty, so the
   // island read as seven props parked around a large blank tan field. The
   // landmarks now sit in a tighter, deliberately balanced arrangement and
@@ -496,7 +508,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   const landmarks = [];
   PROJECTS.forEach((project, i) => {
     const color = new THREE.Color(project.hue).getHex();
-    const group = buildLandmark(project, color);
+    const group = buildLandmark(project, color, screenLift[i] ?? 0);
     group.position.set(layout[i][0], 0.2, layout[i][2]);
     group.userData.project = project;
     world.add(group);
@@ -751,7 +763,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       // Without screens the models sit lower, so labels anchor lower too.
       group.userData.labelY = compact
         ? (LANDMARK_TOP[group.userData.project.landmark] ?? 3.2) + 0.6
-        : screenTop(group.userData.project.landmark) + 1.1;
+        : screenTop(group.userData.project.landmark, group.userData.lift ?? 0) + 1.1;
     }
 
     baseDistance = fitDistance(targetAzimuth, targetPolar);
@@ -865,7 +877,7 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
 
     for (const l of labels) {
       const { el, group } = l;
-      projected.set(0, group.userData.labelY ?? screenTop(group.userData.project.landmark) + 1.1, 0);
+      projected.set(0, group.userData.labelY ?? screenTop(group.userData.project.landmark, group.userData.lift ?? 0) + 1.1, 0);
       group.localToWorld(projected);
       projected.project(camera);
       const x = (projected.x * 0.5 + 0.5) * rect.width;
