@@ -326,7 +326,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   /* The stroke has to scale with the type. A fixed 2px stroke on a 40px
      pixel face merges the glyphs into an unreadable smear — the word
      "SYSTEMS" was the thesis of the page and it could not be read. */
-  -webkit-text-stroke:max(1px, .022em) rgba(222,232,248,.85);
+  /* The stroke colour was rgba(222,232,248,.85) — a near-white blue tuned
+     for the old near-black ground. On the cream paper it blends to
+     (225,232,243) against #F2E9D8: a 1.02:1 contrast ratio, i.e. the line
+     was effectively invisible. Outline in ink instead; the fill stays
+     transparent so the hollow look survives. */
+  -webkit-text-stroke:max(1px, .022em) var(--ink);
   paint-order:stroke fill}
 .display .accent{
   color:var(--cyan)}
@@ -459,6 +464,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      tofu boxes in every CTA. The mono stack does have them. */
   font-family:var(--mono);
   font-size:.9rem;
+  /* The chip is ink, so the glyph must be paper or it disappears into it.
+     `--void` is the cream paper token and was resolving to ink here. */
+  color:var(--bg);
   transition:transform .45s var(--ease),background .35s var(--ease)
 }
 .btn:hover{

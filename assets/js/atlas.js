@@ -330,7 +330,11 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 200);
   camera.position.set(0, 12, 26);
 
-  scene.add(new THREE.HemisphereLight(0x9fd8ff, 0x0a0f1c, 1.55));
+  // The hemisphere sky was a pale blue at 1.55 in every theme, which washed
+  // the models toward pale cardboard on the light paper ground and drowned
+  // the palette blue. setGround() retints it per theme.
+  const hemi = new THREE.HemisphereLight(0x9fd8ff, 0x0a0f1c, 1.55);
+  scene.add(hemi);
   const key = new THREE.DirectionalLight(0xffffff, 1.25);
   key.position.set(10, 18, 12);
   scene.add(key);
@@ -898,6 +902,22 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       scene.fog.color.set(TERRAIN.fog);
       key.intensity = light ? 1.6 : 1.25;
       rim.intensity = light ? 0.4 : 0.9;
+      // On the light paper ground the pale-blue sky washed every model out to
+      // cardboard. A warm sky at a lower intensity keeps the models' own
+      // colour and lets the palette blue read as the hero's deep blue.
+      if (light) {
+        hemi.color.set(0xfff4e2);
+        hemi.groundColor.set(0xbba887);
+        hemi.intensity = 0.85;
+        fill.color.set(0xffe9c9);
+        fill.intensity = 7;
+      } else {
+        hemi.color.set(0x9fd8ff);
+        hemi.groundColor.set(0x0a0f1c);
+        hemi.intensity = 1.55;
+        fill.color.set(0x9fd8ff);
+        fill.intensity = 16;
+      }
       stars.material.opacity = light ? 0 : 0.4;
       renderer.setClearColor(hex, 0);
       startLoop();
