@@ -516,6 +516,10 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     // The visible chip can be demoted to a bare number on a phone, which
     // leaves a screen reader announcing "03" with no project name.
     el.setAttribute('aria-label', `Open ${group.userData.project.name} dossier`);
+    // The plaque text is rendered by CSS from this attribute, so the sign
+    // reads as an in-world object rather than a DOM chip. The span stays
+    // for the phone compact mode and for width measurement.
+    el.dataset.plaque = group.userData.project.name;
     el.innerHTML = `<span class="atlas-label-name">${group.userData.project.name}</span>`;
     // Open on pointerdown, not click. The label is rewritten every frame to
     // follow the orbiting camera, so by the time a `click` fires the element

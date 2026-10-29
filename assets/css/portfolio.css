@@ -1268,28 +1268,58 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 /* ---------- atlas labels ---------- */
 .atlas-labels{
   position:absolute;inset:0;pointer-events:none}
+/* Diegetic signage, not a browser tooltip. A cream chip with a hairline
+   border read as DOM pasted over the render — the clearest sign the island
+   was a demo. These are dark plaques on a stem, like a signpost standing
+   on the deck: dark ground, ink type, a pin below and a cast shadow, so
+   they sit in the scene instead of floating on the glass. */
 .atlas-label{
   position:absolute;top:0;left:0;
-  display:inline-flex;align-items:center;gap:.45rem;
-  padding:.45rem .75rem;border-radius:8px;
-  border:1px solid var(--line);
-  background:color-mix(in srgb, var(--bg) 85%, transparent);
-  font-family:var(--pixel);font-size:.78rem;letter-spacing:.05em;
-  text-transform:uppercase;color:var(--ink);
+  display:inline-flex;flex-direction:column;align-items:center;
+  padding:0;background:none;border:0;
+  font-family:var(--pixel);font-size:.72rem;letter-spacing:.05em;
+  text-transform:uppercase;
   white-space:nowrap;pointer-events:auto;
   /* No transform transition: the transform is rewritten every frame to follow
      the orbiting camera, so transitioning it leaves the labels permanently
      trailing their target and visibly overlapping each other. */
-  transition:border-color .2s var(--ease),background .2s var(--ease)}
+  transition:filter .2s var(--ease)}
+.atlas-label::before{
+  /* the plaque */
+  content:attr(data-plaque);
+  order:1;
+  display:block;padding:.34rem .6rem;border-radius:3px;
+  background:#1A2540;
+  color:#F2E9D8;
+  box-shadow:0 2px 0 rgba(0,0,0,.35),0 6px 14px rgba(0,0,0,.28);
+  border-bottom:2px solid var(--cyan);
+}
+.atlas-label::after{
+  /* the pin that plants the sign on the deck */
+  content:'';order:2;
+  width:2px;height:14px;margin-top:0;
+  background:linear-gradient(#1A2540,rgba(26,37,64,.25));
+}
 .atlas-label:hover{
-  border-color:var(--cyan);
+  filter:brightness(1.12) drop-shadow(0 8px 18px rgba(0,0,0,.3));
   z-index:5
 }
 .atlas-label-key{
-  font-family:var(--mono);font-size:.72rem;color:var(--cyan);letter-spacing:.03em
+  order:0;
+  font-family:var(--mono);font-size:.66rem;color:var(--cyan);letter-spacing:.03em;
+  background:#1A2540;padding:.14rem .34rem;border-radius:3px 3px 0 0;
+  margin-bottom:2px
 }
-.atlas-label-name{color:var(--muted)}
-.atlas-label:hover .atlas-label-name{color:var(--ink)}
+.atlas-label-name{
+  order:0;display:none;color:var(--muted);
+  font-family:var(--pixel);font-size:.72rem;text-transform:uppercase;
+  color:#F2E9D8
+}
+.atlas-label:hover .atlas-label-name{
+  display:inline;order:0;color:#F2E9D8;
+  background:#1A2540;padding:.14rem .34rem;border-radius:3px 3px 0 0;
+  margin-bottom:2px
+}
 .atlas-label.compact .atlas-label-name{display:none}
 .atlas-label.compact{padding:.3rem .45rem}
 .atlas-label.compact .atlas-label-key{font-size:.72rem;font-weight:700;color:var(--cyan)}
