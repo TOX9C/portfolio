@@ -55,10 +55,12 @@ function box(color, w, h, d, x, y, z, emissive = 0) {
 
 function buildIsland(group) {
   // Collected so setGround can retint the whole terrain for a theme.
+  // Each entry is tagged with the role it plays, so a theme can give paths,
+  // grass, trunks and stone their own tones instead of one flat colour.
   const groundMats = [];
-  const groundMat = (color) => {
+  const groundMat = (color, role = 'tile') => {
     const m = new THREE.MeshLambertMaterial({ color });
-    groundMats.push(m);
+    groundMats.push({ mat: m, role });
     return m;
   };
   group.userData.groundMats = groundMats;
@@ -69,7 +71,7 @@ function buildIsland(group) {
   // now sized to its contents: less void, and the models fill the frame.
   const top = new THREE.Mesh(
     new THREE.BoxGeometry(28.4, 1.6, 20.4),
-    groundMat(PALETTE.base)
+    groundMat(PALETTE.base, 'base')
   );
   top.position.y = -0.8;
   top.receiveShadow = true;
@@ -78,14 +80,84 @@ function buildIsland(group) {
   // soil rim
   const rim = new THREE.Mesh(
     new THREE.BoxGeometry(29.4, 0.6, 21.4),
-    groundMat(PALETTE.baseEdge)
+    groundMat(PALETTE.baseEdge, 'edge')
   );
   rim.position.y = -0.3;
   rim.receiveShadow = true;
   group.add(rim);
 
-  // A clean flat deck. The scattered grass-tuft boxes ran right up to the
-  // landmark plots and read as junk on the floor; the island is now bare.
+  // --- environment -------------------------------------------------------
+  // A bare platter read as a turntable of props. The deck now has a road
+  // network, grass verges, trees and rocks, so it reads as ground you could
+  // walk on. Everything here is kept clear of the seven 6.4x4.6 plots.
+  const flat = (w, h, d, x, y, z, role, rot = 0) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), groundMat(0xcbba96, role));
+    m.position.set(x, y, z);
+    m.rotation.y = rot;
+    m.receiveShadow = true;
+    group.add(m);
+    return m;
+  };
+
+  // Main avenues: one along x and one along z, meeting at a small plaza.
+  // They stay between the plot rows, so no road runs under a landmark.
+  flat(12.0, 0.07, 1.7, 0, 0.035, 0, 'path');
+  flat(1.7, 0.07, 8.2, 0, 0.035, 0, 'path');
+  flat(3.6, 0.09, 3.6, 0, 0.045, 0, 'path');
+
+  // Grass verges: large low patches that break the tan field into areas.
+  flat(2.6, 0.08, 5.0, -12.9, 0.04, -6.6, 'grass');
+  flat(2.6, 0.08, 5.0, 12.9, 0.04, -6.6, 'grass');
+  flat(2.6, 0.08, 4.4, -12.9, 0.04, 5.6, 'grass');
+  flat(2.6, 0.08, 4.4, 12.9, 0.04, 5.6, 'grass');
+  flat(6.4, 0.07, 1.3, 0, 0.035, 8.9, 'grass');
+  flat(6.4, 0.07, 1.1, 0, 0.035, -9.4, 'grass');
+
+  // Trees. A trunk and a two-tier canopy, placed around the rim and in the
+  // gaps between plots so they never crowd a landmark.
+  const tree = (x, z, s = 1) => {
+    const trunk = new THREE.Mesh(
+      new THREE.BoxGeometry(0.3 * s, 0.72 * s, 0.3 * s),
+      groundMat(0x6b5138, 'trunk')
+    );
+    trunk.position.set(x, 0.36 * s, z);
+    trunk.castShadow = true;
+    group.add(trunk);
+    const lower = new THREE.Mesh(
+      new THREE.BoxGeometry(1.5 * s, 0.72 * s, 1.5 * s),
+      groundMat(0x7e9450, 'canopy')
+    );
+    lower.position.set(x, 0.72 * s + 0.36 * s, z);
+    lower.castShadow = true;
+    group.add(lower);
+    const upper = new THREE.Mesh(
+      new THREE.BoxGeometry(1.02 * s, 0.58 * s, 1.02 * s),
+      groundMat(0x8aa45c, 'canopy')
+    );
+    upper.position.set(x, 0.72 * s + 0.72 * s + 0.29 * s, z);
+    upper.castShadow = true;
+    group.add(upper);
+  };
+  for (const [x, z, s] of [
+    [-13.2, -9.0, 1.0], [-13.2, -3.4, 0.85], [-13.2, 2.6, 1.0], [-13.2, 8.4, 0.9],
+    [13.2, -9.0, 0.9], [13.2, -3.6, 1.0], [13.2, 2.4, 0.85], [13.2, 8.4, 1.0],
+    [-4.8, 9.2, 0.9], [4.8, 9.2, 1.0], [-4.6, -9.3, 0.95], [4.6, -9.3, 0.85],
+    [-4.9, 3.4, 0.8], [4.9, 3.4, 0.8]
+  ]) tree(x, z, s);
+
+  // Rocks: low blocks that break up the flat ground near the verges.
+  for (const [x, z, w, h, d] of [
+    [-11.6, 8.6, 1.1, 0.42, 0.9], [11.4, -9.1, 0.9, 0.36, 1.0],
+    [1.9, 9.0, 1.3, 0.34, 1.1], [-2.3, -9.2, 1.0, 0.4, 0.8],
+    [12.6, 1.4, 0.8, 0.32, 1.2], [-12.7, -1.2, 1.0, 0.38, 0.9]
+  ]) {
+    const r = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), groundMat(0xa89a7a, 'rock'));
+    r.position.set(x, h / 2, z);
+    r.rotation.y = x * 0.37 + z * 0.21;
+    r.castShadow = true;
+    r.receiveShadow = true;
+    group.add(r);
+  }
 }
 
 /* ---------- landmarks ---------- */
@@ -927,14 +999,18 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       const TERRAIN = light
         ? { base: 0xd8c9a8, edge: 0xbfae8c, tile: 0xc4b28e, grass: 0x9fb06a, fog: hex }
         : { base: PALETTE.base, edge: PALETTE.baseEdge, tile: PALETTE.ground, grass: PALETTE.grass, fog: hex };
-      const mats = world.userData.groundMats || [];
-      if (mats.length) {
-        mats[0].color.set(TERRAIN.base);
-        if (mats[1]) mats[1].color.set(TERRAIN.edge);
-        for (let i = 2; i < mats.length; i++) {
-          // tiles alternate grass/ground; shards keep a deep tone
-          mats[i].color.set(i % 3 === 0 ? TERRAIN.grass : TERRAIN.tile);
-        }
+      // Each terrain piece carries a role, so a theme can give the deck,
+      // roads, verges, trees and stone their own tones. The old flat array
+      // was tinted by index, which assumed three kinds of material.
+      const ROLE_COLORS = light
+        ? { base: 0xd8c9a8, edge: 0xbfae8c, path: 0xf0e6d0, grass: 0x8ba557,
+            trunk: 0x6b5138, canopy: 0x7e9450, rock: 0xa89a7a, tile: 0xc4b28e }
+        : { base: PALETTE.base, edge: PALETTE.baseEdge, path: 0x243456,
+            grass: PALETTE.grass, trunk: 0x4a3a2c, canopy: 0x2f5a3c,
+            rock: 0x2a3550, tile: PALETTE.ground };
+      for (const { mat, role } of (world.userData.groundMats || [])) {
+        const c = ROLE_COLORS[role] ?? ROLE_COLORS.tile;
+        if (c !== undefined) mat.color.set(c);
       }
       scene.fog.color.set(TERRAIN.fog);
       key.intensity = light ? 1.6 : 1.25;
