@@ -68,6 +68,7 @@ function buildIsland(group) {
     groundMat(PALETTE.base)
   );
   top.position.y = -0.8;
+  top.receiveShadow = true;
   group.add(top);
 
   // soil rim
@@ -76,6 +77,7 @@ function buildIsland(group) {
     groundMat(PALETTE.baseEdge)
   );
   rim.position.y = -0.3;
+  rim.receiveShadow = true;
   group.add(rim);
 
   // A clean flat deck. The scattered grass-tuft boxes ran right up to the
@@ -211,6 +213,7 @@ function buildScreen(project, color, postLen = SCREEN_POST) {
     new THREE.BoxGeometry(W + 0.24, H + 0.24, 0.12),
     new THREE.MeshLambertMaterial({ color: 0x1a2540 })
   );
+  frame.castShadow = true;
   group.add(frame);
 
   const texture = new THREE.TextureLoader().load(project.images[0].src, (t) => {
@@ -250,6 +253,7 @@ function buildScreen(project, color, postLen = SCREEN_POST) {
     new THREE.MeshLambertMaterial({ color: 0x1a2540 })
   );
   post.position.y = bottom - postLen / 2;
+  post.castShadow = true;
   group.add(post);
 
   return group;
@@ -279,6 +283,8 @@ function buildLandmark(project, color) {
       ? tops[layer.on]
       : y;
     m.position.set(layer.x ?? 0, baseY + layer.h / 2, layer.z ?? 0);
+    m.castShadow = true;
+    m.receiveShadow = true;
     g.add(m);
     y = baseY + layer.h;
     if (layer.id) tops[layer.id] = y;
@@ -293,6 +299,8 @@ function buildLandmark(project, color) {
     new THREE.MeshLambertMaterial({ color: 0xcbba96 })
   );
   plot.position.y = 0.04;
+  plot.receiveShadow = true;
+  plot.castShadow = true;
   g.add(plot);
 
   // The project's real screenshot, raised above the model on a post that
@@ -323,6 +331,10 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(canvas.clientWidth || 800, canvas.clientHeight || 600, false);
+  // No shadows at all: the diorama read as a flat blockout with the models
+  // pasted onto the deck. The key light casts them now.
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x05070e, 0.018);
@@ -337,6 +349,16 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   scene.add(hemi);
   const key = new THREE.DirectionalLight(0xffffff, 1.25);
   key.position.set(10, 18, 12);
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.camera.near = 1;
+  key.shadow.camera.far = 90;
+  key.shadow.camera.left = -26;
+  key.shadow.camera.right = 26;
+  key.shadow.camera.top = 26;
+  key.shadow.camera.bottom = -26;
+  key.shadow.bias = -0.0012;
+  key.shadow.normalBias = 0.03;
   scene.add(key);
   const rim = new THREE.DirectionalLight(0x54e1ff, 0.9);
   rim.position.set(-12, 6, -10);
