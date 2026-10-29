@@ -902,6 +902,11 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       scene.fog.color.set(TERRAIN.fog);
       key.intensity = light ? 1.6 : 1.25;
       rim.intensity = light ? 0.4 : 0.9;
+      // The fog was recoloured to the cream page but kept the night-ground
+      // density of 0.018. At the camera's distance that replaced 20-40% of
+      // every model's colour with cream haze, so the whole diorama read as
+      // pale beige cardboard. The light ground needs a much thinner haze.
+      scene.fog.density = light ? 0.005 : 0.018;
       // On the light paper ground the pale-blue sky washed every model out to
       // cardboard. A warm sky at a lower intensity keeps the models' own
       // colour and lets the palette blue read as the hero's deep blue.
