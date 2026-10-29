@@ -99,23 +99,32 @@ function buildIsland(group) {
     return m;
   };
 
-  // Main avenues: one along x and one along z, meeting at a small plaza.
-  // They stay between the plot rows, so no road runs under a landmark.
-  flat(12.0, 0.07, 1.7, 0, 0.035, 0, 'path');
-  flat(1.7, 0.07, 8.2, 0, 0.035, 0, 'path');
-  flat(3.6, 0.09, 3.6, 0, 0.045, 0, 'path');
+  // The path network. The old layout assumed a 3x3 grid of plots with a
+  // crossroads through the middle, but the solved layout has none: the roads
+  // ran straight through E-Commerce, CashPilot and PriceHawk. This network
+  // was solved against the seven plot footprints - no path crosses a plot,
+  // every plot is served, and the whole thing is one connected component.
+  flat(27.2, 0.07, 2.0, 0.00, 0.035, 3.30, 'path');   // spine
+  flat(1.4, 0.07, 13.0, -13.30, 0.035, -3.20, 'path'); // west
+  flat(1.4, 0.07, 5.6, 0.00, 0.035, 0.50, 'path');     // centre
+  flat(10.4, 0.07, 1.4, 8.40, 0.035, -4.40, 'path');   // east-mid
+  flat(1.4, 0.07, 7.7, 11.50, 0.035, -0.55, 'path');   // east
+  flat(1.4, 0.07, 1.4, 6.40, 0.035, 2.60, 'path');     // pricehawk spur
 
   // Grass verges: large low patches that break the tan field into areas.
-  flat(2.6, 0.08, 5.0, -12.9, 0.04, -6.6, 'grass');
-  flat(2.6, 0.08, 5.0, 12.9, 0.04, -6.6, 'grass');
-  flat(2.6, 0.08, 4.4, -12.9, 0.04, 5.6, 'grass');
-  flat(2.6, 0.08, 4.4, 12.9, 0.04, 5.6, 'grass');
-  flat(6.4, 0.07, 1.3, 0, 0.035, 8.9, 'grass');
-  flat(6.4, 0.07, 1.1, 0, 0.035, -9.4, 'grass');
+  flat(26.0, 0.08, 1.0, 0.0, 0.04, 9.6, 'grass');
+  flat(12.0, 0.08, 3.4, -1.0, 0.04, 6.9, 'grass');
+  flat(6.0, 0.08, 2.0, 0.0, 0.04, -8.6, 'grass');
+  flat(3.4, 0.08, 2.8, 5.0, 0.04, -8.2, 'grass');
+  flat(2.4, 0.08, 5.4, -4.4, 0.04, -6.4, 'grass');
+  flat(2.6, 0.08, 2.2, -10.9, 0.04, -3.6, 'grass');
+  flat(1.6, 0.08, 4.4, 13.2, 0.04, -1.0, 'grass');
 
-  // Trees. A trunk and a two-tier canopy, placed around the rim and in the
-  // gaps between plots so they never crowd a landmark.
-  const tree = (x, z, s = 1) => {
+  // Trees. Three species so the verges read as woodland rather than a row of
+  // identical hedges: a broad box-leaf, a stepped conifer and a low bush.
+  const tree = (x, z, s = 1, kind = 0) => {
+    const jitter = ((Math.sin(x * 12.9 + z * 7.3) * 43758.5453) % 1 + 1) % 1;
+    const spin = jitter * Math.PI;
     const trunk = new THREE.Mesh(
       new THREE.BoxGeometry(0.3 * s, 0.72 * s, 0.3 * s),
       groundMat(0x6b5138, 'trunk')
@@ -123,33 +132,51 @@ function buildIsland(group) {
     trunk.position.set(x, 0.36 * s, z);
     trunk.castShadow = true;
     group.add(trunk);
-    const lower = new THREE.Mesh(
-      new THREE.BoxGeometry(1.5 * s, 0.72 * s, 1.5 * s),
-      groundMat(0x7e9450, 'canopy')
-    );
-    lower.position.set(x, 0.72 * s + 0.36 * s, z);
-    lower.castShadow = true;
-    group.add(lower);
-    const upper = new THREE.Mesh(
-      new THREE.BoxGeometry(1.02 * s, 0.58 * s, 1.02 * s),
-      groundMat(0x8aa45c, 'canopy')
-    );
-    upper.position.set(x, 0.72 * s + 0.72 * s + 0.29 * s, z);
-    upper.castShadow = true;
-    group.add(upper);
+
+    const tier = (w, h, y, tint, d = w) => {
+      const m = new THREE.Mesh(
+        new THREE.BoxGeometry(w * s, h * s, d * s),
+        groundMat(tint, 'canopy')
+      );
+      m.position.set(x, y * s, z);
+      m.rotation.y = spin;
+      m.castShadow = true;
+      group.add(m);
+      return m;
+    };
+
+    if (kind === 0) {
+      // Broadleaf: two stacked, slightly offset slabs.
+      tier(1.5, 0.72, 1.08, 0x7e9450);
+      tier(1.02, 0.58, 1.73, 0x8aa45c);
+    } else if (kind === 1) {
+      // Conifer: three shrinking tiers.
+      tier(1.42, 0.5, 0.95, 0x4f7a4a, 1.42);
+      tier(1.1, 0.5, 1.42, 0x5d8a52, 1.1);
+      tier(0.74, 0.5, 1.86, 0x6b9a5e, 0.74);
+    } else {
+      // Bush: one wide low mass, no trunk visible above the leaves.
+      tier(1.34, 0.92, 0.78, 0x6f9145, 1.2);
+    }
   };
-  for (const [x, z, s] of [
-    [-13.2, -9.0, 1.0], [-13.2, -3.4, 0.85], [-13.2, 2.6, 1.0], [-13.2, 8.4, 0.9],
-    [13.2, -9.0, 0.9], [13.2, -3.6, 1.0], [13.2, 2.4, 0.85], [13.2, 8.4, 1.0],
-    [-4.8, 9.2, 0.9], [4.8, 9.2, 1.0], [-4.6, -9.3, 0.95], [4.6, -9.3, 0.85],
-    [-4.9, 3.4, 0.8], [4.9, 3.4, 0.8]
-  ]) tree(x, z, s);
+  // Every spot here was checked against the solved plot footprints and the
+  // path network, so no tree grows through a landmark or stands on a road.
+  for (const [x, z, s, k] of [
+    [-4.8, -9.2, 0.97, 1], [-2.8, -9.2, 0.93, 0], [-0.8, -9.2, 0.88, 2],
+    [1.2, -9.2, 0.82, 1], [3.2, -9.2, 0.75, 0], [5.6, -9.2, 0.95, 1],
+    [-4.4, 8.8, 0.8, 2], [-1.6, 8.8, 0.99, 1], [0.4, 8.8, 0.97, 0],
+    [3.6, 8.8, 0.99, 1], [6.0, 8.8, 0.96, 0], [-11.2, -4.0, 0.76, 2],
+    [-11.2, -2.0, 1.0, 1], [-6.0, 7.6, 0.96, 0], [2.0, 7.6, 0.97, 1],
+    [4.4, -7.6, 0.89, 2], [-4.8, -7.2, 0.85, 1], [-2.8, 7.2, 0.92, 0],
+    [4.8, 7.2, 0.85, 1], [0.0, 6.8, 0.77, 2], [-9.2, -4.0, 0.82, 0],
+    [6.0, -6.4, 1.0, 1]
+  ]) tree(x, z, s, k);
 
   // Rocks: low blocks that break up the flat ground near the verges.
   for (const [x, z, w, h, d] of [
-    [-11.6, 8.6, 1.1, 0.42, 0.9], [11.4, -9.1, 0.9, 0.36, 1.0],
-    [1.9, 9.0, 1.3, 0.34, 1.1], [-2.3, -9.2, 1.0, 0.4, 0.8],
-    [12.6, 1.4, 0.8, 0.32, 1.2], [-12.7, -1.2, 1.0, 0.38, 0.9]
+    [-4.8, -9.2, 1.1, 0.42, 0.9], [3.2, -9.2, 0.9, 0.36, 1.0],
+    [0.4, 8.8, 1.3, 0.34, 1.1], [-11.2, -2.0, 1.0, 0.4, 0.8],
+    [-4.8, -7.2, 0.8, 0.32, 1.2], [-9.2, -4.0, 1.0, 0.38, 0.9]
   ]) {
     const r = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), groundMat(0xa89a7a, 'rock'));
     r.position.set(x, h / 2, z);
