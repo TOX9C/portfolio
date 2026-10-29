@@ -1061,7 +1061,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   grid-area:label;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;
   text-transform:uppercase;color:var(--faint)}
-.contact-mail .btn-arrow{grid-area:arrow}
+/* The arrow chips here inherited `color:--void` (the cream paper token)
+   while `.btn-arrow` paints them `--line` (near-black), so the glyph was
+   dark-on-dark and rendered as a solid black square. Pin the glyph to the
+   paper colour; the chip itself stays the ink square. */
+.contact-mail .btn-arrow{grid-area:arrow;color:var(--bg)}
 /* A recruiter asks for the CV before they ask anything else, so the download
    sits directly under the email — not buried in the footer. */
 .contact-resume{
@@ -1089,7 +1093,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   grid-area:note;
   font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;color:var(--faint)
 }
-.contact-resume .btn-arrow{grid-area:arrow}
+.contact-resume .btn-arrow{grid-area:arrow;color:var(--bg)}
 .contact-mail-addr{
   grid-area:addr;
   /* A mono face, not the pixel display font: at 17px Pixelify renders the `@`
