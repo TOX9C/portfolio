@@ -118,7 +118,7 @@ export const PROJECTS = [
     ],
     stack: ['price history', 'charts', 'alerts'],
     images: [
-      { src: 'assets/projects/pricehawk-landing.webp', alt: 'PriceHawk landing page' }
+      { src: 'assets/projects/pricehawk-landing.webp', alt: 'PriceHawk tracking a product with price history' }
     ],
     links: [{ label: 'Source', href: 'https://github.com/TOX9C/price-tracker', primary: true }],
     hue: '#54E1FF',
