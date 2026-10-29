@@ -218,9 +218,14 @@ function buildScreen(project, color, postLen = SCREEN_POST) {
 
   const texture = new THREE.TextureLoader().load(project.images[0].src, (t) => {
     t.colorSpace = THREE.SRGBColorSpace;
-    t.minFilter = THREE.LinearFilter;
+    // Mipmaps off with a plain LinearFilter on a 1600-2000px screenshot
+    // minified to ~90px gave the GPU no chain to sample, so the screens
+    // shimmered and averaged into grey smears. A mip chain plus anisotropy
+    // is the correct minification for a texture seen at a grazing angle.
+    t.minFilter = THREE.LinearMipmapLinearFilter;
     t.magFilter = THREE.LinearFilter;
-    t.generateMipmaps = false;
+    t.generateMipmaps = true;
+    t.anisotropy = 8;
     t.needsUpdate = true;
   });
   // One screen, front-facing only. The crossed second plane made every
