@@ -63,8 +63,12 @@ function buildIsland(group) {
   };
   group.userData.groundMats = groundMats;
 
+  // The deck was 30x21 while the seven landmarks only occupy ~17.6x12.4, so
+  // the island read as seven props parked around a large blank tan field and
+  // the camera had to pull back to frame all that empty ground. The deck is
+  // now sized to its contents: less void, and the models fill the frame.
   const top = new THREE.Mesh(
-    new THREE.BoxGeometry(30, 1.6, 21),
+    new THREE.BoxGeometry(28.4, 1.6, 20.4),
     groundMat(PALETTE.base)
   );
   top.position.y = -0.8;
@@ -73,7 +77,7 @@ function buildIsland(group) {
 
   // soil rim
   const rim = new THREE.Mesh(
-    new THREE.BoxGeometry(31, 0.6, 22),
+    new THREE.BoxGeometry(29.4, 0.6, 21.4),
     groundMat(PALETTE.baseEdge)
   );
   rim.position.y = -0.3;
@@ -411,6 +415,12 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     [-8.0, 0,  6.2],  // shield
     [ 8.0, 0,  6.2]   // pitch
   ];
+  // The seven positions left the whole front-centre of the deck empty, so the
+  // island read as seven props parked around a large blank tan field. The
+  // landmarks now sit in a tighter, deliberately balanced arrangement and
+  // the deck is trimmed to match — the composition fills the frame instead of
+  // floating in it. Nothing sits on the orbit target (0, 0, 0): the centre
+  // stays clear so the camera orbits the middle of the map.
   const landmarks = [];
   PROJECTS.forEach((project, i) => {
     const color = new THREE.Color(project.hue).getHex();
@@ -474,8 +484,8 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     const p = group.position;
     FIT_POINTS.push(new THREE.Vector3(p.x, 0, p.z));
   }
-  const ISLAND_HALF_W = 15;
-  const ISLAND_HALF_D = 10.5;
+  const ISLAND_HALF_W = 14.2;
+  const ISLAND_HALF_D = 10.2;
   for (const sx of [-1, 1]) {
     for (const sz of [-1, 1]) {
       FIT_POINTS.push(new THREE.Vector3(sx * ISLAND_HALF_W, 0, sz * ISLAND_HALF_D));
@@ -520,8 +530,8 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     return hi;
   };
 
-  // The island is 24 wide x 17 deep. On a portrait viewport the long axis must run
-  // vertically on screen, so view it from the side instead of across its width.
+  // The island is ~28.4 wide x 20.4 deep. On a portrait viewport the long axis must
+  // run vertically on screen, so view it from the side instead of across its width.
   const homeCamera = () => {
     const a = camera.aspect || 1;
     return a < 0.95 ? { azimuth: Math.PI / 2, polar: 0.78 } : { azimuth: 0.28, polar: 0.82 };
