@@ -61,7 +61,9 @@ function manifest({ onOpen, onHover }) {
     // for it pulled ~2.7MB of images into the hero; the thumb is ~7KB.
     const thumb = p.images[0].src.replace('assets/projects/', 'assets/projects/thumbs/');
     btn.innerHTML = `
-      <span class="legend-shot"><img src="${thumb}" alt="${p.images[0].alt}" loading="lazy" width="480" height="270"></span>
+      <span class="legend-shot"><img src="${thumb}" alt="${p.images[0].alt}" loading="lazy" width="480" height="270">
+        <span class="legend-index" aria-hidden="true">${p.index}</span>
+      </span>
       <span class="legend-text">
         <span class="legend-head">
           <span class="legend-proof">${p.stats[0].value}<span class="legend-proof-label">${p.stats[0].label}</span></span>

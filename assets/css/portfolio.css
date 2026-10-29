@@ -629,6 +629,16 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   opacity:.95;transition:opacity .35s var(--ease),transform .5s var(--ease),filter .35s var(--ease)
 }
 .legend-list button:hover .legend-shot img{filter:brightness(1.15);opacity:1}
+/* The index badge matches the numbered chips the map uses when a sign has no
+   room for its full name, so a phone visitor can always decode the map. */
+.legend-index{
+  position:absolute;top:8px;left:8px;
+  font-family:var(--mono);font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;color:var(--cyan);
+  background:var(--void);padding:.18rem .4rem;border-radius:3px;
+  border:1px solid color-mix(in srgb, var(--cyan) 40%, transparent)
+}
+.legend-shot{position:relative}
 /* The caption sits BELOW the screenshot, in normal flow. It used to be an
    overlay on the image with the proof badge pinned to the top-right corner —
    and the badge painted straight over the project name (measured 19–54px of
@@ -1314,15 +1324,15 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      the orbiting camera, so transitioning it leaves the labels permanently
      trailing their target and visibly overlapping each other. */
   transition:filter .2s var(--ease)}
-.atlas-label::before{
-  /* the plaque */
-  content:attr(data-plaque);
+.atlas-label-plaque{
   order:1;
   display:block;padding:.34rem .6rem;border-radius:3px;
   background:#1A2540;
   color:#F2E9D8;
   box-shadow:0 2px 0 rgba(0,0,0,.35),0 6px 14px rgba(0,0,0,.28);
   border-bottom:2px solid var(--cyan);
+  font-family:var(--pixel);font-size:.72rem;letter-spacing:.05em;
+  text-transform:uppercase
 }
 .atlas-label::after{
   /* the pin that plants the sign on the deck */
@@ -1352,6 +1362,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .atlas-label.compact .atlas-label-name{display:none}
 .atlas-label.compact{padding:.3rem .45rem}
+/* Demoted to a number: the plaque itself carries the index, and the full
+   name comes back on hover or focus so no sign becomes unidentifiable. */
+.atlas-label.compact .atlas-label-plaque{
+  font-weight:700;color:var(--cyan);
+  padding:.3rem .5rem;letter-spacing:.06em
+}
+.atlas-label.compact:hover .atlas-label-plaque,
+.atlas-label.compact:focus-visible .atlas-label-plaque{color:#F2E9D8}
 .atlas-label.compact .atlas-label-key{font-size:.72rem;font-weight:700;color:var(--cyan)}
 /* Phones keep the project name, just smaller. 9.9px was unreadable on a
    phone; 11.5px was still too small to scan, so the tight size is now
@@ -1361,6 +1379,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-size:.88rem;letter-spacing:.02em
 }
 .atlas-label.tight .atlas-label-key{font-size:.88rem}
+.atlas-label.tight .atlas-label-plaque{font-size:.88rem;letter-spacing:.02em}
 
 /* ---------- scroll reveal ---------- */
 .rv{

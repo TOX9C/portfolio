@@ -555,11 +555,14 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     // The visible chip can be demoted to a bare number on a phone, which
     // leaves a screen reader announcing "03" with no project name.
     el.setAttribute('aria-label', `Open ${group.userData.project.name} dossier`);
-    // The plaque text is rendered by CSS from this attribute, so the sign
-    // reads as an in-world object rather than a DOM chip. The span stays
-    // for the phone compact mode and for width measurement.
+    // The plaque is a real element, not CSS ::before content, so the
+    // declutter can measure exactly the painted sign. A pseudo-element's box
+    // includes transparent padding and the pin stem, which made the layout
+    // think two clearly separated signs were overlapping.
     el.dataset.plaque = group.userData.project.name;
-    el.innerHTML = `<span class="atlas-label-name">${group.userData.project.name}</span>`;
+    el.dataset.fullPlaque = group.userData.project.name;
+    el.dataset.keyPlaque = group.userData.project.index;
+    el.innerHTML = `<span class="atlas-label-plaque">${group.userData.project.name}</span><span class="atlas-label-name">${group.userData.project.name}</span>`;
     // Open on pointerdown, not click. The label is rewritten every frame to
     // follow the orbiting camera, so by the time a `click` fires the element
     // has moved out from under the pointer and the browser cancels the
@@ -584,7 +587,8 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   // Re-measured on resize: the narrow/wide class changes the label's width.
   const cacheLabelWidths = () => {
     for (const l of labels) {
-      l.w = l.el.offsetWidth;
+      const plaque = l.el.querySelector('.atlas-label-plaque');
+      l.w = plaque ? plaque.offsetWidth : l.el.offsetWidth;
       l.keyW = (l.el.querySelector('.atlas-label-key')?.offsetWidth || 0) + 18;
     }
   };
@@ -982,36 +986,65 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       // the cached width was taken before the narrow-viewport class applied.
       l.el.classList.toggle('tight', narrow);
       l.el.classList.remove('compact');
+      // Restore the full name: the compact demotion is per-frame, so a sign
+      // that regained room must go back to showing its name.
+      l.el.querySelector('.atlas-label-plaque').textContent = l.el.dataset.fullPlaque;
       // Read the size once per frame, not inside the nudge loop. Reading
       // offsetWidth there forced a layout on every candidate position, which
       // starved the main thread and stalled the page's CSS transitions.
-      let w = l.el.offsetWidth;
-      let h = l.el.offsetHeight;
+      //
+      // The box that matters is the painted plaque, not the whole button:
+      // the button also carries transparent padding and a 14px pin stem.
+      // Measuring the button made two clearly separated signs look like they
+      // were overlapping, which forced needless demotion to bare numbers.
+      const plaque = l.el.querySelector('.atlas-label-plaque');
+      let w = 0, h = 0, drop = 0;
+      const measure = () => {
+        const elH = l.el.offsetHeight;
+        h = plaque.offsetHeight;
+        w = plaque.offsetWidth;
+        // Distance from the bottom of the plaque down to the bottom of the
+        // button (the pin stem). The button is anchored bottom-up, so the
+        // plaque's bottom edge sits this far above the anchor point.
+        drop = elH - (plaque.offsetTop + h);
+      };
+      measure();
       let y = l.y;
 
-      if (!fits(l.x - w / 2, l.x + w / 2, y - h, y)) {
-        // Nudge upward until clear, then downward if we ran out of room above.
-        let found = false;
+      // Search upward first, then downward, for a slot clear of every placed
+      // sign. Returns null when the label has nowhere to go.
+      const seek = () => {
         for (let dy = 0; dy <= 150; dy += 4) {
           const up = l.y - dy;
-          if (up - h > 4 && fits(l.x - w / 2, l.x + w / 2, up - h, up)) { y = up; found = true; break; }
+          if (up - drop - h > 4 && fits(l.x - w / 2, l.x + w / 2, up - drop - h, up - drop)) return up;
           const down = l.y + dy;
-          if (down < rect.height - 4 && fits(l.x - w / 2, l.x + w / 2, down - h, down)) { y = down; found = true; break; }
+          if (down - drop - h > 4 && fits(l.x - w / 2, l.x + w / 2, down - drop - h, down - drop)) return down;
         }
-        if (!found) {
-          // Last resort: drop the name, keep the numbered chip.
-          l.el.classList.add('compact');
-          w = l.el.offsetWidth;
-          h = l.el.offsetHeight;
-          y = Math.max(h + 4, Math.min(l.y, rect.height - 6));
-        }
+        return null;
+      };
+
+      y = seek();
+      if (y === null) {
+        // No room for the full name: demote to the numbered chip and try
+        // again. The old code compacted and dropped the label at its anchor
+        // without re-testing the fit, so the smaller sign landed on top of
+        // its neighbours anyway — the overlap it was meant to solve.
+        l.el.classList.add('compact');
+        plaque.textContent = l.el.dataset.keyPlaque;
+        measure();
+        y = seek();
+      }
+      if (y === null) {
+        // Still nothing free: keep the number and park it in the least bad
+        // spot — clamped to the canvas so it stays on screen.
+        y = Math.max(l.y, rect.height - 6);
       }
       l.el.style.transform = `translate(-50%,-100%) translate(${l.x.toFixed(1)}px,${y.toFixed(1)}px)`;
       l.el.style.opacity = '1';
       l.el.style.pointerEvents = 'auto';
-      // Record the box the label actually occupies. The element is anchored at
-      // its bottom edge (translate -100% Y), so it occupies [y-h, y].
-      placed.push({ l: l.x - w / 2, r: l.x + w / 2, t: y - h, b: y });
+      // Record the box the plaque actually occupies, so the next sign is
+      // placed against what is really on screen.
+      placed.push({ l: l.x - w / 2, r: l.x + w / 2, t: y - drop - h, b: y - drop });
       l.finalY = y;
       l.finalW = w;
     }
