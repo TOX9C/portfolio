@@ -351,7 +351,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:block;
   margin-top:.7rem;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--cyan);
+  text-transform:uppercase;
+  /* This line was accent blue, the same colour as the primary CTA, so three
+     blue lines competed in a 100px band above the buttons. Blue is now
+     reserved for actions; availability is information. */
+  color:var(--muted);
   line-height:1.7
 }
 /* Inline, not a flex item. As a flex row the whole text block wrapped to its
@@ -481,10 +485,16 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .btn-primary:hover .btn-arrow{background:color-mix(in srgb, var(--bg) 28.000000000000004%, transparent)}
 
 .stage-chips{
-  display:flex;flex-wrap:wrap;gap:2rem;
+  display:flex;flex-wrap:wrap;gap:1.1rem 1.9rem;
   margin-top:1.4rem;padding-top:1rem;
   border-top:1px solid var(--hair-soft)}
-.stage-chips li{display:flex;flex-direction:column;gap:.15rem}
+.stage-chips li{
+  display:flex;flex-direction:column;gap:.15rem;
+  /* The column is narrow enough that three stats cannot share one line at
+     desktop widths. Let them wrap as two balanced rows instead of letting
+     the third orphan onto a line of its own. */
+  flex:1 1 8.5rem;min-width:0
+}
 .stage-chips b{
   font-family:var(--sans);font-weight:600;
   font-size:clamp(1.25rem,2vw,1.7rem);line-height:1;
@@ -494,6 +504,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .stage-chips span{
   font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;
   text-transform:uppercase;color:var(--muted)
+}
+/* A word in the value slot ("Rust") at the numeric size would swamp the row
+   and break its rhythm, so word-values get the display face at text scale. */
+.stage-chips li.word b{
+  font-family:var(--pixel);font-size:clamp(.95rem,1.2vw,1.15rem);
+  letter-spacing:.02em;text-transform:uppercase
 }
 
 /* The proof strip. A recruiter's first three clicks are the CV, the live
