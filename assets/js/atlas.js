@@ -985,10 +985,13 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       // Start from the full label (name included) and measure it as rendered —
       // the cached width was taken before the narrow-viewport class applied.
       l.el.classList.toggle('tight', narrow);
-      l.el.classList.remove('compact');
-      // Restore the full name: the compact demotion is per-frame, so a sign
-      // that regained room must go back to showing its name.
-      l.el.querySelector('.atlas-label-plaque').textContent = l.el.dataset.fullPlaque;
+      // A phone gets a numbered chip, not the full name: at 350px wide the
+      // seven names covered a sixth of the canvas and buried the diorama
+      // they were labelling. The manifest sits directly below the map and
+      // carries the same numbers, so nothing is lost.
+      l.el.classList.toggle('compact', narrow);
+      l.el.querySelector('.atlas-label-plaque').textContent =
+        narrow ? l.el.dataset.keyPlaque : l.el.dataset.fullPlaque;
       // Read the size once per frame, not inside the nudge loop. Reading
       // offsetWidth there forced a layout on every candidate position, which
       // starved the main thread and stalled the page's CSS transitions.
