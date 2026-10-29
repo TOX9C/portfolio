@@ -91,6 +91,18 @@ function buildIsland(group) {
 // Size matters: at 2.6 world units the screenshot rendered ~65 CSS px wide —
 // a grey rectangle you could not read. At 4.6 it is legible at rest, and it
 // scales up further on hover/focus so the detail is always reachable.
+// Per-monument screen geometry. One shared size made all seven read as the
+// same repeated screen-on-a-post; varying w/h (and the post, below) gives each
+// landmark its own silhouette.
+const SCREEN_GEOMETRY = {
+  owl:     { w: 5.6, h: 3.3, post: 1.15 },  // OsSecurity
+  store:   { w: 4.0, h: 2.5, post: 0.70 },  // E-Commerce
+  antenna: { w: 5.2, h: 3.6, post: 1.35 },  // Athenas Core
+  vault:   { w: 4.4, h: 2.7, post: 0.85 },  // CashPilot
+  radar:   { w: 4.6, h: 2.9, post: 0.95 },  // Social
+  shield:  { w: 5.4, h: 3.4, post: 1.25 },  // PrideHawk
+  pitch:   { w: 5.0, h: 3.1, post: 1.05 }   // Football Predictor
+};
 const SCREEN_W = 4.6;
 const SCREEN_H = 2.88;
 const SCREEN_POST = 0.55;
@@ -188,8 +200,12 @@ const screenTop = (landmark) =>
 
 function buildScreen(project, color, postLen = SCREEN_POST) {
   const group = new THREE.Group();
-  const W = SCREEN_W;
-  const H = SCREEN_H;
+  const geom = SCREEN_GEOMETRY[project.landmark] ?? {};
+  const W = geom.w ?? SCREEN_W;
+  const H = geom.h ?? SCREEN_H;
+  // The post is derived from the landmark's own size so tall screens hang
+  // higher and small ones sit closer — the mount point scales with it.
+  postLen = geom.post ?? postLen;
 
   const frame = new THREE.Mesh(
     new THREE.BoxGeometry(W + 0.24, H + 0.24, 0.12),
@@ -283,10 +299,15 @@ function buildLandmark(project, color) {
   // pivots at the model's top so it always faces the camera without tearing
   // loose. (This mount was lost in the model rebuild; the screens vanished.)
   const base = LANDMARK_TOP[project.landmark] ?? 3.2;
-  const screen = buildScreen(project, color, SCREEN_POST);
+  const geom = SCREEN_GEOMETRY[project.landmark] ?? {};
+  const postLen = geom.post ?? SCREEN_POST;
+  const screen = buildScreen(project, color, postLen);
   const pivot = new THREE.Group();
   pivot.position.set(0, base, 0);
-  screen.position.set(0, SCREEN_POST + SCREEN_H / 2 + 0.12, 0);
+  // The post's bottom must land exactly on the model top: group origin is the
+  // screen centre, and buildScreen places the post at -H/2-0.12-postLen from it.
+  const scrH = geom.h ?? SCREEN_H;
+  screen.position.set(0, postLen + scrH / 2 + 0.12, 0);
   pivot.add(screen);
   g.add(pivot);
   g.userData.screen = screen;
