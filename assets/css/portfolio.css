@@ -47,9 +47,13 @@
   --accent:#0E63B6;
   --cyan:#0E63B6;
   --line:#1A1512;
-  --line-soft:#1A1512;
-  --hair:#1A1512;
-  --hair-soft:#1A1512;
+  /* The "soft" variants were all set to the same near-black as --line, so a
+     button filled with --line-soft became a black slab with muted text on
+     it (invisible) and every hairline border rendered at full weight. They
+     are meant to be light tints of the ink. */
+  --line-soft:#E3D8C1;
+  --hair:#8A7E6E;
+  --hair-soft:#D8CBB2;
   --shadow:4px 4px 0 rgba(26,21,18,.9);
   --radius:0px;
   --pixel:'Pixelify',ui-monospace,monospace;
@@ -396,26 +400,27 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 /* The dossier picker. "Open a dossier" promised a choice; it used to open
    one arbitrary project. This shows all seven, so the label is honest.
-   It is anchored to the button and opens UPWARD, over the lede text — the
-   static copy. It used to hang below the button across the CTA row, which
-   covered the "7 systems shipped" stat and made Résumé, Live Store and
-   GitHub unclickable while the picker was open. A menu must never cover the
-   links around it. */
+   It is a native <dialog>, so it renders in the top layer with its own
+   backdrop: an anchored dropdown had nowhere to go that did not cover the
+   headline, the CTAs or the stat row, and every offset just moved the
+   problem. A modal picker also gets a focus trap and Escape for free. */
 .stage-picker{
-  position:absolute;
-  bottom:calc(100% + .5rem);left:0;right:auto;
-  width:min(30rem,calc(100vw - 2 * var(--pad)));
-  max-height:min(22rem,52vh);overflow-y:auto;
-  z-index:20;
-  /* It is a child of the flex row, so it must not participate in layout. */
-  flex:none;
-  padding:.8rem .9rem .9rem;
+  width:min(32rem,calc(100vw - 2 * var(--pad)));
+  max-height:min(26rem,72vh);overflow-y:auto;
+  margin:auto;
+  padding:.9rem 1rem 1rem;
   border-radius:14px;
   border:2px solid var(--line);
   background:var(--panel);
+  box-shadow:var(--shadow);
   animation:scrim-in .22s var(--ease)
-  box-shadow:var(--shadow)}
-.stage-picker[hidden]{display:none}
+}
+/* The page behind stays readable but recedes. No backdrop-filter: a blur on
+   the top-layer backdrop made Chromium composite the dialog itself through
+   the dim layer, so the panel rendered near-black instead of cream. */
+.stage-picker::backdrop{
+  background:rgba(26,21,18,.42)
+}
 .stage-picker-label{
   font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;
   text-transform:uppercase;color:var(--cyan);margin-bottom:.6rem
@@ -648,6 +653,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--mono);font-size:.64rem;font-weight:600;
   letter-spacing:.03em;color:var(--cyan);
   white-space:nowrap;flex:none
+}
+/* The badge showed a bare value — "WS", "OS", "58.77%" — with no label, so
+   it decoded to nothing. The label rides along in a quieter weight. */
+.legend-proof-label{
+  margin-left:.4rem;font-weight:400;
+  color:var(--muted);letter-spacing:.02em
 }
 .legend-name{
   font-family:var(--pixel);font-size:.76rem;letter-spacing:.03em;line-height:1.25;
@@ -1283,7 +1294,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 /* ---------- atlas labels ---------- */
 .atlas-labels{
-  position:absolute;inset:0;pointer-events:none}
+  position:absolute;inset:0;pointer-events:none;
+  /* Above the canvas, or a plaque sitting over a dark screen gets swallowed
+     by it and the name renders as a mangled overlap. */
+  z-index:3}
 /* Diegetic signage, not a browser tooltip. A cream chip with a hairline
    border read as DOM pasted over the render — the clearest sign the island
    was a demo. These are dark plaques on a stem, like a signpost standing

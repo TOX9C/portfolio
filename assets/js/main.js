@@ -64,7 +64,7 @@ function manifest({ onOpen, onHover }) {
       <span class="legend-shot"><img src="${thumb}" alt="${p.images[0].alt}" loading="lazy" width="480" height="270"></span>
       <span class="legend-text">
         <span class="legend-head">
-          <span class="legend-proof" aria-hidden="true">${p.stats[0].value}</span>
+          <span class="legend-proof">${p.stats[0].value}<span class="legend-proof-label">${p.stats[0].label}</span></span>
         </span>
         <span class="legend-name">${p.name}</span>
         <span class="legend-tag">${p.tag}</span>
@@ -453,23 +453,32 @@ async function init() {
         <span>${p.name}</span><i aria-hidden="true">↗</i>
       </button></li>`).join('');
     const setPicker = (open) => {
-      picker.hidden = !open;
+      if (open) {
+        if (!picker.open) picker.showModal();
+      } else if (picker.open) {
+        picker.close();
+      }
       pickerBtn.setAttribute('aria-expanded', String(open));
     };
-    pickerBtn.addEventListener('click', () => setPicker(picker.hidden));
+    pickerBtn.addEventListener('click', () => setPicker(!picker.open));
     pickerList.addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-project]');
       if (!btn) return;
       setPicker(false);
       openDossier(btn.dataset.project);
     });
-    document.addEventListener('click', (e) => {
-      if (picker.hidden) return;
-      if (picker.contains(e.target) || pickerBtn.contains(e.target)) return;
+    // Clicking the backdrop closes the dialog; a click inside the panel
+    // must not. The backdrop is the dialog element itself.
+    picker.addEventListener('click', (e) => {
+      if (e.target !== picker) return;
       setPicker(false);
+      pickerBtn.focus();
+    });
+    picker.addEventListener('close', () => {
+      pickerBtn.setAttribute('aria-expanded', 'false');
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !picker.hidden) {
+      if (e.key === 'Escape' && picker.open) {
         setPicker(false);
         pickerBtn.focus();
       }
@@ -479,7 +488,7 @@ async function init() {
     // button, outside the panel — an on-panel listener never saw the first
     // ArrowDown.
     document.addEventListener('keydown', (e) => {
-      if (picker.hidden) return;
+      if (!picker.open) return;
       if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
       e.preventDefault();
       const items = $$('button[data-project]', pickerList);
