@@ -572,6 +572,23 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
     const p = group.position;
     FIT_POINTS.push(new THREE.Vector3(p.x, 0, p.z));
   }
+  // A billboard screen is up to 5.6 units wide, so its centre can sit well
+  // inside the frame while its edge hangs off it. The screen always faces the
+  // camera, so its width axis swings from X to Z as the map orbits — the
+  // fit points must cover all four directions, or the screen clips at the
+  // frame edge exactly when the camera turns to face it.
+  for (const group of landmarks) {
+    const p = group.position;
+    const geom = SCREEN_GEOMETRY[group.userData.project.landmark] ?? {};
+    const half = (geom.w ?? SCREEN_W) / 2 + 0.12;
+    const top = screenTop(group.userData.project.landmark, group.userData.lift ?? 0) + 1.1;
+    for (const s of [-1, 1]) {
+      FIT_POINTS.push(new THREE.Vector3(p.x + s * half, top, p.z));
+      FIT_POINTS.push(new THREE.Vector3(p.x, top, p.z + s * half));
+      FIT_POINTS.push(new THREE.Vector3(p.x + s * half, 0, p.z));
+      FIT_POINTS.push(new THREE.Vector3(p.x, 0, p.z + s * half));
+    }
+  }
   const ISLAND_HALF_W = 14.2;
   const ISLAND_HALF_D = 10.2;
   for (const sx of [-1, 1]) {
@@ -670,6 +687,11 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       if (Math.abs(dx) + Math.abs(dy) > 3) pointerMoved = true;
       targetAzimuth -= dx * 0.006;
       targetPolar = Math.max(0.42, Math.min(1.42, targetPolar - dy * 0.004));
+      // The framing depends on the viewing angle: the billboard screens swing
+      // as the map turns, so a distance fitted for one azimuth clips the
+      // screens at another. Refit as the camera moves, otherwise the outer
+      // screens hang off the edge exactly when the visitor rotates to them.
+      baseDistance = fitDistance(targetAzimuth, targetPolar);
       userAdjusted = true;
       lastX = e.clientX;
       lastY = e.clientY;
@@ -998,6 +1020,9 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       userAdjusted = true;
       zoom = 0.78;
       targetPolar = 0.86;
+      // Refit at the new angle, same as a drag: the framing depends on which
+      // way the camera faces.
+      baseDistance = fitDistance(targetAzimuth, targetPolar);
       startLoop();
     },
     setHover(id) {
