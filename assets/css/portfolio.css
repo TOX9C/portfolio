@@ -353,6 +353,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
    own line and the dot sat alone, reading as a stray bullet. */
 /* A visible way into the dossiers. The drawer was only reachable by
    discovering that a map landmark was clickable. */
+/* The chip had the same stroke-and-fill weight as the real primary button,
+   so the hero showed three competing CTAs. It is a shortcut for the already
+   decided, so it is quiet underlined text — "explore" is primary, "hire" is
+   secondary, this is neither and must not read like both. */
 .stage-open{
   position:relative;
   display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem .9rem;
@@ -361,15 +365,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .stage-open button{
   display:inline-flex;align-items:center;gap:.4rem;
   font-family:var(--mono);font-size:.76rem;font-weight:600;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);
-  padding:.4rem .75rem;border-radius:8px;
-  border:1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
-  background:color-mix(in srgb, var(--accent) 12%, transparent);
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  padding:.4rem .1rem;border-radius:0;border:0;background:none;
+  text-decoration:underline;
+  text-decoration-color:color-mix(in srgb, var(--accent) 50%, transparent);
+  text-underline-offset:.3em;
   cursor:pointer;
-  transition:background .3s var(--ease),border-color .3s var(--ease),transform .3s var(--ease)
+  transition:color .3s var(--ease),text-decoration-color .3s var(--ease),transform .3s var(--ease)
 }
 .stage-open button:hover{
-  background:color-mix(in srgb, var(--accent) 20%, transparent);border-color:color-mix(in srgb, var(--accent) 60%, var(--line));
+  color:var(--cyan);
+  text-decoration-color:var(--cyan);
   transform:translateY(-1px)
 }
 .stage-open button span{transition:transform .3s var(--ease)}
