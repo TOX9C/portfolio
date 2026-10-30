@@ -43,9 +43,19 @@
   --panel-2:#EBDFC8;
   --ink:#1A1512;
   --muted:#5C5348;
-  --faint:#8A7E6E;
+  /* --faint was #8A7E6E, which is only 3.29:1 on the cream ground — below
+     the 4.5:1 WCAG AA floor for body text. It carried the mono labels, the
+     stack lines and the proof captions, so 46 nodes failed an axe audit.
+     #675C50 clears 4.5:1 on every surface the page uses (4.94 on --deep,
+     5.41 on --bg, 6.12 on --panel) while staying a step lighter than
+     --muted. */
+  --faint:#675C50;
   --accent:#0E63B6;
   --cyan:#0E63B6;
+  /* The diorama's signs sit on a dark navy plaque (#1A2540). The page accent
+     is only 2.52:1 there, so on-dark text needs its own light blue —
+     #8FCBFF clears 8.79:1 on that plaque. */
+  --cyan-on-dark:#8FCBFF;
   --line:#1A1512;
   /* The "soft" variants were all set to the same near-black as --line, so a
      button filled with --line-soft became a black slab with muted text on
@@ -55,7 +65,15 @@
   --hair:#8A7E6E;
   --hair-soft:#D8CBB2;
   --shadow:4px 4px 0 rgba(26,21,18,.9);
+  /* ---- radius system ----
+     The page mixes 3px, 6px, 8px, 9px, 11px, 12px, 14px, 16px, 28px and 99px
+     corners with no rule behind them, so a soft sub-panel and a hard card
+     ended up looking like two different generations of design. Three levels:
+     --r (hard structural panels, matches --radius:0px), --r-soft (nested
+     panels and images), --r-chip (small pills and badges). */
   --radius:0px;
+  --r-soft:8px;
+  --r-chip:6px;
   --pixel:'Pixelify',ui-monospace,monospace;
   --sans:'Sora',system-ui,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,monospace;
@@ -126,14 +144,20 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   gap:clamp(.8rem,2vw,2rem);
   padding:.85rem var(--pad);
   /* A real scrim: the bar sits over section headings, so it must separate
-     them rather than fade into the page. */
-  background:color-mix(in srgb, var(--bg) 97.0%, transparent);
-  
-  border-bottom:1px solid var(--hair-soft)}
+     them rather than fade into the page. It was 97% opaque, and that 3%
+     was enough to ghost project titles and card borders through the band —
+     two reviewers independently called it a broken element. Opaque. */
+  background:var(--bg);
+
+  border-bottom:2px solid var(--line)}
 .brand{
   display:inline-flex;align-items:center;gap:.65rem;
-  font-family:var(--pixel);font-weight:700;
-  font-size:1.05rem;letter-spacing:.14em}
+  /* The pixel face renders its "C" as a closed box, so the wordmark read as
+     "TOX90" to a reviewer scanning the nav. The handle is the one thing on
+     the page that must be unambiguous, so it uses the mono face; the pixel
+     face stays on the headings where it is decoration. */
+  font-family:var(--mono);font-weight:700;
+  font-size:.86rem;letter-spacing:.2em}
 .brand-glyph{
   display:grid;grid-template-columns:repeat(2,7px);gap:2px;
   transform:rotate(45deg)
@@ -171,7 +195,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   width:7px;height:7px;border-radius:2px;background:var(--cyan)
 }
 
-.menu-toggle{display:none;width:44px;height:44px;position:relative;border-radius:12px}
+.menu-toggle{display:none;width:44px;height:44px;position:relative;border-radius:var(--r-soft)}
 .menu-toggle span{
   position:absolute;left:12px;width:20px;height:2px;background:var(--ink);
   transition:transform .4s var(--ease),opacity .3s var(--ease)
@@ -249,7 +273,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   grid-column:2;grid-row:1;
   height:100%;
   min-height:340px;
-  border-radius:28px;
+  border-radius:var(--r-soft);
   background:var(--panel);
   border:1px solid var(--hair-soft);
   
@@ -279,7 +303,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   position:absolute;inset:0;
   display:grid;place-items:center;
   opacity:.85;
-  transition:opacity .6s var(--ease)
+  transition:opacity .6s var(--ease);
   box-shadow:var(--shadow)}
 .atlas-placeholder svg{width:min(78%,360px);height:auto}
 .stage-canvas.atlas-live .atlas-placeholder{opacity:0;pointer-events:none}
@@ -288,7 +312,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:inline-flex;align-items:center;gap:.6rem;
   font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;
   text-transform:uppercase;color:var(--muted);
-  border:1px solid var(--hair);border-radius:99px;
+  border:1px solid var(--hair);border-radius:var(--r-chip);
   padding:.45rem .95rem;
   background:color-mix(in srgb, var(--panel) 60%, transparent)}
 
@@ -296,7 +320,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--pixel);font-weight:700;
   /* Scale on both axes: a short laptop window (720px tall) has to fit the
      same hero as a tall desktop, so the type follows the viewport height too. */
-  font-size:clamp(2.4rem,min(5.6vw,11vh),5.2rem);
+  font-size:clamp(2.2rem,min(5.15vw,11vh),4.9rem);
   line-height:.94;letter-spacing:-.01em;
   margin:1rem 0 1.1rem;
   text-transform:uppercase}
@@ -325,20 +349,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .display-line:nth-child(2)>span{animation-delay:.09s}
 .display-line:nth-child(3)>span{animation-delay:.18s}
 @keyframes display-rise{to{transform:none}}
-.display .outline{
-  color:transparent;
-  /* The stroke has to scale with the type. A fixed 2px stroke on a 40px
-     pixel face merges the glyphs into an unreadable smear — the word
-     "SYSTEMS" was the thesis of the page and it could not be read. */
-  /* The stroke colour was rgba(222,232,248,.85) — a near-white blue tuned
-     for the old near-black ground. On the cream paper it blends to
-     (225,232,243) against #F2E9D8: a 1.02:1 contrast ratio, i.e. the line
-     was effectively invisible. Outline in ink instead; the fill stays
-     transparent so the hollow look survives. */
-  -webkit-text-stroke:max(1px, .022em) var(--ink);
-  paint-order:stroke fill}
 .display .accent{
   color:var(--cyan)}
+/* The name, demoted to a byline. The headline now leads with the discipline
+   — "what do you do" — and the name supports it instead of taking the whole
+   first screen. The handle is here so the byline carries both identifiers. */
+.display-byline{
+  font-family:var(--mono);font-size:.86rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink);
+  margin:-.75rem 0 .35rem;padding-bottom:.75rem;
+  border-bottom:1px solid var(--hair);
+  display:inline-block}
 
 .stage-lede{
   color:var(--muted);font-size:clamp(.86rem,min(1vw,1.9vh),.98rem);
@@ -346,6 +367,20 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   margin-top:.85rem
 }
 .stage-lede strong{color:var(--ink);font-weight:600}
+/* Links inside the hero lede carry the evidence claims — "3 services live"
+   points at the monitor, "52.8% held-out accuracy" at the model. Without them the
+   sentence is a claim; with them it is checkable. */
+.stage-lede a{
+  color:var(--cyan);text-decoration:underline;
+  text-underline-offset:3px;text-decoration-thickness:1px}
+.stage-lede a:hover{color:var(--ink)}
+/* The map cue, stated once and separately. It reads as an instruction
+   rather than another credential, so it does not compete with the lede. */
+.stage-lede-note{
+  margin-top:.6rem;
+  font-family:var(--mono);font-size:.74rem;letter-spacing:.03em;
+  color:var(--muted);line-height:1.55}
+.stage-lede-note strong{color:var(--ink);font-weight:600}
 
 .stage-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.1rem}
 
@@ -409,7 +444,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   max-height:min(26rem,72vh);overflow-y:auto;
   margin:auto;
   padding:.9rem 1rem 1rem;
-  border-radius:14px;
+  border-radius:var(--r-soft);
   border:2px solid var(--line);
   background:var(--panel);
   box-shadow:var(--shadow);
@@ -431,7 +466,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .stage-picker button{
   width:100%;display:flex;align-items:center;gap:.45rem;
-  padding:.38rem .5rem;border-radius:8px;
+  padding:.38rem .5rem;border-radius:var(--r-chip);
   border:1px solid var(--hair);background:var(--line-soft);
   cursor:pointer;text-align:left;
   transition:border-color .25s var(--ease),background .25s var(--ease)
@@ -528,7 +563,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .stage-proof a{
   display:inline-flex;align-items:baseline;gap:.45rem;
-  padding:.4rem .7rem;border-radius:9px;
+  padding:.4rem .7rem;border-radius:var(--r-chip);
   border:1px solid var(--hair);
   background:color-mix(in srgb, var(--panel-2) 50.0%, transparent);
   transition:border-color .3s var(--ease),background .3s var(--ease)
@@ -554,12 +589,29 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:flex;flex-wrap:wrap;gap:.9rem;
   pointer-events:none}
 .stage-corner span{color:var(--muted)}
-/* The hint is the only instruction the map ever gives. Plain text, no dot,
-   no pulse — the map itself is the invitation. */
+/* The hint is the only instruction the map ever gives, so it has to be seen.
+   As low-contrast text in the corner it read as a caption and a first-time
+   visitor took the diorama for wallpaper. It now carries the accent colour,
+   a pulsing marker and a persistent presence; the JS removes it the moment
+   the visitor actually touches the map. */
 .stage-corner .hint{
-  padding:.42rem .7rem;border-radius:99px;
-  background:color-mix(in srgb, var(--bg) 70%, transparent);border:1px solid var(--hair-soft);
-  color:var(--muted)}
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.5rem .85rem;border-radius:var(--r-chip);
+  background:var(--accent);color:#FFF7E8;
+  border:1px solid var(--line);
+  box-shadow:3px 3px 0 var(--line);
+  font-weight:600;letter-spacing:.08em;
+  transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.stage-corner .hint.is-done{opacity:0;transform:translateY(8px)}
+.hint-pulse{
+  width:7px;height:7px;border-radius:50%;
+  background:currentColor;flex:none;
+  animation:hint-pulse 1.8s var(--ease) infinite}
+@keyframes hint-pulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.35;transform:scale(.72)}}
+@media (prefers-reduced-motion:reduce){
+  .hint-pulse{animation:none}}
 
 .stage-legend{
   grid-column:1 / -1;grid-row:2;
@@ -597,16 +649,38 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   gap:.8rem;
   align-items:stretch
 }
-.legend-list li{display:flex}
+.legend-list li{
+  display:flex;flex-direction:column;gap:.35rem}
+/* The source link sits on the card, below the screenshot block. The card
+   button opens the dossier; the link goes straight to the repo or the live
+   site, so a reviewer never has to click through to check a claim. */
+.legend-links{
+  display:flex;flex-wrap:wrap;gap:.3rem}
+.legend-links a{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--cyan);
+  padding:.26rem .5rem;border-radius:var(--r-chip);
+  border:1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+  /* A 10% accent tint over the card keeps the link at 4.9:1; the old 8%
+     over transparent left the accent text at 4.4:1. */
+  background:color-mix(in srgb, var(--accent) 10%, var(--panel));
+  text-decoration:none;
+  transition:background .25s var(--ease),border-color .25s var(--ease)}
+.legend-links a:hover{
+  background:color-mix(in srgb, var(--accent) 18%, transparent);
+  border-color:color-mix(in srgb, var(--accent) 55%, var(--line))}
+.legend-links a span{margin-left:.3rem;opacity:.75}
 .legend-list button{
   position:relative;
-  width:100%;height:100%;text-align:left;
+  /* height:auto, not 100%: the li now holds the card AND a link row, so a
+     100%-height button overflowed the grid cell and pushed the links out. */
+  width:100%;text-align:left;
   display:flex;flex-direction:column;
-  padding:0;border-radius:12px;
+  padding:0;border-radius:var(--r-soft);
   border:2px solid var(--line);
   background:color-mix(in srgb, var(--panel) 55%, transparent);
   overflow:hidden;
-  transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease)
+  transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease);
   box-shadow:var(--shadow)}
 .legend-list button:hover{
   background:color-mix(in srgb, var(--accent) 14%, transparent);
@@ -617,7 +691,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
    list. On phones it is the only readable view of the work. */
 .legend-shot{
   display:block;width:100%;aspect-ratio:16/9;overflow:hidden;
-  border-radius:11px 11px 0 0;background:#05070e;
+  border-radius:var(--r-soft) var(--r-soft) 0 0;background:#05070e;
   border-bottom:1px solid var(--hair-soft);
   flex:none
 }
@@ -658,8 +732,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 /* The hard number, on the card. A recruiter sees the proof without opening
    the drawer, which is what makes the manifest evidence and not decoration. */
 .legend-proof{
-  padding:.12rem .38rem;border-radius:6px;
-  background:color-mix(in srgb, var(--accent) 14%, transparent);border:1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  padding:.12rem .38rem;border-radius:var(--r-chip);
+  /* 14% accent over the card tint left the badge text at 4.39:1 — just
+     under the 4.5:1 floor. 10% lifts the background and clears it. */
+  background:color-mix(in srgb, var(--accent) 10%, var(--panel));
+  border:1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
   font-family:var(--mono);font-size:.64rem;font-weight:600;
   letter-spacing:.03em;color:var(--cyan);
   white-space:nowrap;flex:none
@@ -694,6 +771,16 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   line-height:1.4;overflow:hidden;
   display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
   overflow-wrap:anywhere
+}
+
+/* When the seven systems were last touched. Seven repos with no dates read
+   as a folder of coursework; the dates and commit counts make "shipped"
+   checkable. */
+.legend-shipped{
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--faint);
+  padding-top:.45rem;margin-top:.1rem;
+  border-top:1px solid var(--hair-soft)
 }
 
 .noscript-list{
@@ -740,18 +827,37 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 /* ---------- stack racks ---------- */
 .rack-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  /* Five across, one row. PriceHawk got its own rack so all seven systems
+     reconcile, and auto-fit left that fifth card stranded alone on a second
+     row. 230px floor → 5 × 230 + gaps fits the 78rem max-width. */
+  grid-template-columns:repeat(5,minmax(0,1fr));
   gap:clamp(1rem,2vw,1.6rem);
   max-width:78rem
 }
+/* Five racks only stay readable on a wide screen. Below that they wrap to
+   three, then two, then one — a five-across row of 57px cards on a phone
+   is unreadable. */
+@media (max-width:1180px){
+  .rack-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  .rack-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:460px){
+  .rack-grid{grid-template-columns:1fr}
+}
 .rack{
   position:relative;
+  /* Cards stretch to the tallest sibling, so the proof row is pushed to the
+     bottom — otherwise the shortest cards end with up to 124px of dead
+     space and the row reads as unfinished. */
+  display:flex;flex-direction:column;
   padding:1.1rem 1.2rem 1.4rem;
   border-radius:var(--radius);
   background:var(--panel);
   border:2px solid var(--line);
-  
-  transition:transform .5s var(--ease),border-color .4s var(--ease)
+
+  transition:transform .5s var(--ease),border-color .4s var(--ease);
   box-shadow:var(--shadow)}
 .rack:hover{border-color:color-mix(in srgb, var(--accent) 45%, var(--line))}
 .rack h3{
@@ -762,7 +868,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .tag-list{display:flex;flex-wrap:wrap;gap:.45rem}
 .tag-list li{
   font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
-  padding:.32rem .7rem;border-radius:99px;
+  padding:.32rem .7rem;border-radius:var(--r-chip);
   border:1px solid var(--hair);color:var(--muted);
   background:color-mix(in srgb, var(--bg) 50.0%, transparent)
 }
@@ -770,7 +876,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 /* Which shipped systems each workbench actually produced — proof, not a skills widget. */
 .rack-proof{
   display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;
-  margin-top:1.15rem;padding-top:.9rem;
+  margin-top:auto;padding-top:.9rem;
   border-top:1px solid var(--hair-soft)}
 .rack-proof span{
   font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;
@@ -778,7 +884,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .rack-proof b{
   font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.04em;
-  color:var(--cyan);padding:.22rem .5rem;border-radius:6px;
+  color:var(--cyan);padding:.22rem .5rem;border-radius:var(--r-chip);
   background:color-mix(in srgb, var(--accent) 12%, transparent);border:1px solid color-mix(in srgb, var(--accent) 22%, transparent)
 }
 
@@ -795,11 +901,16 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .lab-unit{
   position:relative;overflow:hidden;
-  padding:1.5rem 1.4rem 3rem;
+  /* The grid stretches every card to the height of the monitor panel, which
+     left 146px of dead space under the last line. Making the card a flex
+     column and pushing the value line to the bottom turns that gap into a
+     deliberate anchor — the value sits on the card's baseline. */
+  display:flex;flex-direction:column;
+  padding:1.5rem 1.4rem 1.6rem;
   border-radius:var(--radius);
   background:var(--panel);
   border:2px solid var(--line);
-  transition:transform .5s var(--ease),border-color .4s var(--ease)
+  transition:transform .5s var(--ease),border-color .4s var(--ease);
   box-shadow:var(--shadow)}
 .lab-unit::after{
   content:'';position:absolute;left:0;right:0;bottom:0;height:3px;
@@ -824,7 +935,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .status i{width:6px;height:6px;border-radius:1px;background:var(--cyan)}
 .lab-unit p{color:var(--muted);font-size:.9rem;line-height:1.75}
 .lab-value{
-  margin-top:.7rem;padding-top:.7rem;
+  margin-top:auto;padding-top:.7rem;
   border-top:1px solid var(--hair-soft);
   font-family:var(--sans);font-size:.9rem!important;font-weight:600;color:var(--ink)!important
 }
@@ -923,8 +1034,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
    timeline card. */
 .profile-focus{
   margin-top:1.8rem;padding:1.1rem 1.2rem;
-  border-radius:16px;
-  background:color-mix(in srgb, var(--accent) 8%, transparent);
+  border-radius:var(--r-soft);
+  /* 10% over the panel, not 8% over transparent — the label sat at 4.4:1. */
+  background:color-mix(in srgb, var(--accent) 10%, var(--panel));
   border:1px solid color-mix(in srgb, var(--accent) 22%, transparent)
 }
 .profile-focus-label{
@@ -949,7 +1061,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding:1.6rem 1.5rem;
   border-radius:var(--radius);
   border:2px solid var(--line);
-  background:var(--panel)
+  background:var(--panel);
   box-shadow:var(--shadow)}
 
 /* The operator ID line. The card opened straight into the award, which read
@@ -963,7 +1075,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .profile-id-glyph{
   width:44px;height:44px;flex:none;
   display:grid;place-items:center;
-  border-radius:12px;
+  border-radius:var(--r-soft);
   background:color-mix(in srgb, var(--accent) 12%, transparent);
   border:1px solid color-mix(in srgb, var(--accent) 30%, transparent)
 }
@@ -1010,7 +1122,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .profile-badge{
   display:flex;align-items:center;gap:1rem;
-  padding:1.1rem;border-radius:16px;
+  padding:1.1rem;border-radius:var(--r-soft);
   background:color-mix(in srgb, var(--bg) 60.0%, transparent);border:1px solid var(--hair-soft);
   margin-bottom:1.1rem
 }
@@ -1021,7 +1133,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .profile-status{
   display:flex;align-items:flex-start;gap:.7rem;
   padding:.95rem 1.1rem;margin-bottom:1.1rem;
-  border-radius:14px;
+  border-radius:var(--r-soft);
   background:color-mix(in srgb, var(--accent) 9%, transparent);
   border:1px solid color-mix(in srgb, var(--accent) 25%, transparent)
 }
@@ -1095,8 +1207,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   column-gap:1rem;row-gap:.35rem;
   margin-top:2rem;padding:1.15rem 1.15rem 1.15rem 1.4rem;
   border:2px solid var(--line);border-radius:var(--radius);
-  background:color-mix(in srgb, var(--accent) 8%, transparent);
-  transition:transform .45s var(--ease),border-color .35s var(--ease)
+  /* 10% over the panel — 8% over transparent put the email address at
+     4.4:1, and this is the string a recruiter most needs to read. */
+  background:color-mix(in srgb, var(--accent) 10%, var(--panel));
+  transition:transform .45s var(--ease),border-color .35s var(--ease);
   box-shadow:var(--shadow)}
 .contact-mail:hover{
   transform:translateY(-4px);
@@ -1122,7 +1236,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   margin-top:.7rem;padding:.95rem 1.15rem .95rem 1.4rem;
   border:2px solid var(--line);border-radius:var(--radius);
   background:color-mix(in srgb, var(--panel) 55.00000000000001%, transparent);
-  transition:transform .4s var(--ease),border-color .35s var(--ease),background .35s var(--ease)
+  transition:transform .4s var(--ease),border-color .35s var(--ease),background .35s var(--ease);
   box-shadow:var(--shadow)}
 .contact-resume:hover{
   transform:translateY(-3px);
@@ -1155,7 +1269,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   gap:1rem;align-items:center;
   padding:1.35rem .4rem;
   border-bottom:1px solid var(--hair-soft);
-  transition:background .4s var(--ease),padding .4s var(--ease)
+  transition:background .4s var(--ease),padding .4s var(--ease);
   box-shadow:var(--shadow)}
 .channel-list a:hover{
   background:color-mix(in srgb, var(--accent) 8%, transparent);
@@ -1214,7 +1328,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .dossier.open{transform:none;visibility:visible}
 .dossier-close{
   position:absolute;top:1rem;right:1rem;
-  width:44px;height:44px;border-radius:12px;
+  width:44px;height:44px;border-radius:var(--r-soft);
   border:1px solid var(--hair);color:var(--muted);
   font-size:.9rem;line-height:1;
   transition:background .3s var(--ease),color .3s var(--ease),transform .4s var(--ease)
@@ -1227,10 +1341,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .dossier-tag{
   font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--faint);margin-bottom:1.4rem
+  text-transform:uppercase;color:var(--faint);margin-bottom:.5rem
+}
+/* The provenance line: when the repo last moved and how much work went in.
+   It answers "is this maintained?" before the reader opens GitHub. */
+.dossier-shipped{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.05em;
+  color:var(--muted);margin-bottom:1.4rem;
+  padding-bottom:.9rem;border-bottom:1px solid var(--hair-soft)
 }
 .dossier-shot{
-  position:relative;border-radius:16px;overflow:hidden;
+  position:relative;border-radius:var(--r-soft);overflow:hidden;
   border:1px solid var(--hair);background:#000;
   aspect-ratio:16/10}
 .dossier-shot img{width:100%;height:100%;object-fit:cover;object-position:top left}
@@ -1245,7 +1366,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .dossier-thumbs{display:flex;gap:.5rem;margin-top:.6rem;flex-wrap:wrap}
 .dossier-thumbs button{
-  width:74px;height:46px;border-radius:8px;overflow:hidden;
+  width:74px;height:46px;border-radius:var(--r-chip);overflow:hidden;
   border:1px solid var(--hair);opacity:.55;
   transition:opacity .3s var(--ease),border-color .3s var(--ease)
 }
@@ -1260,7 +1381,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 /* What the system does, broken out. */
 .dossier-features{
   margin-top:1.2rem;display:grid;gap:.55rem;
-  padding:1rem 1.1rem;border-radius:14px;
+  padding:1rem 1.1rem;border-radius:var(--r-soft);
   border:1px solid var(--hair-soft);background:color-mix(in srgb, var(--panel) 55.00000000000001%, transparent)
 }
 .dossier-features li{
@@ -1276,7 +1397,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   gap:.6rem;margin-top:1.4rem
 }
 .dossier-stats li{
-  padding:.8rem .9rem;border-radius:14px;
+  padding:.8rem .9rem;border-radius:var(--r-soft);
   border:1px solid var(--hair);background:color-mix(in srgb, var(--panel) 70.0%, transparent)
 }
 .dossier-stats b{
@@ -1295,7 +1416,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   display:inline-flex;align-items:center;gap:.55rem;
   font-family:var(--pixel);font-size:.78rem;letter-spacing:.08em;
   text-transform:uppercase;
-  padding:.65rem 1rem;border-radius:99px;
+  padding:.65rem 1rem;border-radius:var(--r-chip);
   border:1px solid var(--hair);background:color-mix(in srgb, var(--panel) 70.0%, transparent);
   transition:border-color .3s var(--ease),background .3s var(--ease),transform .4s var(--ease)
 }
@@ -1346,7 +1467,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .atlas-label-key{
   order:0;
-  font-family:var(--mono);font-size:.66rem;color:var(--cyan);letter-spacing:.03em;
+  font-family:var(--mono);font-size:.66rem;color:var(--cyan-on-dark);letter-spacing:.03em;
   background:#1A2540;padding:.14rem .34rem;border-radius:3px 3px 0 0;
   margin-bottom:2px
 }
@@ -1365,12 +1486,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 /* Demoted to a number: the plaque itself carries the index, and the full
    name comes back on hover or focus so no sign becomes unidentifiable. */
 .atlas-label.compact .atlas-label-plaque{
-  font-weight:700;color:var(--cyan);
+  font-weight:700;color:var(--cyan-on-dark);
   padding:.3rem .5rem;letter-spacing:.06em
 }
 .atlas-label.compact:hover .atlas-label-plaque,
 .atlas-label.compact:focus-visible .atlas-label-plaque{color:#F2E9D8}
-.atlas-label.compact .atlas-label-key{font-size:.72rem;font-weight:700;color:var(--cyan)}
+.atlas-label.compact .atlas-label-key{font-size:.72rem;font-weight:700;color:var(--cyan-on-dark)}
 /* Phones keep the project name, just smaller. 9.9px was unreadable on a
    phone; 11.5px was still too small to scan, so the tight size is now
    12.2px with a taller tap target. */
@@ -1392,11 +1513,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 /* ---------- responsive ---------- */
 @media (max-width:1080px){
   .stage{
-    grid-template-columns:1fr;
+    /* minmax(0,1fr), not 1fr: a bare 1fr has a min-content floor, and the
+       pixel headline's longest word ("CYBERSECURITY") pushed the column
+       22px past the viewport, clipping the right edge of the hero. */
+    grid-template-columns:minmax(0,1fr);
     grid-template-rows:auto auto auto;
     padding-top:clamp(5.5rem,10vh,7rem)
   }
-  .stage-copy{grid-column:1;grid-row:1;max-width:38rem}
+  .stage-copy{grid-column:1;grid-row:1;max-width:38rem;min-width:0}
   .stage-canvas{grid-column:1;grid-row:2;height:min(52vh,460px);min-height:340px}
   .stage-legend{grid-column:1;grid-row:3;grid-template-columns:1fr;align-self:start}
   .legend-list{grid-template-columns:repeat(auto-fit,minmax(158px,1fr))}
@@ -1522,6 +1646,13 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .section-note{font-size:.82rem;letter-spacing:.08em;line-height:1.5}
   .eyebrow{font-size:.78rem}
   .stage-role-line{font-size:.76rem}
+  /* The heading and its note are one thought. On a phone the two-column
+     grid squeezed the note into a 98px gutter — the heading took the wide
+     column and the note wrapped one word per line. Stack them instead. */
+  .section-head{
+    grid-template-columns:minmax(0,1fr);
+    gap:.5rem;align-items:start
+  }
   .stage-chips span{font-size:.68rem}
   .stage-corner{font-size:.78rem}
   .footer{font-size:.8rem}
@@ -1621,8 +1752,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-role-line{font-size:.7rem;margin-top:.35rem}
   /* The headline is the first screen's whole statement on a phone. 37px read
      as a caption; ~54px fills the 350px column and makes it a headline.
-     Line-height ≥ 1 so the pixel face is never clipped. */
-  .display{font-size:clamp(2.6rem,13.5vw,3.6rem);line-height:1.02;margin:.6rem 0 .55rem}
+     Line-height ≥ 1 so the pixel face is never clipped.
+     12vw, not 13.5: the longest word is 12 glyphs of "CYBERSECURITY" and at
+     13.5vw it was 392px wide in a 350px column — the last glyphs fell off
+     the right edge of every phone. */
+  .display{font-size:clamp(2.3rem,12vw,3.4rem);line-height:1.02;margin:.6rem 0 .55rem}
   .stage-lede{font-size:.86rem;line-height:1.5;margin-top:.5rem}
   .stage-role{font-size:.78rem;margin-top:.5rem}
   .stage-open{margin-top:.55rem}

@@ -10,12 +10,13 @@ export const PROJECTS = [
     features: [
       'Parallel agents in dedicated workspaces',
       'Multi-provider LLM support over MCP',
-      '78 IPC commands, 85+ components'
+      '166 IPC commands, 160+ components'
     ],
     stats: [
-      { value: '78', label: 'IPC commands' },
-      { value: '85+', label: 'components' }
+      { value: '166', label: 'IPC commands' },
+      { value: '160+', label: 'components' }
     ],
+    shipped: { last: 'Oct 2026', commits: 476 },
     stack: ['Rust', 'Tauri 2', 'Dioxus', 'MCP', 'multi-agent'],
     images: [
       { src: 'assets/projects/athenas-workspace.webp', alt: 'Athenas Core multi-agent workspace' },
@@ -41,6 +42,7 @@ export const PROJECTS = [
       { value: 'LIVE', label: 'deployed store' },
       { value: '5', label: 'store surfaces' }
     ],
+    shipped: { last: 'Feb 2026', commits: 17 },
     stack: ['Next.js 16', 'TypeScript', 'PostgreSQL', 'Prisma'],
     images: [
       { src: 'assets/projects/ecommerce-landing.webp', alt: 'E-commerce landing page' },
@@ -68,6 +70,7 @@ export const PROJECTS = [
       { value: 'WS', label: 'websocket DMs' },
       { value: '5', label: 'core surfaces' }
     ],
+    shipped: { last: 'Nov 2025', commits: 27 },
     stack: ['React 19', 'socket.io', 'Express', 'Prisma'],
     images: [
       { src: 'assets/projects/social-home.webp', alt: 'Social platform home feed' },
@@ -92,6 +95,7 @@ export const PROJECTS = [
       { value: '4', label: 'finance modules' },
       { value: '1', label: 'dashboard' }
     ],
+    shipped: { last: 'Dec 2025', commits: 9 },
     stack: ['React 19', 'Express 5', 'Prisma', 'PostgreSQL'],
     images: [
       { src: 'assets/projects/cashpilot-dashboard.webp', alt: 'CashPilot finance dashboard' },
@@ -116,6 +120,7 @@ export const PROJECTS = [
       { value: '3', label: 'stores tracked' },
       { value: '24/7', label: 'alerts' }
     ],
+    shipped: { last: 'Jun 2026', commits: 12 },
     stack: ['price history', 'charts', 'alerts'],
     images: [
       { src: 'assets/projects/pricehawk-landing.webp', alt: 'PriceHawk tracking a product with price history' }
@@ -139,6 +144,7 @@ export const PROJECTS = [
       { value: 'OS', label: 'file monitoring' },
       { value: 'REAL-TIME', label: 'encryption alerts' }
     ],
+    shipped: { last: 'Apr 2026', commits: 24 },
     stack: ['OS-level monitoring', 'encryption detection', 'alerts'],
     images: [
       { src: 'assets/projects/ossecurity-terminal.webp', alt: 'OsSecurity terminal output' }
@@ -152,16 +158,17 @@ export const PROJECTS = [
     index: '07',
     name: 'Football Predictor',
     tag: 'XGBoost · live ELO rankings',
-    desc: 'XGBoost model with 58.77% accuracy that beats bookmaker baselines, plus live ELO rankings.',
+    desc: 'XGBoost match-outcome model on pre-match ELO, form and head-to-head features only. 52.8% on held-out matches against a 45.2% always-home baseline.',
     features: [
       'XGBoost match outcome model',
-      '58.77% accuracy, beats bookmaker baselines',
+      '52.8% on 2,892 held-out matches vs 45.2% baseline',
       'Live ELO rankings'
     ],
     stats: [
-      { value: '58.77%', label: 'model accuracy' },
+      { value: '52.8%', label: 'held-out accuracy' },
       { value: 'ELO', label: 'live rankings' }
     ],
+    shipped: { last: 'Aug 2026', commits: 15 },
     stack: ['Python', 'XGBoost'],
     images: [
       { src: 'assets/projects/football-predictor-ui.webp', alt: 'Football predictor interface' }

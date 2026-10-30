@@ -20,13 +20,13 @@ distort the facts below. No lorem ipsum, no placeholder stats, no fake claims.
 
 | # | Project | One-liner (facts only) | Stack | Links | Screenshots available |
 |---|---------|------------------------|-------|-------|----------------------|
-| 1 | Athenas Core | Desktop IDE where parallel AI agents analyse, review and reason about code in dedicated workspaces. 78 IPC commands, 85+ components, multi-provider LLM support. | Rust / Tauri 2 / Dioxus / MCP / multi-agent | github.com/TOX9C/athenas-core | athenas-workspace.png, athenas-agent.png, athenas-pixel-art.png |
+| 1 | Athenas Core | Desktop IDE where parallel AI agents analyse, review and reason about code in dedicated workspaces. 166 IPC commands, 160+ components, multi-provider LLM support. 476 commits. | Rust / Tauri 2 / Dioxus / MCP / multi-agent | github.com/TOX9C/athenas-core | athenas-workspace.png, athenas-agent.png, athenas-pixel-art.png |
 | 2 | E-Commerce | Full store: catalog, cart, checkout, order management, admin dashboard. Deployed live, taking orders. | Next.js 16 / TypeScript / PostgreSQL / Prisma | LIVE: ecommerce-ten-flame-39.vercel.app | ecommerce-landing.jpg, ecommerce-products.jpg |
 | 3 | Social | Real-time social platform: posts, feeds, profiles, notifications, DMs over WebSockets. | React 19 / socket.io / Express / Prisma | github.com/TOX9C/social-media | social-home.png, social-messages.png |
 | 4 | CashPilot | Personal finance: accounts, transactions, budgets, savings goals in one dashboard. | React 19 / Express 5 / Prisma / PostgreSQL | github.com/TOX9C/cashPilot | cashpilot-dashboard.jpg, cashpilot-goals.jpg |
 | 5 | PriceHawk | Price tracker across Amazon, Walmart & eBay with history charts and alerts. | — | github.com/TOX9C/price-tracker | pricehawk-landing.png |
 | 6 | OsSecurity | Ransomware detector: OS-level file monitoring, real-time encryption alerts. | — | github.com/TOX9C/OsSecurity | ossecurity-terminal.png |
-| 7 | Football Predictor | XGBoost model, **58.77% accuracy**, beats bookmaker baselines; live ELO rankings. | Python / XGBoost | github.com/TOX9C/football-predictor | football-predictor-ui.png |
+| 7 | Football Predictor | XGBoost match-outcome model on pre-match ELO, form and head-to-head features only. **52.8% accuracy on 2,892 held-out matches** (2022-23 & 2023-24 seasons), vs a 45.2% always-home baseline; live ELO rankings. | Python / XGBoost | github.com/TOX9C/football-predictor | football-predictor-ui.png |
 
 Git short-hashes used as decoration on the old site (a14e0c1, 9c3d7f2,
 5fb21a8, 2e8a04b, 04f9e1d, 0b71c3a, 8d5a1e9) are presentation, not facts.
@@ -57,9 +57,60 @@ president."
 - Email: mailto:abdulrahmansafah@gmail.com
 
 ## Honest-numbers policy
-The old site showed real numbers only: model accuracy 58.77%, 7 projects
-shipped, 3 homelab services. Keep this principle — every metric displayed
-must be one of these or equally verifiable. Never round up, never invent.
+The old site showed real numbers only: 7 projects shipped, 3 homelab
+services, model accuracy 58.77%. Keep this principle — every metric
+displayed must be verifiable. Never round up, never invent.
+
+**Corrected 2026-10-30:** the old 58.77% figure was a *validation* score
+from a 74-feature model that included leakage (same-match shot counts and
+full-dataset league rates). It was never a held-out test score — the
+report's own test column was empty. That pipeline was deleted in the
+August 2026 rebuild. Re-running the rebuilt pipeline's clean, temporally-
+safe features over four leagues gives **52.8% on 2,892 held-out matches**
+(2022-23 and 2023-24 seasons) against a 45.2% always-home baseline on the
+same test set. The site states 52.8% and names the baseline and sample
+size.
+
+**Re-verified 2026-10-30 (round 5):** the 52.8% was still not reproducible
+from the shipped code. Three defects, all now fixed in the football repo:
+
+1. The pipeline cache key hashed only the raw CSV files, not the requested
+   league set — so `--leagues pl ll bl sa` silently reused a one-league
+   dataset and reported 47.6% on 760 matches.
+2. The training script applied balanced class weights plus a 1.5x draw
+   boost. That made the model call 48.4% of matches a draw against a true
+   rate of 25.3% and dropped accuracy to **44.2% — below the 45.2%
+   baseline the claim is measured against**. Weights are now uniform.
+3. `training_log.txt` was written by a script that no longer existed
+   (`src/run_extended_training.py`); it claimed a 500-trial search that
+   "completed" in four seconds and left its accuracy section empty.
+
+The shipped command now reproduces the published figure:
+
+    python -m src.train --model xgboost --leagues pl ll bl sa
+    Test Accuracy: 52.8%   (2,892 held-out matches, 45.19% baseline)
+
+Across seeds 42/7/13/101/2024 accuracy ranges 52.35% - 53.04% (mean
+52.71%). `tests/test_accuracy.py` pins the accuracy, the match count and
+the baseline. The repo's README, `training_log.txt`, the GitHub repo
+description, the site and the résumé PDF all now carry the same 52.8% /
+45.2% / 2,892 figures.
+
+**Other figures re-checked against the live repos (2026-10-30):**
+- Athenas Core: **476 commits**, not 600. 9 published releases, latest
+  v3.5.3 (Oct 24 2026).
+- Other six repo commit counts confirmed exact: E-Commerce 17, Social 27,
+  CashPilot 9, PriceHawk 12, OsSecurity 24, Football Predictor 15.
+- Athenas Core: **166 registered Tauri IPC commands** (157 unconditional,
+  9 behind the on-by-default `voice`/`relay` features) and **163
+  `#[component]` functions** across 99 component files — not "78 IPC
+  commands, 85+ components".
+- Tailwind is genuinely used by E-Commerce, Social and CashPilot
+  (`tailwind.config.ts` / `.js` in each frontend), so the stack rack's
+  "shipped on" list holds.
+- The live store's footer still carries template placeholder contact
+  details ("123 Commerce Street", "hello@store.com"). The repo is not
+  cloned locally, so this cannot be fixed from here yet.
 
 ## Personality signals worth keeping
 - Interactive terminal with real commands: help, whoami, projects, skills, lab, contact, hire (alias of contact), clear

@@ -71,13 +71,24 @@ function manifest({ onOpen, onHover }) {
         <span class="legend-name">${p.name}</span>
         <span class="legend-tag">${p.tag}</span>
         <span class="legend-stack">${p.stack.slice(0, 3).join(' · ')}</span>
+        <span class="legend-shipped">last commit ${p.shipped.last} · ${p.shipped.commits} commits</span>
       </span>`;
+    // The source link lives on the card, not only in the drawer. Seven
+    // landmarks that only reveal their source after a click is seven claims
+    // a reviewer has to take on trust.
+    const links = document.createElement('div');
+    links.className = 'legend-links';
+    links.innerHTML = p.links.map((l) =>
+      `<a href="${l.href}" target="_blank" rel="noopener noreferrer">${l.label}<span aria-hidden="true">↗</span></a>`
+    ).join('');
+
+    // Hover on the whole card, so the link row also lights up the map sign.
+    li.addEventListener('mouseenter', () => onHover?.(p.id));
+    li.addEventListener('mouseleave', () => onHover?.(null));
     btn.addEventListener('click', () => onOpen?.(p.id));
-    btn.addEventListener('mouseenter', () => onHover?.(p.id));
-    btn.addEventListener('mouseleave', () => onHover?.(null));
     btn.addEventListener('focus', () => onHover?.(p.id));
     btn.addEventListener('blur', () => onHover?.(null));
-    li.appendChild(btn);
+    li.append(btn, links);
     list.appendChild(li);
   });
 }
@@ -355,6 +366,9 @@ function dossier({ atlas: initialAtlas }) {
     $('#dossier-desc').innerHTML = project.desc
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 
+    $('#dossier-shipped').textContent =
+      `last commit ${project.shipped.last} · ${project.shipped.commits} commits on GitHub`;
+
     // What the system actually does, broken out — one paragraph plus a tech
     // list reads like filler; a capability list reads like a case study.
     $('#dossier-features').innerHTML = (project.features || [])
@@ -508,6 +522,21 @@ async function init() {
   // awaiting it first left the whole page inert for seconds on a slow
   // machine. The site now works while the diorama is still assembling.
   const canvas = $('#atlas-canvas');
+
+  // The map's hint is the only instruction the diorama gives. It stays up
+  // until the visitor actually touches the map, then gets out of the way —
+  // a first-time visitor was reading the diorama as wallpaper.
+  const hint = $('#atlas-hint');
+  if (hint && canvas) {
+    const dismissHint = () => {
+      hint.classList.add('is-done');
+      canvas.removeEventListener('pointerdown', dismissHint);
+      canvas.removeEventListener('wheel', dismissHint);
+    };
+    canvas.addEventListener('pointerdown', dismissHint);
+    canvas.addEventListener('wheel', dismissHint, { passive: true });
+  }
+
   const loadAtlas = async () => {
     try {
       const { createAtlas } = await import('./atlas.js');

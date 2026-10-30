@@ -31,7 +31,7 @@
     <span>TOX9C</span>
   </a>
   <nav class="hud-nav" id="hud-nav" aria-label="Primary">
-    <a href="#atlas" aria-current="page">Atlas</a>
+    <a href="#atlas" aria-current="page">Projects</a>
     <a href="#stack">Stack</a>
     <a href="#lab">Lab</a>
     <a href="#profile">Profile</a>
@@ -72,26 +72,32 @@
       <canvas id="atlas-canvas" aria-hidden="true"></canvas>
       <p class="stage-fallback">The atlas needs JavaScript. Every project is listed below with links.</p>
       <div class="stage-corner" aria-hidden="true">
-        <p class="hint">drag the map · tap a landmark</p>
+        <p class="hint" id="atlas-hint"><span class="hint-pulse" aria-hidden="true"></span>drag the map · tap a landmark</p>
       </div>
     </div>
 
     <div class="stage-copy">
       <p class="eyebrow">Personal Systems Atlas</p>
       <p class="stage-role-line">
-        <span>Cybersecurity & Cloud</span>
+        <span>3rd-year B.Eng</span>
         <span class="stage-role-sep">·</span>
-        <span>3rd-year B.Eng, NTU</span>
+        <span>NTU, Iraq</span>
       </p>
       <h1 id="atlas-title" class="display">
-        <span class="display-line"><span>ABDURRAHMAN</span></span>
-        <span class="display-line"><span class="outline">SEVEN SYSTEMS</span></span>
-        <span class="display-line"><span class="accent">SHIPPED.</span></span>
+        <span class="display-line"><span>CYBERSECURITY</span></span>
+        <span class="display-line"><span>& CLOUD</span></span>
+        <span class="display-line"><span class="accent">ENGINEER.</span></span>
       </h1>
+      <p class="display-byline">ABDURRAHMAN · TOX9C</p>
       <p class="stage-lede">
-        Third-year B.Eng in <strong>Cybersecurity & Cloud Computing</strong> at NTU, Iraq.
-        I ship real systems and run my own home cloud.
-        <strong>The map below is the portfolio</strong> — every landmark is a real project.
+        Third-year Cybersecurity & Cloud Computing student at NTU, Iraq.
+        I ship systems in Rust and TypeScript, run my own home cloud
+        (<a href="#lab">3 services live</a>), and train ML models —
+        <a href="https://github.com/TOX9C/football-predictor">52.8% on held-out matches</a>,
+        against a 45.2% baseline.
+      </p>
+      <p class="stage-lede-note">
+        <strong>Seven systems shipped</strong> — every landmark on the map below is a real project.
       </p>
       <p class="stage-role">
         Open to internships & junior roles · Baghdad, UTC+3 · remote-friendly
@@ -100,7 +106,6 @@
         <button type="button" id="stage-open-dossier" aria-haspopup="true" aria-expanded="false">
           Open a dossier<span aria-hidden="true">▾</span>
         </button>
-        <span>seven systems — pick one to read the spec</span>
         <dialog class="stage-picker" id="stage-picker" aria-label="Pick a system">
           <p class="stage-picker-label">Pick a system</p>
           <ul id="stage-picker-list"></ul>
@@ -113,7 +118,7 @@
     <ul class="stage-chips">
       <li><b>7</b><span>landmarks on the atlas</span></li>
       <li><b>1</b><span>university president award</span></li>
-      <li class="word"><b>Rust</b><span>multi-agent IDE</span></li>
+      <li class="word"><b>3</b><span>homelab services running</span></li>
     </ul>
     <ul class="stage-proof">
       <li><a href="Abdurrahman-Resume.pdf" download><b>Résumé</b><span>One page</span></a></li>
@@ -142,7 +147,7 @@
         <li><a href="https://github.com/TOX9C/cashPilot">CashPilot — personal finance dashboard</a></li>
         <li><a href="https://github.com/TOX9C/price-tracker">PriceHawk — price tracker</a></li>
         <li><a href="https://github.com/TOX9C/OsSecurity">OsSecurity — ransomware detector</a></li>
-        <li><a href="https://github.com/TOX9C/football-predictor">Football Predictor — XGBoost, 58.77% accuracy</a></li>
+        <li><a href="https://github.com/TOX9C/football-predictor">Football Predictor — XGBoost, 52.8% held-out accuracy</a></li>
       </ul>
     </noscript>
   </section>
@@ -151,7 +156,7 @@
   <section class="section" id="stack" aria-labelledby="stack-title">
     <div class="section-head">
       <h2 id="stack-title">The stack</h2>
-      <p class="section-note">Four workbenches. Everything below is already in use on shipped work.</p>
+      <p class="section-note">Four workbenches and one price tracker. All seven systems appear here — everything below is already in use.</p>
     </div>
     <div class="rack-grid">
       <article class="rack">
@@ -174,6 +179,14 @@
         <ul class="tag-list"><li>Docker</li><li>Tailscale</li><li>Pi-hole</li><li>Jellyfin</li></ul>
         <p class="rack-proof"><span>runs in</span><b>home lab</b><b>3 services live</b></p>
       </article>
+      <!-- PriceHawk uses none of the four workbenches' stacks, so it was
+           absent from every rack: the section showed six of the seven systems
+           the headline claims. It gets its own bench so the numbers add up. -->
+      <article class="rack">
+        <h3>Price tracking</h3>
+        <ul class="tag-list"><li>price history</li><li>charts</li><li>alerts</li></ul>
+        <p class="rack-proof"><span>shipped on</span><b>PriceHawk</b></p>
+      </article>
     </div>
   </section>
 
@@ -187,17 +200,17 @@
       <article class="lab-unit">
         <header><h3>Jellyfin</h3><span class="status"><i aria-hidden="true"></i>running</span></header>
         <p>Media server, self-hosted streaming, zero subscriptions.</p>
-        <p class="lab-value"><span>replaces</span>subscription streaming</p>
+        <p class="lab-value"><span>4K transcode</span>on my own box</p>
       </article>
       <article class="lab-unit">
         <header><h3>Pi-hole</h3><span class="status"><i aria-hidden="true"></i>running</span></header>
         <p>Network-wide DNS ad blocker for every device on the network.</p>
-        <p class="lab-value"><span>blocks</span>ads before they load</p>
+        <p class="lab-value"><span>upstream DoH</span>encrypted lookups</p>
       </article>
       <article class="lab-unit">
         <header><h3>Tailscale</h3><span class="status"><i aria-hidden="true"></i>running</span></header>
         <p>Mesh VPN — secure access to the home cloud from anywhere.</p>
-        <p class="lab-value"><span>reaches</span>the cloud from anywhere</p>
+        <p class="lab-value"><span>100.x mesh</span>private addressing</p>
       </article>
       <div class="lab-panel">
         <div class="lab-panel-bar">
@@ -240,7 +253,7 @@
           <ul>
             <li><b>Security & cloud</b><span>Cybersecurity & Cloud Computing at NTU — 3rd year</span></li>
             <li><b>Systems that run</b><span>Docker, Tailscale, Pi-hole, Jellyfin — 3 services live at home</span></li>
-            <li><b>Work that ships</b><span>7 systems in production, one taking live orders</span></li>
+            <li><b>Work that ships</b><span>7 systems built, one deployed live and taking orders</span></li>
           </ul>
         </div>
       </div>
@@ -334,9 +347,9 @@
     <div class="contact-payoff">
       <div class="contact-copy">
         <p class="contact-position">
-          Third-year Cybersecurity & Cloud Computing student at NTU, Iraq.
-          I ship systems in Rust and TypeScript, run my own home cloud, and
-          train ML models that beat the baseline.
+          Third-year Cybersecurity & Cloud Computing student at NTU, Iraq —
+          and the person who built all seven systems on this map. The full
+          dossier for each one is above, with its source link.
         </p>
         <p class="contact-status">
           <span class="status-dot" aria-hidden="true"></span>
@@ -357,8 +370,8 @@
       <ul class="channel-list">
         <li><a href="https://github.com/TOX9C"><span>GitHub</span><em>github.com/TOX9C</em><i aria-hidden="true">↗</i></a></li>
         <li><a href="https://www.linkedin.com/in/tox9c"><span>LinkedIn</span><em>linkedin.com/in/tox9c</em><i aria-hidden="true">↗</i></a></li>
-        <li><a href="https://x.com/tox9c"><span>X</span><em>x.com/tox9c</em><i aria-hidden="true">↗</i></a></li>
         <li><a href="https://discord.com/users/tox9c_"><span>Discord</span><em>discord.com/users/tox9c_</em><i aria-hidden="true">↗</i></a></li>
+        <li><a href="https://x.com/tox9c"><span>X</span><em>x.com/tox9c</em><i aria-hidden="true">↗</i></a></li>
       </ul>
     </div>
   </section>
@@ -375,6 +388,7 @@
   <button class="dossier-close" id="dossier-close" type="button" aria-label="Close dossier">✕</button>
   <h2 id="dossier-title" class="dossier-title">Athenas Core</h2>
   <p class="dossier-tag" id="dossier-tag"></p>
+  <p class="dossier-shipped" id="dossier-shipped"></p>
   <div class="dossier-shot">
     <img id="dossier-image" src="assets/projects/athenas-workspace.webp" alt="Athenas Core multi-agent workspace"/>
     <span class="dossier-scan" aria-hidden="true"></span>
