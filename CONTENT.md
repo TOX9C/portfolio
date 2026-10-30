@@ -108,9 +108,13 @@ description, the site and the résumé PDF all now carry the same 52.8% /
 - Tailwind is genuinely used by E-Commerce, Social and CashPilot
   (`tailwind.config.ts` / `.js` in each frontend), so the stack rack's
   "shipped on" list holds.
-- The live store's footer still carries template placeholder contact
-  details ("123 Commerce Street", "hello@store.com"). The repo is not
-  cloned locally, so this cannot be fixed from here yet.
+- The live store's footer still carried template placeholder contact
+  details ("123 Commerce Street", "hello@store.com"). **Fixed 2026-10-30:**
+  the ecommerce repo is now cloned locally and its footer states the truth
+  — a demo storefront for a portfolio project, Baghdad, Iraq, reachable at
+  the owner's real email. The fake phone row was removed rather than
+  replaced with another invented number. Committed upstream as `cca7a29`
+  (the live site is a Vercel deploy and needs a push to go live).
 
 ## Personality signals worth keeping
 - Interactive terminal with real commands: help, whoami, projects, skills, lab, contact, hire (alias of contact), clear
