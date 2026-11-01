@@ -369,6 +369,15 @@ function dossier({ atlas: initialAtlas }) {
     $('#dossier-shipped').textContent =
       `last commit ${project.shipped.last} · ${project.shipped.commits} commits on GitHub`;
 
+    // Shown only when a project has something to declare that the rest of
+    // the card cannot: OsSecurity was built with other people, and Athenas
+    // Core's two headline counts come from a repo command. Attribution and
+    // evidence nobody can see are the same as neither.
+    const note = $('#dossier-credit');
+    const noteText = project.credit || project.evidence || '';
+    note.hidden = !noteText;
+    note.textContent = noteText.trim();
+
     // What the system actually does, broken out — one paragraph plus a tech
     // list reads like filler; a capability list reads like a case study.
     $('#dossier-features').innerHTML = (project.features || [])

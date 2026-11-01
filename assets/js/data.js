@@ -10,12 +10,16 @@ export const PROJECTS = [
     features: [
       'Parallel agents in dedicated workspaces',
       'Multi-provider LLM support over MCP',
-      '166 IPC commands, 160+ components'
+      '166 IPC commands, 163 components'
     ],
     stats: [
       { value: '166', label: 'IPC commands' },
-      { value: '160+', label: 'components' }
+      { value: '163', label: 'components' }
     ],
+    // The two counts above are the only headline numbers on this site that
+    // nothing outside the repo can confirm, so the repo command that produces
+    // them is printed alongside them.
+    evidence: "grep -rhoE '#[tauri::command]' src-tauri/src | wc -l → 166",
     shipped: { last: 'Oct 2026', commits: 476 },
     stack: ['Rust', 'Tauri 2', 'Dioxus', 'MCP', 'multi-agent'],
     images: [
@@ -109,15 +113,20 @@ export const PROJECTS = [
     id: 'pricehawk',
     index: '05',
     name: 'PriceHawk',
-    tag: 'cross-store price tracker',
-    desc: 'Price tracker across Amazon, Walmart and eBay with history charts and price alerts.',
+    tag: 'cross-store price tracker · deployed',
+    // The scraper module declares five stores (AMAZON, WALMART, TARGET,
+    // BESTBUY, EBAY). The card said three and named a set that included
+    // eBay but not Target or Best Buy; the live deploy says "9+ major
+    // retailers", which the code does not support. Five is what the code
+    // does, so five is what the card says.
+    desc: 'Price tracker across Amazon, Walmart, Target, Best Buy and eBay with history charts and price alerts.',
     features: [
-      'Tracks Amazon, Walmart and eBay',
+      'Tracks Amazon, Walmart, Target, Best Buy and eBay',
       'Price history charts per product',
       'Alerts when a tracked price drops'
     ],
     stats: [
-      { value: '3', label: 'stores tracked' },
+      { value: '5', label: 'stores tracked' },
       { value: '24/7', label: 'alerts' }
     ],
     shipped: { last: 'Jun 2026', commits: 12 },
@@ -125,7 +134,10 @@ export const PROJECTS = [
     images: [
       { src: 'assets/projects/pricehawk-landing.webp', alt: 'PriceHawk tracking a product with price history' }
     ],
-    links: [{ label: 'Source', href: 'https://github.com/TOX9C/price-tracker', primary: true }],
+    links: [
+      { label: 'Visit live', href: 'https://pricehawk-theta.vercel.app', primary: true },
+      { label: 'Source', href: 'https://github.com/TOX9C/price-tracker' }
+    ],
     hue: '#54E1FF',
     landmark: 'radar'
   },
@@ -135,6 +147,12 @@ export const PROJECTS = [
     name: 'OsSecurity',
     tag: 'OS-level ransomware detector',
     desc: 'Ransomware detector: OS-level file monitoring with real-time encryption alerts.',
+    // The only landmark on this map that was not built alone. GitHub's own
+    // contributor list puts 7 of the repo's 24 commits under other people,
+    // so the card says so rather than letting the site's "sole author"
+    // framing imply otherwise. Team work is a stronger signal than a solo
+    // claim nobody can check.
+    credit: 'Built with theflash1211 and ZezOok · 17 of 24 commits mine',
     features: [
       'OS-level file system monitoring',
       'Encryption behaviour detection',

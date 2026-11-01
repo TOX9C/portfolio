@@ -1350,6 +1350,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   color:var(--muted);margin-bottom:1.4rem;
   padding-bottom:.9rem;border-bottom:1px solid var(--hair-soft)
 }
+/* Shown only for a project that was not built alone. It sits directly under
+   the commit line because that line is what makes the claim checkable. */
+.dossier-credit{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.05em;
+  color:var(--cyan);margin:-1.1rem 0 1.4rem;
+  padding-bottom:.9rem;border-bottom:1px solid var(--hair-soft)
+}
+.dossier-credit[hidden]{display:none}
 .dossier-shot{
   position:relative;border-radius:var(--r-soft);overflow:hidden;
   border:1px solid var(--hair);background:#000;

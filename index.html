@@ -21,8 +21,6 @@
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
-</div>
-
 <div class="scroll-progress" aria-hidden="true"><i id="scroll-fill"></i></div>
 
 <header class="hud" id="hud">
@@ -115,9 +113,15 @@
         <a class="btn btn-primary" href="#manifest">Explore the atlas<span class="btn-arrow" aria-hidden="true">↘</span></a>
         <a class="btn" href="mailto:abdulrahmansafah@gmail.com">Hire / contact<span class="btn-arrow" aria-hidden="true">↗</span></a>
       </div>
+    <!-- Every chip in this row is something a visitor can check: the seven
+         landmarks are the map below, both deploys are linked, and the homelab
+         is the next section. It used to hold "1 university president award" -
+         a bare count, in a row of verifiable metrics, for the one credential
+         a reader would most want a source for. The award is a credential, not
+         a metric, so it lives in the profile card instead. -->
     <ul class="stage-chips">
       <li><b>7</b><span>landmarks on the atlas</span></li>
-      <li><b>1</b><span>university president award</span></li>
+      <li><b>2</b><span>deploys running live</span></li>
       <li class="word"><b>3</b><span>homelab services running</span></li>
     </ul>
     <ul class="stage-proof">
@@ -214,8 +218,15 @@
       </article>
       <div class="lab-panel">
         <div class="lab-panel-bar">
-          <span class="lab-panel-title">home-node · service monitor</span>
-          <span class="lab-panel-stat"><i aria-hidden="true"></i>3/3 online</span>
+          <!-- This panel reads like a live service monitor, and it used to
+               claim to be one ("3/3 online", "uptime 112d 06h"). Those are
+               static strings in the markup - nothing polls the box, so
+               nothing on this page updates. An uptime figure precise to the
+               hour that never moves is the one place on this site where the
+               look is doing the convincing. It is a manual reading now, and
+               it says so. -->
+          <span class="lab-panel-title">home-node · manual readout</span>
+          <span class="lab-panel-stat"><i aria-hidden="true"></i>3/3 services up</span>
         </div>
         <dl class="lab-readout">
           <div><dt>host</dt><dd>tox9c-node</dd></div>
@@ -223,11 +234,13 @@
           <div><dt>network</dt><dd>Tailscale mesh · 100.x</dd></div>
           <div><dt>dns</dt><dd>Pi-hole · upstream DoH</dd></div>
           <div><dt>media</dt><dd>Jellyfin · 4K transcode</dd></div>
-          <div><dt>uptime</dt><dd>112d 06h</dd></div>
+          <div><dt>uptime</dt><dd>112d · when last checked</dd></div>
         </dl>
         <p class="lab-panel-note">
           One always-on machine in Baghdad runs all three. Nothing here rents
           infrastructure — it replaces three subscriptions with one box I own.
+          <b>These figures are a hand-taken reading, not a live feed</b> —
+          last checked 25 Oct 2026.
         </p>
       </div>
     </div>
@@ -253,7 +266,7 @@
           <ul>
             <li><b>Security & cloud</b><span>Cybersecurity & Cloud Computing at NTU — 3rd year</span></li>
             <li><b>Systems that run</b><span>Docker, Tailscale, Pi-hole, Jellyfin — 3 services live at home</span></li>
-            <li><b>Work that ships</b><span>7 systems built, one deployed live and taking orders</span></li>
+            <li><b>Work that ships</b><span>7 systems built, two deployed live — a store and a price tracker</span></li>
           </ul>
         </div>
       </div>
@@ -348,8 +361,9 @@
       <div class="contact-copy">
         <p class="contact-position">
           Third-year Cybersecurity & Cloud Computing student at NTU, Iraq —
-          and the person who built all seven systems on this map. The full
-          dossier for each one is above, with its source link.
+          and the person behind all seven systems on this map (OsSecurity
+          was a team build; the rest are mine). The full dossier for each
+          one is above, with its source link.
         </p>
         <p class="contact-status">
           <span class="status-dot" aria-hidden="true"></span>
@@ -389,6 +403,7 @@
   <h2 id="dossier-title" class="dossier-title">Athenas Core</h2>
   <p class="dossier-tag" id="dossier-tag"></p>
   <p class="dossier-shipped" id="dossier-shipped"></p>
+  <p class="dossier-credit" id="dossier-credit" hidden></p>
   <div class="dossier-shot">
     <img id="dossier-image" src="assets/projects/athenas-workspace.webp" alt="Athenas Core multi-agent workspace"/>
     <span class="dossier-scan" aria-hidden="true"></span>

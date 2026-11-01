@@ -103,7 +103,7 @@ description, the site and the résumé PDF all now carry the same 52.8% /
   CashPilot 9, PriceHawk 12, OsSecurity 24, Football Predictor 15.
 - Athenas Core: **166 registered Tauri IPC commands** (157 unconditional,
   9 behind the on-by-default `voice`/`relay` features) and **163
-  `#[component]` functions** across 99 component files — not "78 IPC
+  `#[component]` functions** across 80 component files — not "78 IPC
   commands, 85+ components".
 - Tailwind is genuinely used by E-Commerce, Social and CashPilot
   (`tailwind.config.ts` / `.js` in each frontend), so the stack rack's
@@ -115,6 +115,49 @@ description, the site and the résumé PDF all now carry the same 52.8% /
   the owner's real email. The fake phone row was removed rather than
   replaced with another invented number. Committed upstream as `cca7a29`
   (the live site is a Vercel deploy and needs a push to go live).
+
+**Re-verified 2026-10-31 (round 6):** a hiring-manager reviewer with no
+prior context spent a dozen API calls checking the site's own claims and
+found four soft spots. All four are fixed:
+
+- **OsSecurity was not built alone, and the site implied it was.** GitHub's
+  contributor list: TOX9C 17, `theflash1211` 4, `ZezOok` 3 — 29% of the
+  repo's 24 commits belong to two other people. The contact section said
+  "the person who built all seven systems on this map". The card now names
+  the collaborators and the contact copy says OsSecurity was a team build.
+- **PriceHawk's store count was wrong, and the site hid its live deploy.**
+  The scraper module declares five stores (AMAZON, WALMART, TARGET,
+  BESTBUY, EBAY). The card said three and named a set that dropped Target
+  and Best Buy; the live deploy says "9+ major retailers", which the code
+  does not support. The card now says five, names them, and links
+  `pricehawk-theta.vercel.app` — a complete live product the site was not
+  linking at all, while claiming "one deployed live". It is two now.
+- **The homelab panel faked live telemetry.** "3/3 online" and
+  "uptime 112d 06h" were static strings in the markup — nothing polls the
+  box. It is now labelled a manual readout with the date it was taken
+  (25 Oct 2026, per `git log -S "112d 06h"`).
+- **The one unverifiable number sat in the verifiable row.** The hero chips
+  held "1 university president award" — a bare count, beside metrics that
+  are all checkable. The chips are now 7 landmarks / 2 live deploys /
+  3 homelab services, all verifiable. The award stays in the profile card
+  as a credential, which is what it is.
+
+Also fixed: an orphaned `</div>` after the skip link, and the "166 IPC /
+160+" counts now print the repo command that produces them
+(`grep -rhoE '#[tauri::command]' src-tauri/src | wc -l` → 166; 163
+`#[component]` functions across 80 files).
+
+**Open, needs a decision:** `<link rel="canonical">` points at
+`tox9c.github.io/portfolio/`, which is correct as this repo's Pages URL —
+but the live `main` branch still serves the OLD design with 58.77% / 78 IPC
+/ 85+ components. Two public pages of the same person disagree on two
+flagship metrics until this branch is merged and deployed. The canonical
+tag is right; the old page needs replacing.
+
+**Security note (not the portfolio's, but linked from it):**
+`price-tracker/pricehawk-web/src/lib/scrapers/index.ts` ships a hardcoded
+ScraperAPI key as a fallback — `process.env.SCRAPER_API_KEY || "0c3ff4…"` —
+in a public repo. It should be rotated and the fallback removed.
 
 ## Personality signals worth keeping
 - Interactive terminal with real commands: help, whoami, projects, skills, lab, contact, hire (alias of contact), clear
