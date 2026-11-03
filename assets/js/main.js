@@ -92,6 +92,11 @@ function manifest({ onOpen, onHover }) {
     list.appendChild(li);
   });
 
+  // The seven names in one line, above the cards. Rendered from the same
+  // source as everything else so it cannot drift from what is listed below.
+  const indexLine = $('#legend-index-line');
+  if (indexLine) indexLine.textContent = PROJECTS.map((p) => p.name).join(' · ');
+
   refreshRepoStats();
 }
 

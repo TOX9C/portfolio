@@ -138,7 +138,11 @@
     <div class="stage-legend" id="manifest">
       <div class="legend-head">
         <h2>System manifest</h2>
-        <p>Seven landmarks · select one to open its dossier</p>
+        <!-- Filled from data.js. A reviewer's note across two rounds was that
+             the seven systems are not readable as a set until you either drag
+             the map or scroll into the cards. This is the whole set in one
+             line, in the first screen, without interacting with anything. -->
+        <p class="legend-index-line" id="legend-index-line"></p>
       </div>
       <!-- Rendered from data.js so the manifest can never drift from the map.
            The thumbnail is what carries the work on phones, where the 3D
