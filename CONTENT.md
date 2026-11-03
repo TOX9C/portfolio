@@ -159,6 +159,37 @@ tag is right; the old page needs replacing.
 ScraperAPI key as a fallback — `process.env.SCRAPER_API_KEY || "0c3ff4…"` —
 in a public repo. It should be rotated and the fallback removed.
 
+**Re-verified 2026-11-03 (round 7):** two reviewers (7.0 and 7.5) both went
+for the links first and found the same class of problem — the linked
+artifacts did not back the claims, mostly because fixes were committed
+locally and never pushed.
+
+- **The marquee claim's repo contradicted it.** The football-predictor
+  README opened with "⚠️ Total rebuild in progress" and stated no accuracy
+  at all. The number was reproducible (the fix from round 5 was in a local
+  commit), but the public README had never been pushed. Now pushed and
+  re-run: `Test Accuracy: 52.8%`, support 2,892 (D 733 / L 852 / W 1307);
+  1307/2892 = 45.19% baseline, so +7.5pp holds.
+- **Two repo homepage URLs were dead.** `ecommerce-beige-beta-79` and
+  `social-media-mu-flame` both return 404. The store's homepage now points
+  at `ecommerce-ten-flame-39` (which serves) and social-media's is cleared.
+- **A third live deploy was hidden.** `tox9c.github.io/athenas-core/` is a
+  real product page with downloads and releases; the site claimed "two
+  deploys running live". It is three, and the Athenas site is linked.
+- **The dossier lacked engineering evidence.** Added: 914 Rust tests +
+  48 e2e specs in CI, 9 tagged releases, signed macOS build, Homebrew cask.
+  (Reproduce with `grep -rhoE '#\[(tokio::)?test\]' --include=*.rs . | wc -l`.)
+- **Reply to "476 commits vs the API's 461":** the contributors endpoint
+  undercounts — it only counts commits whose author is linked to a GitHub
+  account. Commits on `main` number 476 (page 476 = 1 commit, 477 = empty),
+  which is what the card says. Kept.
+
+**Fixed from the same round:** mobile hero reflow (the diorama was at
+y=730 on an 844px screen; identity and the full map are now above the
+fold), the dead Discord link (needs the numeric id — it is a handle now),
+a missing semicolon that dropped `.dossier`'s box-shadow, and the 10.2px
+provenance type raised to 12.5px.
+
 ## Personality signals worth keeping
 - Interactive terminal with real commands: help, whoami, projects, skills, lab, contact, hire (alias of contact), clear
 - Live Baghdad clock + page session uptime
