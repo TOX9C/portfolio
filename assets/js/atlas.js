@@ -545,16 +545,23 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
   // labels
   const labelRoot = document.createElement('div');
   labelRoot.className = 'atlas-labels';
+  // The map is a visual affordance over content the manifest already lists in
+  // full, so it is presentational: every landmark had a focusable button here
+  // AND a card below, which put each of the seven projects in the tab order
+  // twice and made a keyboard user walk fourteen stops to reach "The stack".
+  // tabindex="-1" goes with aria-hidden - a hidden subtree that still holds
+  // focusable elements is itself an accessibility fault. Keyboard visitors
+  // reach the dossiers through the manifest cards and the "Open a dossier"
+  // picker, both of which list all seven.
+  labelRoot.setAttribute('aria-hidden', 'true');
   canvas.parentElement.appendChild(labelRoot);
 
   const labels = landmarks.map((group) => {
     const el = document.createElement('button');
     el.type = 'button';
     el.className = 'atlas-label';
+    el.tabIndex = -1;
     el.dataset.project = group.userData.project.id;
-    // The visible chip can be demoted to a bare number on a phone, which
-    // leaves a screen reader announcing "03" with no project name.
-    el.setAttribute('aria-label', `Open ${group.userData.project.name} dossier`);
     // The plaque is a real element, not CSS ::before content, so the
     // declutter can measure exactly the painted sign. A pseudo-element's box
     // includes transparent padding and the pin stem, which made the layout
@@ -573,11 +580,6 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       e.preventDefault();
       e.stopPropagation();
       onSelect?.(group.userData.project.id);
-    });
-    // Keyboard users still need a click path — Enter/Space on a button fires
-    // a `click` with no pointerdown before it.
-    el.addEventListener('click', (e) => {
-      if (e.detail === 0) onSelect?.(group.userData.project.id);
     });
     labelRoot.appendChild(el);
     return { el, group, w: 0, keyW: 0 };
@@ -948,8 +950,12 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
       el.style.transform = `translate(-50%,-100%) translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
       el.style.opacity = onScreen ? '1' : '0';
       el.style.pointerEvents = onScreen ? 'auto' : 'none';
-      el.tabIndex = onScreen ? 0 : -1;
-      el.setAttribute('aria-hidden', String(!onScreen));
+      // No tabIndex or aria-hidden here any more. This used to make each
+      // landmark focusable while it was on screen and unfocusable once the
+      // camera carried it off - so the tab order changed every frame. The
+      // plate is presentational now (aria-hidden on the root, tabindex="-1"
+      // on each label, set once at creation); the manifest below is the
+      // keyboard path.
     }
 
     // Declutter: on narrow canvases the full names cover the models and collide.
@@ -978,8 +984,6 @@ export function createAtlas(canvas, { onSelect, onHover } = {}) {
         l.el.classList.remove('compact', 'tight');
         l.el.style.opacity = '0';
         l.el.style.pointerEvents = 'none';
-        l.el.tabIndex = -1;
-        l.el.setAttribute('aria-hidden', 'true');
         continue;
       }
       // Start from the full label (name included) and measure it as rendered —

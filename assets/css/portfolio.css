@@ -657,7 +657,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .legend-links{
   display:flex;flex-wrap:wrap;gap:.3rem}
 .legend-links a{
-  font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;
   text-transform:uppercase;color:var(--cyan);
   padding:.26rem .5rem;border-radius:var(--r-chip);
   border:1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
@@ -737,7 +737,9 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      under the 4.5:1 floor. 10% lifts the background and clears it. */
   background:color-mix(in srgb, var(--accent) 10%, var(--panel));
   border:1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
-  font-family:var(--mono);font-size:.64rem;font-weight:600;
+  /* 10.2px - the smallest type on the page, sitting on the stat the whole
+     site asks you to verify. */
+  font-family:var(--mono);font-size:.72rem;font-weight:600;
   letter-spacing:.03em;color:var(--cyan);
   white-space:nowrap;flex:none
 }
@@ -1465,7 +1467,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   position:absolute;top:0;left:0;
   display:inline-flex;flex-direction:column;align-items:center;
   padding:0;background:none;border:0;
-  font-family:var(--pixel);font-size:.72rem;letter-spacing:.05em;
+  /* .72rem put the landmark names at 11.5px, which is small for the one
+     thing on the map a visitor has to read before deciding to click. The
+     declutter pass measures the painted plaque, so bigger labels simply
+     push more of them to the numbered fallback - the map stays uncluttered
+     and the names that survive are legible. */
+  font-family:var(--pixel);font-size:.82rem;letter-spacing:.04em;
   text-transform:uppercase;
   white-space:nowrap;pointer-events:auto;
   /* No transform transition: the transform is rewritten every frame to follow
@@ -1580,7 +1587,12 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-copy>.stage-actions{order:10}
   .stage-copy>.stage-proof{order:11}
   .stage-legend{order:12;grid-column:1;grid-row:auto;grid-template-columns:1fr;align-self:start}
-  .legend-list{grid-template-columns:repeat(auto-fit,minmax(158px,1fr))}
+  /* The floor was 158px, which at 390px produced two columns of 168px cards
+     - inside the width this file already calls unreadable for the desktop
+     layout, on the device where the cards are the only readable view of the
+     work. 200px forces a single column below ~415px and three across at
+     tablet width, so no card is ever narrower than the desktop cards. */
+  .legend-list{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
   .profile-grid{grid-template-columns:1fr}
   .contact-payoff{grid-template-columns:1fr;gap:2.4rem}
     /* The monitor spans the full width below the three service cards. */

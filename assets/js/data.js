@@ -60,6 +60,7 @@ export const PROJECTS = [
       { value: 'LIVE', label: 'deployed store' },
       { value: '5', label: 'store surfaces' }
     ],
+    depth: 'Dual sign-in (username or phone) on JWT sessions, guest checkout with the cart mirrored to local storage, and Zod schemas shared between client and server so the two cannot disagree about what a valid order is.',
     repo: 'TOX9C/ecommerce',
     shipped: { last: 'Oct 2026', commits: 19 },
     stack: ['Next.js 16', 'TypeScript', 'PostgreSQL', 'Prisma'],
@@ -89,6 +90,7 @@ export const PROJECTS = [
       { value: 'WS', label: 'websocket DMs' },
       { value: '5', label: 'core surfaces' }
     ],
+    depth: 'Follows are request-based rather than instant, and likes, comments, follows and messages all push notifications over the same Socket.io channel — one connection per client, not one per feature.',
     repo: 'TOX9C/social-media',
     shipped: { last: 'Nov 2025', commits: 27 },
     stack: ['React 19', 'socket.io', 'Express', 'Prisma'],
@@ -115,6 +117,7 @@ export const PROJECTS = [
       { value: '4', label: 'finance modules' },
       { value: '1', label: 'dashboard' }
     ],
+    depth: 'Four modules share one dashboard: income against expenses as a stacked time series, a per-category spending breakdown, and savings goals measured against real account balances rather than a typed-in target.',
     repo: 'TOX9C/cashPilot',
     shipped: { last: 'Dec 2025', commits: 9 },
     stack: ['React 19', 'Express 5', 'Prisma', 'PostgreSQL'],
@@ -146,6 +149,10 @@ export const PROJECTS = [
       { value: '5', label: 'stores tracked' },
       { value: '24/7', label: 'alerts' }
     ],
+    // Amazon hides its buy-box price from datacenter IPs, so that one scraper
+    // goes out through a residential proxy; the rest are direct. The schema
+    // is multi-store because the first version assumed a single retailer.
+    depth: 'Amazon will not show a buy-box price to a datacenter IP, so that one scraper proxies out as a residential user while the rest fetch directly — and the schema is multi-store because the first version assumed a single retailer.',
     repo: 'TOX9C/price-tracker',
     shipped: { last: 'Nov 2026', commits: 13 },
     stack: ['price history', 'charts', 'alerts'],
@@ -171,6 +178,10 @@ export const PROJECTS = [
     // framing imply otherwise. Team work is a stronger signal than a solo
     // claim nobody can check.
     credit: 'Built with theflash1211 and ZezOok · 17 of 24 commits mine',
+    // Detection runs off I/O rates in /proc, which is cheap but needs a
+    // tripwire to be early enough; the decoy files are that tripwire, and
+    // the harness is how the whole thing gets tested without real malware.
+    depth: 'Detection reads I/O rates out of /proc and plants sentinel plus per-process decoy files, so an encryption sweep trips a tripwire before the first real file is lost. It ships a safe fake-ransomware harness — create, encrypt, clean up — to test that without ever running malware.',
     features: [
       'OS-level file system monitoring',
       'Encryption behaviour detection',

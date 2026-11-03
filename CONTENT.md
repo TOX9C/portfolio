@@ -97,10 +97,16 @@ description, the site and the résumé PDF all now carry the same 52.8% /
 45.2% / 2,892 figures.
 
 **Other figures re-checked against the live repos (2026-10-30):**
-- Athenas Core: **476 commits**, not 600. 9 published releases, latest
-  v3.5.3 (Oct 24 2026).
-- Other six repo commit counts confirmed exact: E-Commerce 17, Social 27,
-  CashPilot 9, PriceHawk 12, OsSecurity 24, Football Predictor 15.
+- **Superseded 2026-11-03:** these counts were right when written and are
+  now stale, because pushing the fixes below moved three of them. The site
+  no longer hardcodes them — it fetches each repo's commit count and last
+  commit month from the GitHub API on load, cached six hours, with the
+  values in `data.js` as the offline fallback. **Keep the fallbacks
+  current anyway**, since they are what a visitor sees when the API is
+  rate-limited or unreachable. As of this writing:
+  Athenas Core 486 (was 476), E-Commerce 19 (was 17), Social 27,
+  CashPilot 9, PriceHawk 13, OsSecurity 24, Football Predictor 18.
+- Athenas Core: 9 published releases, latest v3.5.3 (Oct 24 2026).
 - Athenas Core: **166 registered Tauri IPC commands** (157 unconditional,
   9 behind the on-by-default `voice`/`relay` features) and **163
   `#[component]` functions** across 80 component files — not "78 IPC
