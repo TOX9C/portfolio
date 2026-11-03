@@ -223,6 +223,36 @@ converged on two things — the commit counts, and the tab order.
   that the dossiers state outcomes but not depth, and that the seven
   systems are not scannable as one-line outcomes without opening the atlas.
 
+**Re-verified 2026-11-04 (rounds 9–13, scores 7.5 / 8 / 7 / 7.5 / 8):**
+the reviewers' claims table came back all-PASS — commit counts exact,
+OsSecurity 17/4/3 exact, 52.8% vs 45.2% matching the README, both deploys
+live. What they kept returning to was structure and legibility.
+
+- **Depth in the dossiers.** Two reviewers said the dossiers state outcomes
+  and never depth. Every project now carries the one line its numbers
+  cannot: the football model's published 52.8% is *lower* than the 58.77%
+  it replaced because the old pipeline leaked same-match statistics;
+  OsSecurity reads I/O rates from `/proc` and plants decoy files, and
+  ships a safe fake-ransomware harness to test itself; Athenas Core's
+  oldest commit is an import, not the start of a build. Where a repo has no
+  depth to show (no tests, no CI), nothing is claimed.
+- **The seven systems are readable in the first screen.** The hero came
+  down from 772px to 685px, and the manifest head carries the seven names
+  in one line, rendered from `data.js`. Previously no card row could fit
+  above the fold at 900px.
+- **The map is no longer in the tab order twice.** Each project had a
+  focusable landmark *and* a card, and the landmark's tabindex flipped with
+  the camera. The map is presentational now; tab stops went 45 → 38.
+- **The manifest broke its own readability rule on phones.** A 158px
+  auto-fit floor produced 168px cards at 390px — narrower than the 178px
+  the same rule calls unreadable. Floor is 200px.
+- **The smallest type carried the checkable numbers** (stat badge 10.2px,
+  source links 10.5px). Both are 11.5px.
+- **In-flight, not yet done:** reviewers still describe the atlas as
+  friction for a fast scan and note that no claim has external validation
+  (stars, users, independent review) — that is a property of the work, not
+  the site.
+
 ## Personality signals worth keeping
 - Interactive terminal with real commands: help, whoami, projects, skills, lab, contact, hire (alias of contact), clear
 - Live Baghdad clock + page session uptime
