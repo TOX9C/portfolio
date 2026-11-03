@@ -1366,6 +1366,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   padding-bottom:.9rem;border-bottom:1px solid var(--hair-soft)
 }
 .dossier-credit[hidden]{display:none}
+/* The depth line: the one thing the numbers cannot say - why a commit count
+   is low, or what an accuracy figure cost to get. It reads as a remark
+   beside the evidence rather than part of the spec list. */
+.dossier-depth{
+  margin:-1.1rem 0 1.4rem;
+  padding:.5rem .75rem .5rem .8rem;
+  border-left:2px solid var(--cyan);
+  background:color-mix(in srgb, var(--cyan) 7%, transparent);
+  font-size:.82rem;line-height:1.5;color:var(--muted)
+}
+.dossier-depth[hidden]{display:none}
 .dossier-shot{
   position:relative;border-radius:var(--r-soft);overflow:hidden;
   border:1px solid var(--hair);background:#000;

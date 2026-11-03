@@ -27,6 +27,9 @@ export const PROJECTS = [
     // nothing outside the repo can confirm, so the repo commands that
     // produce them are printed alongside them.
     evidence: "grep -rhoE '#\\[(tokio::)?test\\]' --include=*.rs . | wc -l → 914 · grep -rhoE '#\\[tauri::command\\]' src-tauri/src | wc -l → 166",
+    // Deliberately number-free: the commit count above is fetched live, so
+    // repeating it here would drift the moment the count changes.
+    depth: 'The oldest commit is an import of a working tree rather than the first step of a build — and CI runs 914 tests before anything ships, which is the part a commit count cannot show.',
     repo: 'TOX9C/athenas-core',
     shipped: { last: 'Nov 2026', commits: 486 },
     stack: ['Rust', 'Tauri 2', 'Dioxus', 'MCP', 'multi-agent'],
@@ -202,6 +205,11 @@ export const PROJECTS = [
       { value: '52.8%', label: 'held-out accuracy' },
       { value: 'ELO', label: 'live rankings' }
     ],
+    // The number is 18 commits, which reads thin next to a headline accuracy.
+    // What it does not show is the work behind it: the first pipeline scored
+    // higher by leaking match statistics into its own features, and the
+    // rebuild trades that score for one that survives a held-out season.
+    depth: 'The published 52.8% is lower than the 58.77% it replaced — the earlier figure leaked same-match statistics into the features. The rebuild is temporally safe and a test pins the number.',
     repo: 'TOX9C/football-predictor',
     shipped: { last: 'Nov 2026', commits: 18 },
     stack: ['Python', 'XGBoost'],

@@ -194,6 +194,29 @@ fold), the dead Discord link (needs the numeric id — it is a handle now),
 a missing semicolon that dropped `.dossier`'s box-shadow, and the 10.2px
 provenance type raised to 12.5px.
 
+**Re-verified 2026-11-03 (round 8, scores 7 / 7 / 8):** the reviewers
+converged on two things — the commit counts, and the tab order.
+
+- **The commit counts had already drifted.** Pushing the round-5 and
+  round-7 fixes moved three of the seven repos, so the cards were quoting
+  stale numbers: Athenas Core is **486** not 476, E-Commerce **19** not 17,
+  PriceHawk **13** not 12, Football Predictor **18** not 15 (last commit
+  Nov 2026, not Aug). Corrected, and they are now **fetched from the GitHub
+  API on load** with a six-hour cache and a static fallback, so they cannot
+  drift again. The card and the dossier share the value.
+- **The hero's tab order was wrong.** `.stage-canvas` came before
+  `.stage-copy` in the DOM, so the first seven tab stops were atlas
+  buttons that do not exist until Three.js loads and whose order changes
+  with the camera. Copy is first in the DOM now; grid placement keeps the
+  two columns in the same place.
+- **The proof row hid its own qualifiers on phones** — "Live store" with no
+  "Orders open". Restored.
+- **Dead CSS removed:** two `.stage-chips span` rules inside
+  `@media (max-width:640px)` where `.stage-chips` is `display:none`.
+- Reviewer scores are still short of the bar: the recurring criticism is
+  that the dossiers state outcomes but not depth, and that the seven
+  systems are not scannable as one-line outcomes without opening the atlas.
+
 ## Personality signals worth keeping
 - Interactive terminal with real commands: help, whoami, projects, skills, lab, contact, hire (alias of contact), clear
 - Live Baghdad clock + page session uptime

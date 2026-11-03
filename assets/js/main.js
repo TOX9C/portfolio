@@ -442,6 +442,13 @@ function dossier({ atlas: initialAtlas }) {
     note.hidden = !noteText;
     note.textContent = noteText.trim();
 
+    // The one line that says what the card's numbers cannot: why a count is
+    // low, or what the score cost. A reviewer's note was that the dossiers
+    // stated outcomes and never depth.
+    const depth = $('#dossier-depth');
+    depth.hidden = !project.depth;
+    depth.textContent = project.depth || '';
+
     // What the system actually does, broken out — one paragraph plus a tech
     // list reads like filler; a capability list reads like a case study.
     $('#dossier-features').innerHTML = (project.features || [])
