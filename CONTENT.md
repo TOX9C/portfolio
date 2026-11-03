@@ -155,9 +155,13 @@ flagship metrics until this branch is merged and deployed. The canonical
 tag is right; the old page needs replacing.
 
 **Security note (not the portfolio's, but linked from it):**
-`price-tracker/pricehawk-web/src/lib/scrapers/index.ts` ships a hardcoded
-ScraperAPI key as a fallback — `process.env.SCRAPER_API_KEY || "0c3ff4…"` —
-in a public repo. It should be rotated and the fallback removed.
+`price-tracker/pricehawk-web/src/lib/scrapers/index.ts` shipped a
+hardcoded ScraperAPI key as a fallback —
+`process.env.SCRAPER_API_KEY || "0c3ff4…"` — in a public repo.
+**Fixed 2026-11-03** (commit `6b12eea`): the fallback is gone and the
+scraper now throws if the variable is unset. **The key itself still needs
+rotating in the ScraperAPI dashboard** and the new value setting in Vercel
+— it is in the git history, so it is compromised regardless of the commit.
 
 **Re-verified 2026-11-03 (round 7):** two reviewers (7.0 and 7.5) both went
 for the links first and found the same class of problem — the linked
