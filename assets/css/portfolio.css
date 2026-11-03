@@ -1659,7 +1659,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   }
   .stage-chips li{gap:.1rem}
   .stage-chips b{font-size:1.35rem}
-  .stage-chips span{font-size:.6rem;letter-spacing:.06em;line-height:1.3}
+  /* .stage-chips is display:none at this width (see the phone block below),
+     so the span sizing that used to live here was dead. */
   .stage-picker ul{grid-template-columns:repeat(2,minmax(0,1fr))}
   .stage-corner{font-size:.72rem;gap:1rem}
   /* The channel list was five 100px bands — 1140px of scroll for five links.
@@ -1699,7 +1700,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
     grid-template-columns:minmax(0,1fr);
     gap:.5rem;align-items:start
   }
-  .stage-chips span{font-size:.68rem}
+  /* (dead .stage-chips span sizing removed - the chips are hidden here) */
   .stage-corner{font-size:.78rem}
   .footer{font-size:.8rem}
   .footer a{padding:.6rem 0;display:inline-block}
@@ -1814,6 +1815,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   /* Three tight chips in one row instead of stacked bands. */
   .stage-proof{margin-top:.6rem;gap:.3rem;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0}
   .stage-proof a{flex-direction:column;align-items:flex-start;gap:.1rem;padding:.42rem .5rem;min-height:44px}
-  .stage-proof span{display:none}
+  /* The qualifiers used to be hidden here to fit three chips in a row, which
+     left "Live store" with no "Orders open" and "GitHub" with no "All 7
+     sources" - three bare nouns where the row's whole job is to say what is
+     behind each link. They fit; they just needed to be shown. */
+  .stage-proof span{font-size:.62rem;letter-spacing:.02em;line-height:1.25}
   .stage-canvas{height:min(50vh,420px);min-height:320px}
 }

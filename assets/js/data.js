@@ -27,7 +27,8 @@ export const PROJECTS = [
     // nothing outside the repo can confirm, so the repo commands that
     // produce them are printed alongside them.
     evidence: "grep -rhoE '#\\[(tokio::)?test\\]' --include=*.rs . | wc -l → 914 · grep -rhoE '#\\[tauri::command\\]' src-tauri/src | wc -l → 166",
-    shipped: { last: 'Oct 2026', commits: 476 },
+    repo: 'TOX9C/athenas-core',
+    shipped: { last: 'Nov 2026', commits: 486 },
     stack: ['Rust', 'Tauri 2', 'Dioxus', 'MCP', 'multi-agent'],
     images: [
       { src: 'assets/projects/athenas-workspace.webp', alt: 'Athenas Core multi-agent workspace' },
@@ -56,7 +57,8 @@ export const PROJECTS = [
       { value: 'LIVE', label: 'deployed store' },
       { value: '5', label: 'store surfaces' }
     ],
-    shipped: { last: 'Feb 2026', commits: 17 },
+    repo: 'TOX9C/ecommerce',
+    shipped: { last: 'Oct 2026', commits: 19 },
     stack: ['Next.js 16', 'TypeScript', 'PostgreSQL', 'Prisma'],
     images: [
       { src: 'assets/projects/ecommerce-landing.webp', alt: 'E-commerce landing page' },
@@ -84,6 +86,7 @@ export const PROJECTS = [
       { value: 'WS', label: 'websocket DMs' },
       { value: '5', label: 'core surfaces' }
     ],
+    repo: 'TOX9C/social-media',
     shipped: { last: 'Nov 2025', commits: 27 },
     stack: ['React 19', 'socket.io', 'Express', 'Prisma'],
     images: [
@@ -109,6 +112,7 @@ export const PROJECTS = [
       { value: '4', label: 'finance modules' },
       { value: '1', label: 'dashboard' }
     ],
+    repo: 'TOX9C/cashPilot',
     shipped: { last: 'Dec 2025', commits: 9 },
     stack: ['React 19', 'Express 5', 'Prisma', 'PostgreSQL'],
     images: [
@@ -139,7 +143,8 @@ export const PROJECTS = [
       { value: '5', label: 'stores tracked' },
       { value: '24/7', label: 'alerts' }
     ],
-    shipped: { last: 'Jun 2026', commits: 12 },
+    repo: 'TOX9C/price-tracker',
+    shipped: { last: 'Nov 2026', commits: 13 },
     stack: ['price history', 'charts', 'alerts'],
     images: [
       { src: 'assets/projects/pricehawk-landing.webp', alt: 'PriceHawk tracking a product with price history' }
@@ -172,6 +177,7 @@ export const PROJECTS = [
       { value: 'OS', label: 'file monitoring' },
       { value: 'REAL-TIME', label: 'encryption alerts' }
     ],
+    repo: 'TOX9C/OsSecurity',
     shipped: { last: 'Apr 2026', commits: 24 },
     stack: ['OS-level monitoring', 'encryption detection', 'alerts'],
     images: [
@@ -196,7 +202,8 @@ export const PROJECTS = [
       { value: '52.8%', label: 'held-out accuracy' },
       { value: 'ELO', label: 'live rankings' }
     ],
-    shipped: { last: 'Aug 2026', commits: 15 },
+    repo: 'TOX9C/football-predictor',
+    shipped: { last: 'Nov 2026', commits: 18 },
     stack: ['Python', 'XGBoost'],
     images: [
       { src: 'assets/projects/football-predictor-ui.webp', alt: 'Football predictor interface' }

@@ -88,8 +88,72 @@ function manifest({ onOpen, onHover }) {
     btn.addEventListener('click', () => onOpen?.(p.id));
     btn.addEventListener('focus', () => onHover?.(p.id));
     btn.addEventListener('blur', () => onHover?.(null));
-    li.append(btn, links);
+      li.append(btn, links);
     list.appendChild(li);
+  });
+
+  refreshRepoStats();
+}
+
+/* ---------- live repo stats ---------- */
+
+// The commit count and last-commit month are the only two figures on this page
+// that go stale on their own — every push to any of the seven repos changes
+// them, and three of them were already wrong by the time a reviewer checked.
+// They are re-read from the GitHub API on load and cached for six hours so the
+// page does not spend seven unauthenticated requests per view (the limit is 60
+// per hour per IP). If the API is unreachable or rate-limited the static
+// values from data.js stand, which is why those still have to be kept honest.
+const STATS_KEY = 'tox9c.repoStats.v1';
+const STATS_TTL = 6 * 60 * 60 * 1000;
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const monthYear = (iso) => {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? null : `${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+};
+
+// GitHub returns the total commit count only as the page number of the
+// `rel="last"` link on a one-per-page response.
+async function repoStat(fullName) {
+  const res = await fetch(`https://api.github.com/repos/${fullName}/commits?per_page=1`, {
+    headers: { Accept: 'application/vnd.github+json' }
+  });
+  if (!res.ok) throw new Error(String(res.status));
+  const rel = /[?&]page=(\d+)>;\s*rel="last"/.exec(res.headers.get('link') || '');
+  const [latest] = await res.json();
+  return {
+    commits: rel ? Number(rel[1]) : 1,
+    last: latest?.commit?.committer?.date ? monthYear(latest.commit.committer.date) : null
+  };
+}
+
+async function refreshRepoStats() {
+  let cached = null;
+  try { cached = JSON.parse(localStorage.getItem(STATS_KEY) || 'null'); } catch { /* private mode */ }
+
+  if (cached && Date.now() - cached.at < STATS_TTL) return applyStats(cached.repos);
+
+  const repos = {};
+  await Promise.all(PROJECTS.filter((p) => p.repo).map(async (p) => {
+    try { repos[p.id] = await repoStat(p.repo); } catch { /* keep the static value */ }
+  }));
+  if (!Object.keys(repos).length) return;
+
+  applyStats(repos);
+  try { localStorage.setItem(STATS_KEY, JSON.stringify({ at: Date.now(), repos })); } catch { /* ignore */ }
+}
+
+function applyStats(repos) {
+  PROJECTS.forEach((p) => {
+    const live = repos[p.id];
+    if (!live) return;
+    // Keep data.js in step so the dossier, which reads from PROJECTS, agrees
+    // with the card the visitor just read.
+    if (live.commits) p.shipped.commits = live.commits;
+    if (live.last) p.shipped.last = live.last;
+    const line = $(`.legend-list li button[data-project="${p.id}"] .legend-shipped`);
+    if (line) line.textContent = `last commit ${p.shipped.last} · ${p.shipped.commits} commits`;
   });
 }
 
