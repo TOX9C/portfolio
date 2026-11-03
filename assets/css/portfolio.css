@@ -777,7 +777,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
    as a folder of coursework; the dates and commit counts make "shipped"
    checkable. */
 .legend-shipped{
-  font-family:var(--mono);font-size:.64rem;letter-spacing:.04em;
+  /* .64rem put the commit line at 10.2px - the smallest type on the page,
+     sitting on the number the whole site asks you to check. Raised to
+     12.5px so the provenance is readable without zooming. */
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.03em;
   text-transform:uppercase;color:var(--faint);
   padding-top:.45rem;margin-top:.1rem;
   border-top:1px solid var(--hair-soft)
@@ -974,7 +977,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   gap:.6rem;align-items:baseline;min-width:0
 }
 .lab-readout dt{
-  font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;
+  font-family:var(--mono);font-size:.76rem;letter-spacing:.12em;
   text-transform:uppercase;color:var(--faint)
 }
 .lab-readout dd{
@@ -1263,7 +1266,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   overflow-wrap:anywhere}
 .contact-payoff .channel-list{border-top:1px solid var(--hair)}
 .channel-list{max-width:78rem;border-top:1px solid var(--hair)}
-.channel-list a{
+.channel-list a,
+.channel-list .channel-static{
   display:grid;
   grid-template-columns:minmax(8rem,.8fr) minmax(0,1.6fr) auto;
   gap:1rem;align-items:center;
@@ -1271,6 +1275,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   border-bottom:1px solid var(--hair-soft);
   transition:background .4s var(--ease),padding .4s var(--ease);
   box-shadow:var(--shadow)}
+/* A channel with no reachable URL (see index.html) keeps the row rhythm but
+   is not a link, so it gets no hover affordance. */
+.channel-list .channel-static{cursor:default}
+.channel-list .channel-static i{opacity:.5}
 .channel-list a:hover{
   background:color-mix(in srgb, var(--accent) 8%, transparent);
   padding-left:1.1rem;padding-right:1.1rem
@@ -1323,7 +1331,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      a slow slide made a tap feel like nothing happened. */
   transition:transform .28s var(--ease);
   visibility:hidden;
-  will-change:transform
+  will-change:transform;
   box-shadow:var(--shadow)}
 .dossier.open{transform:none;visibility:visible}
 .dossier-close{
@@ -1346,14 +1354,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 /* The provenance line: when the repo last moved and how much work went in.
    It answers "is this maintained?" before the reader opens GitHub. */
 .dossier-shipped{
-  font-family:var(--mono);font-size:.7rem;letter-spacing:.05em;
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;
   color:var(--muted);margin-bottom:1.4rem;
   padding-bottom:.9rem;border-bottom:1px solid var(--hair-soft)
 }
 /* Shown only for a project that was not built alone. It sits directly under
    the commit line because that line is what makes the claim checkable. */
 .dossier-credit{
-  font-family:var(--mono);font-size:.7rem;letter-spacing:.05em;
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;
   color:var(--cyan);margin:-1.1rem 0 1.4rem;
   padding-bottom:.9rem;border-bottom:1px solid var(--hair-soft)
 }
@@ -1525,12 +1533,42 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
        pixel headline's longest word ("CYBERSECURITY") pushed the column
        22px past the viewport, clipping the right edge of the hero. */
     grid-template-columns:minmax(0,1fr);
-    grid-template-rows:auto auto auto;
+    /* Auto rows, not a fixed three-row template: display:contents below turns
+       the copy into a dozen grid items, and they need rows to land in. */
+    grid-template-rows:none;
+    grid-auto-rows:auto;
+    align-items:start;
+    row-gap:.85rem;
     padding-top:clamp(5.5rem,10vh,7rem)
   }
-  .stage-copy{grid-column:1;grid-row:1;max-width:38rem;min-width:0}
-  .stage-canvas{grid-column:1;grid-row:2;height:min(52vh,460px);min-height:340px}
-  .stage-legend{grid-column:1;grid-row:3;grid-template-columns:1fr;align-self:start}
+  /* Phones used to stack copy -> canvas -> manifest, which put the diorama
+     at y=730 on an 844px screen: a visitor saw a sliver of the map's top
+     edge, and the thing that makes this portfolio memorable sat a full
+     scroll below the fold. display:contents dissolves the copy wrapper so
+     its children become grid items and can be interleaved with the canvas:
+     identity first (name, headline), then the map, then the supporting copy.
+     The headline and the whole diorama now land in the first screen. */
+  .stage-copy{display:contents}
+  /* Every item needs an explicit grid-column AND grid-row:auto for `order`
+     to decide placement. Grid auto-placement runs in passes, and items with
+     a definite column or row are positioned before fully-auto ones — so the
+     base rules that pin the canvas to row 1 and the manifest to row 2 made
+     both of them jump the queue, and the copy children landed underneath
+     regardless of what order said. With both axes cleared they sort by
+     order, which is the whole point of the reflow. */
+  .stage-copy>*{min-width:0;grid-column:1;grid-row:auto}
+  .stage-copy>.eyebrow{order:1}
+  .stage-copy>.stage-role-line{order:2}
+  .stage-copy>.display{order:3}
+  .stage-copy>.display-byline{order:4}
+  .stage-canvas{order:5;grid-column:1;grid-row:auto;height:min(52vh,460px);min-height:340px}
+  .stage-copy>.stage-lede{order:6}
+  .stage-copy>.stage-lede-note{order:7}
+  .stage-copy>.stage-role{order:8}
+  .stage-copy>.stage-open{order:9}
+  .stage-copy>.stage-actions{order:10}
+  .stage-copy>.stage-proof{order:11}
+  .stage-legend{order:12;grid-column:1;grid-row:auto;grid-template-columns:1fr;align-self:start}
   .legend-list{grid-template-columns:repeat(auto-fit,minmax(158px,1fr))}
   .profile-grid{grid-template-columns:1fr}
   .contact-payoff{grid-template-columns:1fr;gap:2.4rem}

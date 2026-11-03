@@ -7,19 +7,26 @@ export const PROJECTS = [
     name: 'Athenas Core',
     tag: 'multi-agent desktop IDE',
     desc: 'Desktop IDE where parallel AI agents analyse, review and reason about code in dedicated workspaces. Multi-provider LLM support with MCP.',
+    // This dossier used to be a screenshot and a component count. A
+    // reviewer's note was that the portfolio reads as a gallery rather than
+    // evidence of engineering — the CI, the test suite and the release
+    // pipeline were all one click away and none of it was on the page. The
+    // numbers below are the ones a technical reader actually weighs.
     features: [
       'Parallel agents in dedicated workspaces',
       'Multi-provider LLM support over MCP',
-      '166 IPC commands, 163 components'
+      '914 Rust tests and 48 end-to-end specs, run in CI on every push',
+      '166 IPC commands across 163 Dioxus components',
+      '9 tagged releases, signed macOS build, Homebrew cask'
     ],
     stats: [
-      { value: '166', label: 'IPC commands' },
-      { value: '163', label: 'components' }
+      { value: '914', label: 'tests in CI' },
+      { value: '9', label: 'tagged releases' }
     ],
-    // The two counts above are the only headline numbers on this site that
-    // nothing outside the repo can confirm, so the repo command that produces
-    // them is printed alongside them.
-    evidence: "grep -rhoE '#[tauri::command]' src-tauri/src | wc -l → 166",
+    // The counts above are the only headline numbers on this site that
+    // nothing outside the repo can confirm, so the repo commands that
+    // produce them are printed alongside them.
+    evidence: "grep -rhoE '#\\[(tokio::)?test\\]' --include=*.rs . | wc -l → 914 · grep -rhoE '#\\[tauri::command\\]' src-tauri/src | wc -l → 166",
     shipped: { last: 'Oct 2026', commits: 476 },
     stack: ['Rust', 'Tauri 2', 'Dioxus', 'MCP', 'multi-agent'],
     images: [
@@ -27,7 +34,10 @@ export const PROJECTS = [
       { src: 'assets/projects/athenas-agent.webp', alt: 'Athenas Core agent panel' },
       { src: 'assets/projects/athenas-pixel-art.webp', alt: 'Athenas Core pixel-art owl mascot' }
     ],
-    links: [{ label: 'Source', href: 'https://github.com/TOX9C/athenas-core', primary: true }],
+    links: [
+      { label: 'Visit site', href: 'https://tox9c.github.io/athenas-core/', primary: true },
+      { label: 'Source', href: 'https://github.com/TOX9C/athenas-core' }
+    ],
     hue: '#54E1FF',
     landmark: 'owl'
   },
@@ -286,7 +296,7 @@ export const TERMINAL_COMMANDS = {
       'github   https://github.com/TOX9C',
       'linkedin https://www.linkedin.com/in/tox9c',
       'x        https://x.com/tox9c',
-      'discord  https://discord.com/users/tox9c_',
+      'discord  tox9c_  (handle — add me in the app)',
       'email    abdulrahmansafah@gmail.com'
     ]
   }

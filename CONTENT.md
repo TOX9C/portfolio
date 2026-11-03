@@ -20,7 +20,7 @@ distort the facts below. No lorem ipsum, no placeholder stats, no fake claims.
 
 | # | Project | One-liner (facts only) | Stack | Links | Screenshots available |
 |---|---------|------------------------|-------|-------|----------------------|
-| 1 | Athenas Core | Desktop IDE where parallel AI agents analyse, review and reason about code in dedicated workspaces. 166 IPC commands, 160+ components, multi-provider LLM support. 476 commits. | Rust / Tauri 2 / Dioxus / MCP / multi-agent | github.com/TOX9C/athenas-core | athenas-workspace.png, athenas-agent.png, athenas-pixel-art.png |
+| 1 | Athenas Core | Desktop IDE where parallel AI agents analyse, review and reason about code in dedicated workspaces. 476 commits, 914 Rust tests + 48 e2e specs in CI, 9 tagged releases with a signed macOS build and Homebrew cask, 166 IPC commands, 163 components, multi-provider LLM support. | Rust / Tauri 2 / Dioxus / MCP / multi-agent | github.com/TOX9C/athenas-core | athenas-workspace.png, athenas-agent.png, athenas-pixel-art.png |
 | 2 | E-Commerce | Full store: catalog, cart, checkout, order management, admin dashboard. Deployed live, taking orders. | Next.js 16 / TypeScript / PostgreSQL / Prisma | LIVE: ecommerce-ten-flame-39.vercel.app | ecommerce-landing.jpg, ecommerce-products.jpg |
 | 3 | Social | Real-time social platform: posts, feeds, profiles, notifications, DMs over WebSockets. | React 19 / socket.io / Express / Prisma | github.com/TOX9C/social-media | social-home.png, social-messages.png |
 | 4 | CashPilot | Personal finance: accounts, transactions, budgets, savings goals in one dashboard. | React 19 / Express 5 / Prisma / PostgreSQL | github.com/TOX9C/cashPilot | cashpilot-dashboard.jpg, cashpilot-goals.jpg |
