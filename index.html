@@ -29,7 +29,11 @@
     <span>TOX9C</span>
   </a>
   <nav class="hud-nav" id="hud-nav" aria-label="Primary">
-    <a href="#atlas" aria-current="page">Projects</a>
+    <!-- No aria-current in the markup. It was hardcoded to "page" here and
+         then corrected by JS on scroll, so a failed module left assistive
+         tech being told "Projects is the current page" on a site that has
+         not navigated anywhere. The observer owns it now. -->
+    <a href="#atlas">Projects</a>
     <a href="#stack">Stack</a>
     <a href="#lab">Lab</a>
     <a href="#profile">Profile</a>
@@ -79,35 +83,38 @@
       <p class="stage-role">
         Open to internships & junior roles · Baghdad, UTC+3 · remote-friendly
       </p>
-      <div class="stage-open">
-        <button type="button" id="stage-open-dossier" aria-haspopup="true" aria-expanded="false">
-          Open a dossier<span aria-hidden="true">▾</span>
-        </button>
-        <dialog class="stage-picker" id="stage-picker" aria-label="Pick a system">
-          <p class="stage-picker-label">Pick a system</p>
-          <ul id="stage-picker-list"></ul>
-        </dialog>
-      </div>
+      <!-- The "Open a dossier" control and its picker dialog were removed.
+           It existed so keyboard users could reach a project without the
+           canvas, but the manifest cards do that already and the seven names
+           now sit in one line above them, so it was a collapsed control
+           whose contents were visible a scroll further down - which two
+           reviewers read as clutter in an already dense hero. -->
       <div class="stage-actions">
         <a class="btn btn-primary" href="#manifest">Explore the atlas<span class="btn-arrow" aria-hidden="true">↘</span></a>
         <a class="btn" href="mailto:abdulrahmansafah@gmail.com">Hire / contact<span class="btn-arrow" aria-hidden="true">↗</span></a>
       </div>
-    <!-- Every chip in this row is something a visitor can check: the seven
-         landmarks are the map below, both deploys are linked, and the homelab
-         is the next section. It used to hold "1 university president award" -
-         a bare count, in a row of verifiable metrics, for the one credential
-         a reader would most want a source for. The award is a credential, not
-         a metric, so it lives in the profile card instead. -->
-    <ul class="stage-chips">
-      <li><b>7</b><span>landmarks on the atlas</span></li>
-      <li><b>3</b><span>deploys running live</span></li>
-      <li class="word"><b>3</b><span>homelab services running</span></li>
-    </ul>
-    <ul class="stage-proof">
-      <li><a href="Abdurrahman-Resume.pdf" download><b>Résumé</b><span>One page</span></a></li>
-      <li><a href="https://ecommerce-ten-flame-39.vercel.app" target="_blank" rel="noopener noreferrer"><b>Live store</b><span>Orders open</span></a></li>
-      <li><a href="https://github.com/TOX9C" target="_blank" rel="noopener noreferrer"><b>GitHub</b><span>All 7 sources</span></a></li>
-    </ul>
+    <!-- One strip, not two. The stat row and the proof links were separate
+         bands with their own rules and margins, which pushed the manifest
+         below the fold; reviewers twice described the hero as a wall of
+         type. They say different things - counts, and where to look - so
+         they stay, but they share a row. Every item is checkable: the seven
+         landmarks are the map below, the deploys are linked, the homelab is
+         the next section. It used to hold "1 university president award",
+         a bare count for the one credential a reader would want a source
+         for; the award is a credential, not a metric, and lives in the
+         profile card. -->
+    <div class="stage-strip">
+      <ul class="stage-chips">
+        <li><b>7</b><span>landmarks on the atlas</span></li>
+        <li><b>3</b><span>deploys running live</span></li>
+        <li class="word"><b>3</b><span>homelab services running</span></li>
+      </ul>
+      <ul class="stage-proof">
+        <li><a href="Abdurrahman-Resume.pdf" download><b>Résumé</b><span>One page</span></a></li>
+        <li><a href="https://ecommerce-ten-flame-39.vercel.app" target="_blank" rel="noopener noreferrer"><b>Live store</b><span>Orders open</span></a></li>
+        <li><a href="https://github.com/TOX9C" target="_blank" rel="noopener noreferrer"><b>GitHub</b><span>All 7 sources</span></a></li>
+      </ul>
+    </div>
     </div>
 
     <div class="stage-canvas">

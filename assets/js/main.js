@@ -271,7 +271,9 @@ function reveals() {
       const isActive = link.getAttribute('href') === `#${id}`;
       link.classList.toggle('active', isActive);
       // The active state was a class only. Screen readers get no signal.
-      if (isActive) link.setAttribute('aria-current', 'true');
+      // "page" rather than "true": the nav points at sections of one page,
+      // and "page" is the token that says so.
+      if (isActive) link.setAttribute('aria-current', 'page');
       else link.removeAttribute('aria-current');
     });
   };
@@ -541,66 +543,6 @@ async function init() {
     onOpen: openDossier,
     onHover: (id) => atlas?.setHover(id)
   });
-
-  // A visible way into the dossiers from the hero copy. The button promises
-  // "a dossier" — opening one arbitrary project broke that promise, so it
-  // opens a picker of all seven instead.
-  const picker = $('#stage-picker');
-  const pickerList = $('#stage-picker-list');
-  const pickerBtn = $('#stage-open-dossier');
-  if (picker && pickerList && pickerBtn) {
-    pickerList.innerHTML = PROJECTS.map((p) => `
-      <li><button type="button" data-project="${p.id}">
-        <span>${p.name}</span><i aria-hidden="true">↗</i>
-      </button></li>`).join('');
-    const setPicker = (open) => {
-      if (open) {
-        if (!picker.open) picker.showModal();
-      } else if (picker.open) {
-        picker.close();
-      }
-      pickerBtn.setAttribute('aria-expanded', String(open));
-    };
-    pickerBtn.addEventListener('click', () => setPicker(!picker.open));
-    pickerList.addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-project]');
-      if (!btn) return;
-      setPicker(false);
-      openDossier(btn.dataset.project);
-    });
-    // Clicking the backdrop closes the dialog; a click inside the panel
-    // must not. The backdrop is the dialog element itself.
-    picker.addEventListener('click', (e) => {
-      if (e.target !== picker) return;
-      setPicker(false);
-      pickerBtn.focus();
-    });
-    picker.addEventListener('close', () => {
-      pickerBtn.setAttribute('aria-expanded', 'false');
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && picker.open) {
-        setPicker(false);
-        pickerBtn.focus();
-      }
-    });
-    // Arrow keys move through the seven systems, as in a native menu. The
-    // listener lives on the document because focus starts on the toggle
-    // button, outside the panel — an on-panel listener never saw the first
-    // ArrowDown.
-    document.addEventListener('keydown', (e) => {
-      if (!picker.open) return;
-      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
-      e.preventDefault();
-      const items = $$('button[data-project]', pickerList);
-      if (!items.length) return;
-      const at = items.indexOf(document.activeElement);
-      const next = e.key === 'ArrowDown'
-        ? items[(at + 1 + items.length) % items.length]
-        : items[(at - 1 + items.length) % items.length];
-      next.focus();
-    });
-  }
 
   // The manifest and the dossiers are wired up before the 3D
   // atlas loads. Three.js is ~380KB and its import blocks the main thread;

@@ -399,93 +399,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 /* Inline, not a flex item. As a flex row the whole text block wrapped to its
    own line and the dot sat alone, reading as a stray bullet. */
-/* A visible way into the dossiers. The drawer was only reachable by
-   discovering that a map landmark was clickable. */
-/* The chip had the same stroke-and-fill weight as the real primary button,
-   so the hero showed three competing CTAs. It is a shortcut for the already
-   decided, so it is quiet underlined text — "explore" is primary, "hire" is
-   secondary, this is neither and must not read like both. */
-.stage-open{
-  position:relative;
-  display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem .9rem;
-  margin-top:.75rem
-}
-.stage-open button{
-  display:inline-flex;align-items:center;gap:.4rem;
-  font-family:var(--mono);font-size:.76rem;font-weight:600;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
-  padding:.4rem .1rem;border-radius:0;border:0;background:none;
-  text-decoration:underline;
-  text-decoration-color:color-mix(in srgb, var(--accent) 50%, transparent);
-  text-underline-offset:.3em;
-  cursor:pointer;
-  transition:color .3s var(--ease),text-decoration-color .3s var(--ease),transform .3s var(--ease)
-}
-.stage-open button:hover{
-  color:var(--cyan);
-  text-decoration-color:var(--cyan);
-  transform:translateY(-1px)
-}
-.stage-open button span{transition:transform .3s var(--ease)}
-
-.stage-open>span{
-  font-family:var(--mono);font-size:.84rem;line-height:1.55;
-  color:var(--faint);letter-spacing:.02em;max-width:42ch
-}
-
-/* The dossier picker. "Open a dossier" promised a choice; it used to open
-   one arbitrary project. This shows all seven, so the label is honest.
-   It is a native <dialog>, so it renders in the top layer with its own
-   backdrop: an anchored dropdown had nowhere to go that did not cover the
-   headline, the CTAs or the stat row, and every offset just moved the
-   problem. A modal picker also gets a focus trap and Escape for free. */
-.stage-picker{
-  width:min(32rem,calc(100vw - 2 * var(--pad)));
-  max-height:min(26rem,72vh);overflow-y:auto;
-  margin:auto;
-  padding:.9rem 1rem 1rem;
-  border-radius:var(--r-soft);
-  border:2px solid var(--line);
-  background:var(--panel);
-  box-shadow:var(--shadow);
-  animation:scrim-in .22s var(--ease)
-}
-/* The page behind stays readable but recedes. No backdrop-filter: a blur on
-   the top-layer backdrop made Chromium composite the dialog itself through
-   the dim layer, so the panel rendered near-black instead of cream. */
-.stage-picker::backdrop{
-  background:rgba(26,21,18,.42)
-}
-.stage-picker-label{
-  font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--cyan);margin-bottom:.6rem
-}
-.stage-picker ul{
-  list-style:none;margin:0;padding:0;
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.3rem
-}
-.stage-picker button{
-  width:100%;display:flex;align-items:center;gap:.45rem;
-  padding:.38rem .5rem;border-radius:var(--r-chip);
-  border:1px solid var(--hair);background:var(--line-soft);
-  cursor:pointer;text-align:left;
-  transition:border-color .25s var(--ease),background .25s var(--ease)
-}
-.stage-picker button:hover{
-  border-color:color-mix(in srgb, var(--accent) 55%, var(--line));background:color-mix(in srgb, var(--accent) 14%, transparent)
-}
-.stage-picker button b{
-  font-family:var(--mono);font-size:.68rem;font-weight:600;
-  color:var(--cyan);letter-spacing:.04em;flex:none
-}
-.stage-picker button span{
-  font-family:var(--pixel);font-size:.72rem;letter-spacing:.03em;
-  text-transform:uppercase;color:var(--ink);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
-}
-.stage-picker button i{
-  margin-left:auto;font-style:normal;color:var(--faint);flex:none
-}
 
 .btn{
   display:inline-flex;align-items:center;gap:.9rem;
@@ -524,25 +437,31 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .btn-primary .btn-arrow{background:color-mix(in srgb, var(--bg) 16.0%, transparent);color:var(--void)}
 .btn-primary:hover .btn-arrow{background:color-mix(in srgb, var(--bg) 28.000000000000004%, transparent)}
 
-.stage-chips{
-  display:flex;flex-wrap:wrap;gap:1.1rem 1.9rem;
+/* One band for the counts and the proof links. They were two rows with two
+   rules and two margins, which is what pushed the manifest past the fold. */
+.stage-strip{
+  display:flex;flex-wrap:wrap;align-items:baseline;
+  gap:.7rem clamp(1rem,2.2vw,2rem);
   margin-top:.95rem;padding-top:.75rem;
   border-top:1px solid var(--hair-soft)}
+.stage-chips{
+  display:flex;flex-wrap:wrap;gap:1.1rem 1.35rem;
+  border-top:0;margin-top:0;padding-top:0}
 .stage-chips li{
   display:flex;flex-direction:column;gap:.15rem;
-  /* The column is narrow enough that three stats cannot share one line at
-     desktop widths. Let them wrap as two balanced rows instead of letting
-     the third orphan onto a line of its own. */
-  flex:1 1 8.5rem;min-width:0
+  /* Sized to its content, not stretched. These used to be a full-width row
+     where the three stats shared the column; inside the strip beside the
+     proof links they only need their own width. */
+  flex:0 0 auto;min-width:0
 }
 .stage-chips b{
   font-family:var(--sans);font-weight:600;
-  font-size:clamp(1.25rem,2vw,1.7rem);line-height:1;
+  font-size:clamp(1rem,1.35vw,1.3rem);line-height:1;
   letter-spacing:-.02em;font-variant-numeric:tabular-nums;
   color:var(--ink)
 }
 .stage-chips span{
-  font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;
   text-transform:uppercase;color:var(--muted)
 }
 /* A word in the value slot ("Rust") at the numeric size would swamp the row
@@ -559,7 +478,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
    row and the links collided with the SYSTEM MANIFEST heading. */
 .stage-proof{
   list-style:none;display:flex;flex-wrap:wrap;gap:.45rem .5rem;
-  margin:.9rem 0 0;padding:0
+  margin:0;padding:0
 }
 .stage-proof a{
   display:inline-flex;align-items:baseline;gap:.45rem;
@@ -646,7 +565,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   flex-basis:100%;
   color:var(--ink)!important;
   font-size:.78rem!important;letter-spacing:.04em!important;
-  max-width:62ch;line-height:1.7
+  max-width:none;line-height:1.6
 }
 .legend-list{
   display:grid;
@@ -1589,12 +1508,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-copy>.display-byline{order:4}
   .stage-canvas{order:5;grid-column:1;grid-row:auto;height:min(52vh,460px);min-height:340px}
   .stage-copy>.stage-lede{order:6}
-  .stage-copy>.stage-lede-note{order:7}
-  .stage-copy>.stage-role{order:8}
-  .stage-copy>.stage-open{order:9}
-  .stage-copy>.stage-actions{order:10}
-  .stage-copy>.stage-proof{order:11}
-  .stage-legend{order:12;grid-column:1;grid-row:auto;grid-template-columns:1fr;align-self:start}
+  .stage-copy>.stage-role{order:7}
+  .stage-copy>.stage-actions{order:8}
+  .stage-copy>.stage-strip{order:9}
+  .stage-legend{order:10;grid-column:1;grid-row:auto;grid-template-columns:1fr;align-self:start}
   /* The floor was 158px, which at 390px produced two columns of 168px cards
      - inside the width this file already calls unreadable for the desktop
      layout, on the device where the cards are the only readable view of the
@@ -1692,7 +1609,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-chips b{font-size:1.35rem}
   /* .stage-chips is display:none at this width (see the phone block below),
      so the span sizing that used to live here was dead. */
-  .stage-picker ul{grid-template-columns:repeat(2,minmax(0,1fr))}
   .stage-corner{font-size:.72rem;gap:1rem}
   /* The channel list was five 100px bands — 1140px of scroll for five links.
      Compact rows keep the whole thing scannable in one glance. */
@@ -1746,7 +1662,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   /* WCAG 2.5.5 wants 44px. */
   .menu-toggle{width:44px;height:44px}
   .dossier-close{width:44px;height:44px}
-  .stage-open button{min-height:44px;padding:.55rem .9rem}
   .footer a{min-height:44px;display:inline-flex;align-items:center}
   .atlas-label{min-height:40px;align-items:center}
   .stage-proof a{min-height:40px;display:inline-flex;align-items:center}
@@ -1808,7 +1723,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-lede{font-size:.82rem;line-height:1.5;max-width:52ch}
   .stage-role-line{font-size:.7rem;margin-top:.5rem}
   .stage-role{margin-top:.45rem;line-height:1.45}
-  .stage-open{margin-top:.5rem}
   .stage-actions{margin-top:.7rem}
   .stage-chips{margin-top:.7rem;padding-top:.55rem;gap:1.4rem}
   .stage-chips b{font-size:1.2rem}
@@ -1841,7 +1755,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .display{font-size:clamp(2.3rem,12vw,3.4rem);line-height:1.02;margin:.6rem 0 .55rem}
   .stage-lede{font-size:.86rem;line-height:1.5;margin-top:.5rem}
   .stage-role{font-size:.78rem;margin-top:.5rem}
-  .stage-open{margin-top:.55rem}
   .stage-actions{margin-top:.8rem;gap:.5rem}
   /* The 7/3/1 stats move below the atlas on a phone: hiding them from the
      hero pulls the diorama — the site's whole conceit — into the first
