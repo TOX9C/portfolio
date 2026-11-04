@@ -253,6 +253,29 @@ live. What they kept returning to was structure and legibility.
   (stars, users, independent review) — that is a property of the work, not
   the site.
 
+**Re-verified 2026-11-05 (rounds 14–18, scores 8 / 8 / 8 / 7.5):** every
+claims table came back PASS. The reviewers' remaining complaints were
+structural, and three are now fixed.
+
+- **The headline claimed a job title he does not hold.** "CYBERSECURITY &
+  CLOUD ENGINEER." on a third-year student, in the largest type on a site
+  that prints its own corrections. Now "ENGINEERING." — the field, not the
+  title. The role line above it carries the year and the institution.
+  **If the user prefers the original, this is a one-word revert.**
+- **The hero was a wall of type.** Two bands of stats and proof links
+  became one; the "Open a dossier" control and its picker dialog were
+  removed (the manifest cards and the seven-name index already cover it).
+  Hero copy went 772px → 608px, and the manifest's first card row moved
+  from y=957 to y=785 at 1440×900.
+- **"914 tests in CI" had no door.** The Athenas dossier links the CI
+  workflow now. Green on `main`, 179 runs.
+- **`aria-current` was hardcoded** on "Projects" and corrected only by JS;
+  a failed module left assistive tech told a page had been navigated to.
+  The observer owns it now and sets `page`, not `true`.
+- Reviewer scores are consistently 7.5–8. The gap to 9 is now about scale
+  of evidence (9–27 commits per repo, 0–1 stars, no external users) rather
+  than anything wrong with the site.
+
 ## Personality signals worth keeping
 - Interactive terminal with real commands: help, whoami, projects, skills, lab, contact, hire (alias of contact), clear
 - Live Baghdad clock + page session uptime
