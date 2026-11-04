@@ -664,8 +664,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      under the 4.5:1 floor. 10% lifts the background and clears it. */
   background:color-mix(in srgb, var(--accent) 10%, var(--panel));
   border:1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
-  /* 10.2px - the smallest type on the page, sitting on the stat the whole
-     site asks you to verify. */
+  /* This badge used to be 10.2px - the smallest type on the page, sitting
+     on the stat the whole site asks you to verify. Raised to 11.5px. */
   font-family:var(--mono);font-size:.72rem;font-weight:600;
   letter-spacing:.03em;color:var(--cyan);
   white-space:nowrap;flex:none
@@ -1506,11 +1506,17 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-copy>.stage-role-line{order:2}
   .stage-copy>.display{order:3}
   .stage-copy>.display-byline{order:4}
-  .stage-canvas{order:5;grid-column:1;grid-row:auto;height:min(52vh,460px);min-height:340px}
-  .stage-copy>.stage-lede{order:6}
-  .stage-copy>.stage-role{order:7}
-  .stage-copy>.stage-actions{order:8}
-  .stage-copy>.stage-strip{order:9}
+  /* The map used to sit fifth, right after the byline. That made it the
+     whole first screen on a phone - two reviewers reported reaching the
+     bottom of the hero without seeing a CTA, a stat or a system name. The
+     identity, the lede, the two buttons and the strip now come first, and
+     the diorama follows them: still no scroll needed to reach it, but the
+     recruiter's four questions are answered before it. */
+  .stage-copy>.stage-lede{order:5}
+  .stage-copy>.stage-role{order:6}
+  .stage-copy>.stage-actions{order:7}
+  .stage-copy>.stage-strip{order:8}
+  .stage-canvas{order:9;grid-column:1;grid-row:auto;height:min(46vh,420px);min-height:320px}
   .stage-legend{order:10;grid-column:1;grid-row:auto;grid-template-columns:1fr;align-self:start}
   /* The floor was 158px, which at 390px produced two columns of 168px cards
      - inside the width this file already calls unreadable for the desktop
@@ -1713,7 +1719,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
    HUD. The hero still grows if it has to: the grid rows are content-sized,
    so the manifest never overlaps the copy. (An earlier version pinned the
    hero to exactly 100dvh here, which made the two collide at 1280x800.) */
-@media (min-width:1081px) and (max-height:860px){
+/* 940px, not 860px. 1440x900 is one of the most common laptop viewports
+   there is, and it fell in the gap between the full-size hero and this
+   tightened one - so the exact size most reviewers were using got the
+   roomiest hero and the least of the manifest. */
+@media (min-width:1081px) and (max-height:940px){
   .stage{
     padding-top:clamp(4.2rem,6.2vh,4.9rem);
     padding-bottom:1rem;
@@ -1728,7 +1738,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-chips b{font-size:1.2rem}
   .stage-proof{margin-top:.55rem;gap:.3rem}
   .stage-proof a{padding:.3rem .55rem}
-  .stage-proof span{display:none}
+  /* Smaller, not hidden. Hiding these turned "Live store" into a bare noun
+     in a row whose whole job is to say what is behind each link; the
+     earlier fix that restored them should not be undone by a breakpoint. */
+  .stage-proof span{font-size:.66rem}
   .stage-legend{max-height:26vh;padding-top:.5rem;gap:.45rem}
   .legend-head h2{font-size:.85rem}
 }
