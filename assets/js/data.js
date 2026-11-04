@@ -40,7 +40,11 @@ export const PROJECTS = [
     ],
     links: [
       { label: 'Visit site', href: 'https://tox9c.github.io/athenas-core/', primary: true },
-      { label: 'Source', href: 'https://github.com/TOX9C/athenas-core' }
+      { label: 'Source', href: 'https://github.com/TOX9C/athenas-core' },
+      // A reviewer's note: "914 tests in CI" was the one number on the page
+      // with no way to check it. The workflow that runs them is public, so
+      // the claim gets a door. Green on main as of this commit.
+      { label: 'CI', href: 'https://github.com/TOX9C/athenas-core/actions/workflows/ci.yml' }
     ],
     hue: '#54E1FF',
     landmark: 'owl'
