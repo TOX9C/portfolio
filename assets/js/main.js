@@ -122,6 +122,13 @@ const monthYear = (iso) => {
 
 // GitHub returns the total commit count only as the page number of the
 // `rel="last"` link on a one-per-page response.
+//
+// Two GitHub endpoints give different totals and both are right: this one
+// counts every commit on the default branch, while /contributors counts only
+// commits whose author email maps to a GitHub account. On athenas-core that
+// is 487 against 472 - 15 commits have authors with no linked account. The
+// count here is the one that matches the commit list; you can confirm it by
+// asking for the last page and landing on the repo's root commit.
 async function repoStat(fullName) {
   const res = await fetch(`https://api.github.com/repos/${fullName}/commits?per_page=1`, {
     headers: { Accept: 'application/vnd.github+json' }
@@ -421,7 +428,10 @@ function dossier({ atlas: initialAtlas }) {
     project.images.forEach((img, i) => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.setAttribute('aria-current', String(i === 0));
+      // aria-pressed, not aria-current. These are toggles in an image
+      // picker, not links in a navigation set: aria-current made a screen
+      // reader announce "current" as if the visitor had navigated somewhere.
+      btn.setAttribute('aria-pressed', String(i === 0));
       btn.setAttribute('aria-label', `Show image ${i + 1} of ${project.name}`);
       // The strip is 60px tall. The full screenshot is a wasted download here.
       const thumb = img.src.replace('assets/projects/', 'assets/projects/thumbs/');
@@ -431,7 +441,7 @@ function dossier({ atlas: initialAtlas }) {
         image.src = img.src;
         image.alt = img.alt;
         $('#dossier-caption').textContent = img.alt;
-        $$('button', thumbs).forEach((b, bi) => b.setAttribute('aria-current', String(bi === i)));
+        $$('button', thumbs).forEach((b, bi) => b.setAttribute('aria-pressed', String(bi === i)));
       });
       thumbs.appendChild(btn);
     });

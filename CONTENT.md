@@ -276,8 +276,42 @@ structural, and three are now fixed.
   of evidence (9–27 commits per repo, 0–1 stars, no external users) rather
   than anything wrong with the site.
 
+**Re-verified 2026-11-05 (rounds 20–23, scores 8 / 8 / 7 / 8 / 8):** claims
+tables came back PASS or "unchecked with a door". Fixes:
+
+- **Two card "stats" were not numbers** — Social's "WS / websocket DMs" and
+  OsSecurity's "OS / file monitoring" sat beside Athenas Core's real "914
+  tests in CI". They are 7 Prisma models and 7 Python modules now, both
+  countable from the repos. All seven cards now lead with a number or a
+  deployed state.
+- **`aria-current` was on the dossier image thumbnails.** Those are toggles
+  in an image picker, not links in a navigation set; `aria-pressed` now.
+- **The seven-name line cleared the phone fold** (y=840 of 844) after the
+  hero chips lost their long labels.
+- **OsSecurity gained a Contributors link.** A reviewer read the capital O
+  in `ZezOok` as a zero and filed it as a typo; the link settles it and
+  makes the 17-of-24 split checkable from the card.
+
+**Answered, not changed:** a reviewer noted GitHub's contributors endpoint
+sums to 472 for athenas-core while the card says 487. Both are right — 487
+is every commit on the default branch (confirmed: page 487 is the repo's
+root commit, 0 parents), 472 is only the commits whose author email maps to
+a GitHub account. The card uses the former via the `Link` header.
+
+**Deliberate, for the record:** the 3D map is pointer-only — its landmark
+buttons carry `aria-hidden` and `tabindex="-1"`. Two earlier reviewers
+flagged the opposite problem (every project appearing twice in the tab
+order, in a set whose order changed with the camera). The projects stay
+keyboard-reachable through the manifest cards and the seven-name line, and
+the hero CTA leads to that list. This is the standard split for a canvas
+visualisation with equivalent content alongside it; it is a choice, not an
+oversight.
+
 ## Personality signals worth keeping
-- Interactive terminal with real commands: help, whoami, projects, skills, lab, contact, hire (alias of contact), clear
+- ~~Interactive terminal with commands (help, whoami, projects, …)~~ — the
+  old site had one; this design replaced it with the atlas + dossier, and
+  the command table had no consumer left. Removed 2026-11-05 as dead code
+  (`TERMINAL_COMMANDS`, `resolveProject`, 95 lines).
 - Live Baghdad clock + page session uptime
 - Marquee voice: "systems that think / security first / self-hosted / real-time / rust on the desktop"
 - Git-flavored project presentation (commit/staging metaphors)
