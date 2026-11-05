@@ -3,7 +3,7 @@
    reveal observer, clocks. No framework.
    ============================================================ */
 
-import { PROJECTS, PROJECT_BY_ID } from './data.js';
+import { PROJECTS, PROJECT_BY_ID, STATS_AS_OF } from './data.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -145,11 +145,25 @@ async function repoStat(fullName) {
   };
 }
 
+function setStatsSource(state) {
+  const el = $('#legend-source');
+  if (!el) return;
+  el.dataset.state = state;
+  el.textContent = state === 'live'
+    ? 'commit counts fetched live from GitHub'
+    : `commit counts as of ${STATS_AS_OF} — GitHub did not answer`;
+}
+
 async function refreshRepoStats() {
+  setStatsSource('static');
   let cached = null;
   try { cached = JSON.parse(localStorage.getItem(STATS_KEY) || 'null'); } catch { /* private mode */ }
 
-  if (cached && Date.now() - cached.at < STATS_TTL) return applyStats(cached.repos);
+  if (cached && Date.now() - cached.at < STATS_TTL) {
+    const complete = Object.keys(cached.repos).length === PROJECTS.filter((p) => p.repo).length;
+    setStatsSource(complete ? 'live' : 'static');
+    return applyStats(cached.repos);
+  }
 
   const repos = {};
   await Promise.all(PROJECTS.filter((p) => p.repo).map(async (p) => {
@@ -157,6 +171,9 @@ async function refreshRepoStats() {
   }));
   if (!Object.keys(repos).length) return;
 
+  // "live" only if every repo answered. A partial answer is still a page
+  // showing some stored numbers, so it keeps saying so.
+  setStatsSource(Object.keys(repos).length === PROJECTS.filter((p) => p.repo).length ? 'live' : 'static');
   applyStats(repos);
   try { localStorage.setItem(STATS_KEY, JSON.stringify({ at: Date.now(), repos })); } catch { /* ignore */ }
 }

@@ -175,6 +175,11 @@
       <div class="legend-head">
         <h2>System manifest</h2>
         <p>Seven landmarks · select one to open its dossier</p>
+        <!-- Says where the commit counts came from. It reads "live from
+             GitHub" only when the fetch actually answered, and names the
+             date of the stored values when it did not - a static number
+             that looks live is the one thing this page must not do. -->
+        <p class="legend-source" id="legend-source" data-state="static"></p>
       </div>
       <!-- Rendered from data.js so the manifest can never drift from the map.
            The thumbnail is what carries the work on phones, where the 3D

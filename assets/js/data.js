@@ -75,7 +75,7 @@ export const PROJECTS = [
     ],
     depth: 'Dual sign-in (username or phone) on JWT sessions, guest checkout with the cart mirrored to local storage, and Zod schemas shared between client and server so the two cannot disagree about what a valid order is.',
     repo: 'TOX9C/ecommerce',
-    shipped: { last: 'Oct 2026', commits: 19 },
+    shipped: { last: 'Nov 2026', commits: 20 },
     stack: ['Next.js 16', 'TypeScript', 'PostgreSQL', 'Prisma'],
     images: [
       { src: 'assets/projects/ecommerce-landing.webp', alt: 'E-commerce landing page' },
@@ -171,7 +171,7 @@ export const PROJECTS = [
     // is multi-store because the first version assumed a single retailer.
     depth: 'Amazon will not show a buy-box price to a datacenter IP, so that one scraper proxies out as a residential user while the rest fetch directly — and the schema is multi-store because the first version assumed a single retailer.',
     repo: 'TOX9C/price-tracker',
-    shipped: { last: 'Nov 2026', commits: 13 },
+    shipped: { last: 'Nov 2026', commits: 14 },
     stack: ['price history', 'charts', 'alerts'],
     images: [
       { src: 'assets/projects/pricehawk-landing.webp', alt: 'PriceHawk tracking a product with price history' }
@@ -242,7 +242,7 @@ export const PROJECTS = [
     // rebuild trades that score for one that survives a held-out season.
     depth: 'The published 52.8% is lower than the 58.77% it replaced — the earlier figure leaked same-match statistics into the features. The rebuild is temporally safe and a test pins the number.',
     repo: 'TOX9C/football-predictor',
-    shipped: { last: 'Nov 2026', commits: 18 },
+    shipped: { last: 'Nov 2026', commits: 19 },
     stack: ['Python', 'XGBoost'],
     images: [
       { src: 'assets/projects/football-predictor-ui.webp', alt: 'Football predictor interface' }
@@ -252,5 +252,10 @@ export const PROJECTS = [
     landmark: 'pitch'
   }
 ];
+
+// The date the commits/last-commit values above were last checked against
+// GitHub. The page fetches live on load; these are what a visitor sees if
+// that fetch fails, and the UI says so rather than passing them off as live.
+export const STATS_AS_OF = '5 Nov 2026';
 
 export const PROJECT_BY_ID = Object.fromEntries(PROJECTS.map((p) => [p.id, p]));

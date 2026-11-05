@@ -550,6 +550,16 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 /* The whole set, in one line. It is set in ink, not faint, because it is the
    answer to "what are the seven?" rather than a caption above the cards. */
+/* Provenance for the commit counts. It reads "live from GitHub" only when
+   the fetch actually answered, and names the date of the stored values when
+   it did not - the one thing this page must not do is show a static number
+   that looks live. */
+.legend-source{
+  flex-basis:100%;margin:.15rem 0 0;
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;
+  color:var(--faint)
+}
+.legend-source[data-state="live"]{color:var(--cyan)}
 /* The seven names. It rides the hero band now - flex-basis:100% wraps it to
    its own line under the counts and the proof links, so it is in the first
    screen on desktop and on a phone rather than two screens down in the
@@ -1692,7 +1702,8 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      names now live in the hero band, where a phone visitor reads them
      without dragging the map. */
   .legend-head p{display:none}
-  .legend-index-line{line-height:1.5;font-size:.8rem}
+  .legend-index-line{line-height:1.45;font-size:.8rem}
+  .legend-source{font-size:.66rem;margin-top:.05rem}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -1759,14 +1770,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      13.5vw it was 392px wide in a 350px column — the last glyphs fell off
      the right edge of every phone. */
   .display{font-size:clamp(2.3rem,12vw,3.4rem);line-height:1.02;margin:.6rem 0 .55rem}
-  .stage-lede{font-size:.86rem;line-height:1.5;margin-top:.5rem}
-  .stage-role{font-size:.78rem;margin-top:.5rem}
-  .stage-actions{margin-top:.8rem;gap:.5rem}
+  .stage-lede{font-size:.86rem;line-height:1.45;margin-top:.45rem}
+  .stage-role{font-size:.78rem;margin-top:.4rem}
+  .stage-actions{margin-top:.62rem;gap:.5rem}
   /* The 7/3/3 counts stay. They used to be display:none here to pull the
      diorama up the page, which left a phone visitor with no stat counts
      anywhere outside the dossiers - and the map now follows the whole band
      anyway, so nothing was gained by hiding them. Three chips in one row. */
-  .stage-proof{margin-top:.6rem;gap:.3rem;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0}
+  .stage-proof{margin-top:.42rem;gap:.3rem;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0}
   .stage-proof a{flex-direction:column;align-items:flex-start;gap:.1rem;padding:.42rem .5rem;min-height:44px}
   /* The qualifiers used to be hidden here to fit three chips in a row, which
      left "Live store" with no "Orders open" and "GitHub" with no "All 7
