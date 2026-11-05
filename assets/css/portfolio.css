@@ -111,11 +111,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   outline-offset:3px;
   border-radius:4px}
 
-.sr-only{
-  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
-  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0
-}
-
 .skip-link{
   position:fixed;top:10px;left:10px;z-index:3000;
   transform:translateY(-160%);
@@ -376,12 +371,6 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 .stage-lede a:hover{color:var(--ink)}
 /* The map cue, stated once and separately. It reads as an instruction
    rather than another credential, so it does not compete with the lede. */
-.stage-lede-note{
-  margin-top:.6rem;
-  font-family:var(--mono);font-size:.74rem;letter-spacing:.03em;
-  color:var(--muted);line-height:1.55}
-.stage-lede-note strong{color:var(--ink);font-weight:600}
-
 .stage-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:.8rem}
 
 /* The availability status. A recruiter needs "who wants what" on the first
@@ -1070,25 +1059,14 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   width:42px;height:42px;flex:none;
   filter:drop-shadow(0 0 12px rgba(255,182,92,.45))
 }
-.profile-status{
-  display:flex;align-items:flex-start;gap:.7rem;
-  padding:.95rem 1.1rem;margin-bottom:1.1rem;
-  border-radius:var(--r-soft);
-  background:color-mix(in srgb, var(--accent) 9%, transparent);
-  border:1px solid color-mix(in srgb, var(--accent) 25%, transparent)
-}
-.profile-status .status-dot{
+/* The availability dot. Its size and colour used to hang off
+   `.profile-status .status-dot`, and when the profile card was rebuilt
+   without that wrapper the contact section's dot silently became a 0x0
+   transparent box - the "Available" indicator was an invisible nothing.
+   Unscoped now, so it applies wherever the dot is used. */
+.status-dot{
   width:8px;height:8px;flex:none;margin-top:.4rem;border-radius:50%;
   background:var(--cyan)}
-.profile-status b{
-  display:block;
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;
-  color:var(--faint);margin-bottom:.35rem
-}
-.profile-status span{
-  display:block;
-  font-size:.86rem;line-height:1.5;color:var(--cyan)
-}
 .profile-badge p{
   font-family:var(--pixel);font-weight:700;font-size:.95rem;
   line-height:1.3;letter-spacing:.04em;color:var(--cyan);
@@ -1639,7 +1617,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .contact-payoff{gap:1.8rem}
   /* Metadata is supporting text on desktop but becomes the primary content
      on a phone, where there is no second column to lean on. */
-    .profile-status b,.profile-card-note{font-size:.76rem}
+    .profile-card-note{font-size:.76rem}
   .profile-badge p{font-size:.82rem}
   .section{padding-left:20px;padding-right:20px}
   .stage{padding-left:20px;padding-right:20px}
