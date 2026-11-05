@@ -1,0 +1,1798 @@
+/* ============================================================
+   TOX9C — Personal Systems Atlas
+   A voxel diorama mapped to a portfolio. Dark, pixel-hinted,
+   built around one signature: the explorable atlas.
+   ============================================================ */
+
+@font-face{
+  font-family:'Pixelify';
+  src:url('../fonts/PixelifySans-400.woff2') format('woff2');
+  font-weight:400;font-display:swap
+}
+@font-face{
+  font-family:'Pixelify';
+  src:url('../fonts/PixelifySans-700.woff2') format('woff2');
+  font-weight:700;font-display:swap
+}
+@font-face{
+  font-family:'Sora';
+  src:url('../fonts/Sora-400.woff2') format('woff2');
+  font-weight:400;font-display:swap
+}
+@font-face{
+  font-family:'Sora';
+  src:url('../fonts/Sora-600.woff2') format('woff2');
+  font-weight:600;font-display:swap
+}
+@font-face{
+  font-family:'JetBrains Mono';
+  src:url('../fonts/JetBrainsMono-Variable.woff2') format('woff2-variations');
+  font-weight:100 800;font-display:swap
+}
+
+:root{
+  /* ---- pixel-game palette ----
+     Cream paper ground, warm panels, near-black ink, one strong blue
+     accent, solid black rules, no radius. The whole file reads from these
+     tokens. --cyan is a legacy alias for --accent kept so the atlas and
+     older rules keep working. */
+  --bg:#F2E9D8;
+  --void:#F2E9D8;
+  --deep:#E8DCC4;
+  --panel:#FFF7E8;
+  --panel-2:#EBDFC8;
+  --ink:#1A1512;
+  --muted:#5C5348;
+  /* --faint was #8A7E6E, which is only 3.29:1 on the cream ground — below
+     the 4.5:1 WCAG AA floor for body text. It carried the mono labels, the
+     stack lines and the proof captions, so 46 nodes failed an axe audit.
+     #675C50 clears 4.5:1 on every surface the page uses (4.94 on --deep,
+     5.41 on --bg, 6.12 on --panel) while staying a step lighter than
+     --muted. */
+  --faint:#675C50;
+  --accent:#0E63B6;
+  --cyan:#0E63B6;
+  /* The diorama's signs sit on a dark navy plaque (#1A2540). The page accent
+     is only 2.52:1 there, so on-dark text needs its own light blue —
+     #8FCBFF clears 8.79:1 on that plaque. */
+  --cyan-on-dark:#8FCBFF;
+  --line:#1A1512;
+  /* The "soft" variants were all set to the same near-black as --line, so a
+     button filled with --line-soft became a black slab with muted text on
+     it (invisible) and every hairline border rendered at full weight. They
+     are meant to be light tints of the ink. */
+  --line-soft:#E3D8C1;
+  --hair:#8A7E6E;
+  --hair-soft:#D8CBB2;
+  --shadow:4px 4px 0 rgba(26,21,18,.9);
+  /* ---- radius system ----
+     The page mixes 3px, 6px, 8px, 9px, 11px, 12px, 14px, 16px, 28px and 99px
+     corners with no rule behind them, so a soft sub-panel and a hard card
+     ended up looking like two different generations of design. Three levels:
+     --r (hard structural panels, matches --radius:0px), --r-soft (nested
+     panels and images), --r-chip (small pills and badges). */
+  --radius:0px;
+  --r-soft:8px;
+  --r-chip:6px;
+  --pixel:'Pixelify',ui-monospace,monospace;
+  --sans:'Sora',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --ease-out:cubic-bezier(.22,.61,.36,1);
+  --pad:clamp(20px,5vw,88px)}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+html{
+  scroll-behavior:smooth;
+  -webkit-text-size-adjust:100%}
+
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden}
+
+body.is-locked{overflow:hidden}
+
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+ul{list-style:none}
+code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
+
+::selection{background:var(--cyan);color:var(--void)}
+
+:focus-visible{
+  outline:2px solid var(--cyan);
+  outline-offset:3px;
+  border-radius:4px}
+
+.skip-link{
+  position:fixed;top:10px;left:10px;z-index:3000;
+  transform:translateY(-160%);
+  background:var(--cyan);color:var(--void);
+  font-family:var(--pixel);font-size:.8rem;letter-spacing:.08em;
+  padding:.7rem 1.1rem;border-radius:10px;
+  /* No transition. A keyboard user tabs to this and it must be there now —
+     animating it in meant it was still off-screen at the moment of focus. */
+}
+.skip-link:focus{transform:none}
+
+/* ---------- progress ---------- */
+.scroll-progress{
+  position:fixed;top:0;left:0;right:0;height:2px;z-index:1200;
+  background:var(--line-soft)}
+.scroll-progress i{
+  display:block;height:100%;width:0;
+  background:var(--cyan);
+  
+  transform-origin:left}
+
+/* ---------- HUD ---------- */
+.hud{
+  position:fixed;top:0;left:0;right:0;z-index:1100;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:clamp(.8rem,2vw,2rem);
+  padding:.85rem var(--pad);
+  /* A real scrim: the bar sits over section headings, so it must separate
+     them rather than fade into the page. It was 97% opaque, and that 3%
+     was enough to ghost project titles and card borders through the band —
+     two reviewers independently called it a broken element. Opaque. */
+  background:var(--bg);
+
+  border-bottom:2px solid var(--line)}
+.brand{
+  display:inline-flex;align-items:center;gap:.65rem;
+  /* The pixel face renders its "C" as a closed box, so the wordmark read as
+     "TOX90" to a reviewer scanning the nav. The handle is the one thing on
+     the page that must be unambiguous, so it uses the mono face; the pixel
+     face stays on the headings where it is decoration. */
+  font-family:var(--mono);font-weight:700;
+  font-size:.86rem;letter-spacing:.2em}
+.brand-glyph{
+  display:grid;grid-template-columns:repeat(2,7px);gap:2px;
+  transform:rotate(45deg)
+}
+.brand-glyph i{width:7px;height:7px;background:var(--cyan)}
+.brand-glyph i:nth-child(3){background:var(--muted)}
+
+.hud-nav{display:flex;gap:clamp(.8rem,1.8vw,1.8rem)}
+.hud-nav a{
+  position:relative;
+  font-family:var(--pixel);font-size:.86rem;letter-spacing:.1em;
+  color:var(--muted);
+  padding:.35rem .1rem;
+  transition:color .3s var(--ease)
+}
+.hud-nav a em{
+  font-style:normal;font-family:var(--mono);font-size:.78rem;
+  color:var(--faint);margin-right:.4rem;letter-spacing:.06em
+}
+.hud-nav a::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:var(--cyan);transform:scaleX(0);transform-origin:left;
+  transition:transform .45s var(--ease)
+}
+.hud-nav a:hover{color:var(--ink)}
+.hud-nav a:hover::after,.hud-nav a.active::after,.hud-nav a[aria-current]::after{transform:scaleX(1)}
+.hud-nav a.active,.hud-nav a[aria-current]{color:var(--cyan)}
+
+.hud-readout{
+  display:flex;align-items:center;gap:.6rem;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
+  color:var(--muted);text-transform:uppercase;
+  font-variant-numeric:tabular-nums}
+.led{
+  width:7px;height:7px;border-radius:2px;background:var(--cyan)
+}
+
+.menu-toggle{display:none;width:44px;height:44px;position:relative;border-radius:var(--r-soft)}
+.menu-toggle span{
+  position:absolute;left:12px;width:20px;height:2px;background:var(--ink);
+  transition:transform .4s var(--ease),opacity .3s var(--ease)
+}
+.menu-toggle span:nth-child(1){top:16px}
+.menu-toggle span:nth-child(2){top:24px}
+.menu-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(4px) rotate(45deg)}
+.menu-toggle[aria-expanded="true"] span:nth-child(2){transform:translateY(-4px) rotate(-45deg)}
+
+/* ---------- stage / hero ---------- */
+.stage{
+  position:relative;
+  min-height:100dvh;
+  display:grid;
+  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+  grid-template-rows:minmax(0,1fr) auto;
+  align-items:center;
+  gap:clamp(.7rem,1.2vw,1.15rem) clamp(1.5rem,3vw,3rem);
+  padding:clamp(3.6rem,6vh,4.6rem) var(--pad) clamp(1.2rem,2.5vh,2rem);
+  /* Clip horizontally only. Clipping vertically cut the eyebrow and the top of
+     the headline on short laptop windows; letting the hero grow and the page
+     scroll is far better than hiding the copy. */
+  overflow-x:hidden}
+/* Row 1 holds the copy and the diorama, row 2 the manifest. Without this the
+   legend's auto row grew past the viewport and pushed the headline up under
+   the fixed HUD, clipping the eyebrow and the top of the display type. */
+.stage-copy{
+  grid-column:1;grid-row:1;
+  max-width:40rem;
+  align-self:center;
+  min-height:0;
+  position:relative
+}
+
+/* On desktop the hero is exactly one viewport tall: the copy, the diorama and
+   the manifest all fit above the fold, so the seven projects are visible on
+   first paint instead of hiding below it. */
+@media (min-width:1081px){
+  /* The hero is exactly one viewport tall so the diorama and the manifest are
+     both above the fold. `min-height`, not `height`: with a fixed height the
+     copy column overflowed its grid row and the proof links landed on top of
+     the SYSTEM MANIFEST heading. The hero grows instead of overlapping. */
+  .stage{min-height:100dvh}
+  .stage-canvas{height:100%;min-height:0}
+  .stage-copy{min-height:0}
+  .stage-legend{max-height:34vh}
+  .stage-canvas{min-height:0}
+  /* Row 1 takes at least the copy's height and absorbs the leftover space;
+     row 2 is the manifest at its natural size. With a plain `1fr` the
+     manifest row collapsed and the legend overflowed upward onto the copy —
+     the proof links landed on the SYSTEM MANIFEST heading. `min-content` as
+     the floor lets the hero grow instead of overlapping. */
+  .stage{grid-template-rows:minmax(min-content,1fr) auto}
+  .stage-copy{align-self:start}
+  .stage-legend{grid-column:1 / -1;grid-row:2;align-self:end;max-height:34vh}
+  .stage-canvas{grid-column:2;grid-row:1;align-self:stretch;min-height:0;height:100%}
+}
+
+/* Short-window tightening for short laptop windows lives at the end of this
+   file, with the other trailing overrides. */
+
+/* The dossier docks over the right edge. Shift only the canvas column left so
+   the diorama stays in frame — translating the whole stage dragged the
+   headline off the left edge of the viewport. */
+@media (min-width:1180px){
+  body.dossier-open .stage-canvas{
+    transform:translateX(calc(-1 * min(260px, 24vw)));
+    transition:transform .6s var(--ease)}
+  body.dossier-open .stage-copy{
+    transition:opacity .4s var(--ease)}
+}
+
+.stage-canvas{
+  position:relative;
+  grid-column:2;grid-row:1;
+  height:100%;
+  min-height:340px;
+  border-radius:var(--r-soft);
+  background:var(--panel);
+  border:1px solid var(--hair-soft);
+  
+  overflow:hidden}
+#atlas-canvas{
+  /* Absolute, never in flow: a flowed canvas feeds its attribute height
+     back into the grid row's min-content, and renderer.setSize() rewrites
+     that attribute on every resize — a feedback loop that once grew the
+     hero to millions of pixels. Pinning it to the panel breaks the cycle
+     for good; the panel itself sizes the grid. */
+  position:absolute;inset:0;width:100%;height:100%;display:block;
+  image-rendering:pixelated;
+  cursor:grab;
+  touch-action:pan-y}
+#atlas-canvas.dragging{cursor:grabbing}
+.stage-fallback{
+  position:absolute;inset:0;display:none;
+  align-items:center;justify-content:center;text-align:center;
+  color:var(--muted);font-family:var(--mono);font-size:.78rem;
+  border:1px dashed var(--hair);border-radius:var(--radius);padding:2rem
+}
+.no-js .stage-fallback{display:flex}
+/* A static map the visitor sees on first paint, before Three.js has built
+   the diorama. The panel used to be an empty dark rectangle for the first
+   seconds — half the hero showed nothing. The 3D scene replaces it. */
+.atlas-placeholder{
+  position:absolute;inset:0;
+  display:grid;place-items:center;
+  opacity:.85;
+  transition:opacity .6s var(--ease);
+  box-shadow:var(--shadow)}
+.atlas-placeholder svg{width:min(78%,360px);height:auto}
+.stage-canvas.atlas-live .atlas-placeholder{opacity:0;pointer-events:none}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.6rem;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--muted);
+  border:1px solid var(--hair);border-radius:var(--r-chip);
+  padding:.45rem .95rem;
+  background:color-mix(in srgb, var(--panel) 60%, transparent)}
+
+.display{
+  font-family:var(--pixel);font-weight:700;
+  /* Scale on both axes: a short laptop window (720px tall) has to fit the
+     same hero as a tall desktop, so the type follows the viewport height too. */
+  font-size:clamp(2.15rem,min(4.1vw,9vh),3.5rem);
+  line-height:.94;letter-spacing:-.01em;
+  margin:.62rem 0 .7rem;
+  text-transform:uppercase}
+
+/* The role, stated above the slogan. A recruiter needs "what job could this
+   person do" before "what does this person build". */
+.stage-role-line{
+  font-family:var(--mono);font-size:.86rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--cyan);
+  margin-top:.5rem
+}
+.stage-role-line::before{
+  content:'// ';color:var(--cyan)
+}
+/* Each phrase stays on one line; the line itself may wrap between them.
+   "Cybersecurity & Cloud" was breaking mid-phrase and stranding the degree. */
+.stage-role-line>span{white-space:nowrap}
+.stage-role-sep{padding:0 .35rem}
+.display-line{display:block;overflow:hidden}
+.display-line>span{
+  display:inline-block;transform:translateY(105%);
+  /* A CSS animation, not a JS class toggle: requestAnimationFrame is suspended
+     in background tabs, which once left the headline invisible for ~50s. */
+  animation:display-rise .95s var(--ease) forwards
+}
+.display-line:nth-child(2)>span{animation-delay:.09s}
+.display-line:nth-child(3)>span{animation-delay:.18s}
+@keyframes display-rise{to{transform:none}}
+.display .accent{
+  color:var(--cyan)}
+/* The name, demoted to a byline. The headline now leads with the discipline
+   — "what do you do" — and the name supports it instead of taking the whole
+   first screen. The handle is here so the byline carries both identifiers. */
+.display-byline{
+  font-family:var(--mono);font-size:.86rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink);
+  margin:-.75rem 0 .35rem;padding-bottom:.75rem;
+  border-bottom:1px solid var(--hair);
+  display:inline-block}
+
+.stage-lede{
+  color:var(--muted);font-size:clamp(.86rem,min(1vw,1.9vh),.98rem);
+  line-height:1.6;max-width:44ch;
+  margin-top:.6rem
+}
+.stage-lede strong{color:var(--ink);font-weight:600}
+/* Links inside the hero lede carry the evidence claims — "3 services live"
+   points at the monitor, "52.8% held-out accuracy" at the model. Without them the
+   sentence is a claim; with them it is checkable. */
+.stage-lede a{
+  color:var(--cyan);text-decoration:underline;
+  text-underline-offset:3px;text-decoration-thickness:1px}
+.stage-lede a:hover{color:var(--ink)}
+/* The map cue, stated once and separately. It reads as an instruction
+   rather than another credential, so it does not compete with the lede. */
+.stage-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:.8rem}
+
+/* The availability status. A recruiter needs "who wants what" on the first
+   screen — it was buried below the fold. */
+.stage-role{
+  display:block;
+  margin-top:.7rem;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
+  text-transform:uppercase;
+  /* This line was accent blue, the same colour as the primary CTA, so three
+     blue lines competed in a 100px band above the buttons. Blue is now
+     reserved for actions; availability is information. */
+  color:var(--muted);
+  line-height:1.7
+}
+/* Inline, not a flex item. As a flex row the whole text block wrapped to its
+   own line and the dot sat alone, reading as a stray bullet. */
+
+.btn{
+  display:inline-flex;align-items:center;gap:.9rem;
+  font-family:var(--pixel);font-size:.88rem;letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:.85rem 1rem .85rem 1.4rem;
+  border-radius:0;
+  border:2px solid var(--line);
+  background:var(--panel);
+  box-shadow:4px 4px 0 var(--line);
+  transition:transform .12s var(--ease),box-shadow .12s var(--ease)
+}
+/* Press-to-depress: the offset shadow collapses on hover, like a key. */
+.btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--line)}
+.btn-arrow{
+  display:grid;place-items:center;
+  width:30px;height:30px;border-radius:0;
+  background:var(--line);
+  /* The pixel face has no arrow glyphs — inheriting it rendered solid black
+     tofu boxes in every CTA. The mono stack does have them. */
+  font-family:var(--mono);
+  font-size:.9rem;
+  /* The chip is ink, so the glyph must be paper or it disappears into it.
+     `--void` is the cream paper token and was resolving to ink here. */
+  color:var(--bg);
+  transition:transform .45s var(--ease),background .35s var(--ease)
+}
+.btn:hover{
+  transform:translateY(-2px);
+  border-color:color-mix(in srgb, var(--accent) 55%, var(--line))}
+.btn:hover .btn-arrow{background:color-mix(in srgb, var(--accent) 28%, transparent)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn-primary{
+  background:var(--accent);color:#FFF7E8;border-color:var(--line)
+}
+.btn-primary .btn-arrow{background:color-mix(in srgb, var(--bg) 16.0%, transparent);color:var(--void)}
+.btn-primary:hover .btn-arrow{background:color-mix(in srgb, var(--bg) 28.000000000000004%, transparent)}
+
+/* One band for the counts and the proof links. They were two rows with two
+   rules and two margins, which is what pushed the manifest past the fold. */
+.stage-strip{
+  display:flex;flex-wrap:wrap;align-items:baseline;
+  gap:.7rem clamp(1rem,2.2vw,2rem);
+  margin-top:.95rem;padding-top:.75rem;
+  border-top:1px solid var(--hair-soft)}
+.stage-chips{
+  display:flex;flex-wrap:wrap;gap:1.1rem 1.35rem;
+  border-top:0;margin-top:0;padding-top:0}
+.stage-chips li{
+  display:flex;flex-direction:column;gap:.15rem;
+  /* Sized to its content, not stretched. These used to be a full-width row
+     where the three stats shared the column; inside the strip beside the
+     proof links they only need their own width. */
+  flex:0 0 auto;min-width:0
+}
+.stage-chips b{
+  font-family:var(--sans);font-weight:600;
+  font-size:clamp(1rem,1.35vw,1.3rem);line-height:1;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+  color:var(--ink)
+}
+.stage-chips span{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted)
+}
+/* A word in the value slot ("Rust") at the numeric size would swamp the row
+   and break its rhythm, so word-values get the display face at text scale. */
+.stage-chips li.word b{
+  font-family:var(--pixel);font-size:clamp(.95rem,1.2vw,1.15rem);
+  letter-spacing:.02em;text-transform:uppercase
+}
+
+/* The proof strip. A recruiter's first three clicks are the CV, the live
+   product and the source code — all three were eight viewports down.
+   Every link here goes straight to real, verifiable work.
+   One row, not cards: as a card row it pushed the copy column past its grid
+   row and the links collided with the SYSTEM MANIFEST heading. */
+.stage-proof{
+  list-style:none;display:flex;flex-wrap:wrap;gap:.45rem .5rem;
+  margin:0;padding:0
+}
+.stage-proof a{
+  display:inline-flex;align-items:baseline;gap:.45rem;
+  padding:.4rem .7rem;border-radius:var(--r-chip);
+  border:1px solid var(--hair);
+  background:color-mix(in srgb, var(--panel-2) 50.0%, transparent);
+  transition:border-color .3s var(--ease),background .3s var(--ease)
+}
+.stage-proof a:hover{
+  border-color:color-mix(in srgb, var(--accent) 55%, var(--line));
+  background:color-mix(in srgb, var(--accent) 12%, transparent)
+}
+.stage-proof b{
+  font-family:var(--pixel);font-size:.72rem;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--ink)
+}
+.stage-proof a:hover b{color:var(--cyan)}
+.stage-proof span{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.03em;
+  color:var(--faint);line-height:1.4
+}
+
+.stage-corner{
+  position:absolute;left:1rem;bottom:1rem;z-index:4;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint);
+  display:flex;flex-wrap:wrap;gap:.9rem;
+  pointer-events:none}
+.stage-corner span{color:var(--muted)}
+/* The hint is the only instruction the map ever gives, so it has to be seen.
+   As low-contrast text in the corner it read as a caption and a first-time
+   visitor took the diorama for wallpaper. It now carries the accent colour,
+   a pulsing marker and a persistent presence; the JS removes it the moment
+   the visitor actually touches the map. */
+.stage-corner .hint{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.5rem .85rem;border-radius:var(--r-chip);
+  background:var(--accent);color:#FFF7E8;
+  border:1px solid var(--line);
+  box-shadow:3px 3px 0 var(--line);
+  font-weight:600;letter-spacing:.08em;
+  transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.stage-corner .hint.is-done{opacity:0;transform:translateY(8px)}
+.hint-pulse{
+  width:7px;height:7px;border-radius:50%;
+  background:currentColor;flex:none;
+  animation:hint-pulse 1.8s var(--ease) infinite}
+@keyframes hint-pulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.35;transform:scale(.72)}}
+@media (prefers-reduced-motion:reduce){
+  .hint-pulse{animation:none}}
+
+.stage-legend{
+  grid-column:1 / -1;grid-row:2;
+  align-self:end;
+  display:grid;grid-template-columns:minmax(0,1fr);
+  gap:.9rem;align-items:center;
+  padding-top:1rem;
+  border-top:1px solid var(--hair);
+  /* The manifest sits below the fixed HUD. Jumping to it without this
+     landed the section title underneath the header bar. */
+  scroll-margin-top:5.5rem}
+.legend-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  gap:1rem;flex-wrap:wrap
+}
+.legend-head h2{
+  font-family:var(--pixel);font-weight:700;
+  /* A step above the eyebrow it used to match — at 15px it read as a
+     caption while its five sibling section headings render at 30px. The
+     manifest is the hero's second row, so it stays compact, but it is a
+     heading and now looks like one. */
+  font-size:clamp(1.25rem,2.2vw,1.7rem);letter-spacing:.05em;
+  text-transform:uppercase
+}
+.legend-head p{
+  font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--faint)
+}
+/* The whole set, in one line. It is set in ink, not faint, because it is the
+   answer to "what are the seven?" rather than a caption above the cards. */
+/* Provenance for the commit counts. It reads "live from GitHub" only when
+   the fetch actually answered, and names the date of the stored values when
+   it did not - the one thing this page must not do is show a static number
+   that looks live. */
+.legend-source{
+  flex-basis:100%;margin:.15rem 0 0;
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;
+  color:var(--faint)
+}
+.legend-source[data-state="live"]{color:var(--cyan)}
+/* The seven names. It rides the hero band now - flex-basis:100% wraps it to
+   its own line under the counts and the proof links, so it is in the first
+   screen on desktop and on a phone rather than two screens down in the
+   manifest head. */
+.legend-index-line{
+  flex-basis:100%;margin-top:.15rem;
+  font-family:var(--mono);
+  color:var(--ink);
+  font-size:.78rem;letter-spacing:.04em;
+  max-width:none;line-height:1.6
+}
+.legend-list{
+  display:grid;
+  /* Four across. Seven across kept the manifest to one row but made the
+  cards 178px wide — the screenshot, name and stack were unreadable, which
+  defeated the point of the section. The hero grows, so two rows is fine. */
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:.8rem;
+  align-items:stretch
+}
+.legend-list li{
+  display:flex;flex-direction:column;gap:.35rem}
+/* The source link sits on the card, below the screenshot block. The card
+   button opens the dossier; the link goes straight to the repo or the live
+   site, so a reviewer never has to click through to check a claim. */
+.legend-links{
+  display:flex;flex-wrap:wrap;gap:.3rem}
+.legend-links a{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--cyan);
+  padding:.26rem .5rem;border-radius:var(--r-chip);
+  border:1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+  /* A 10% accent tint over the card keeps the link at 4.9:1; the old 8%
+     over transparent left the accent text at 4.4:1. */
+  background:color-mix(in srgb, var(--accent) 10%, var(--panel));
+  text-decoration:none;
+  transition:background .25s var(--ease),border-color .25s var(--ease)}
+.legend-links a:hover{
+  background:color-mix(in srgb, var(--accent) 18%, transparent);
+  border-color:color-mix(in srgb, var(--accent) 55%, var(--line))}
+.legend-links a span{margin-left:.3rem;opacity:.75}
+.legend-list button{
+  position:relative;
+  /* height:auto, not 100%: the li now holds the card AND a link row, so a
+     100%-height button overflowed the grid cell and pushed the links out. */
+  width:100%;text-align:left;
+  display:flex;flex-direction:column;
+  padding:0;border-radius:var(--r-soft);
+  border:2px solid var(--line);
+  background:color-mix(in srgb, var(--panel) 55%, transparent);
+  overflow:hidden;
+  transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease);
+  box-shadow:var(--shadow)}
+.legend-list button:hover{
+  background:color-mix(in srgb, var(--accent) 14%, transparent);
+  border-color:color-mix(in srgb, var(--accent) 45%, var(--line));
+  transform:translateY(-2px)
+}
+/* The real screenshot is what makes the manifest a portfolio rather than a
+   list. On phones it is the only readable view of the work. */
+.legend-shot{
+  display:block;width:100%;aspect-ratio:16/9;overflow:hidden;
+  border-radius:var(--r-soft) var(--r-soft) 0 0;background:#05070e;
+  border-bottom:1px solid var(--hair-soft);
+  flex:none
+}
+.legend-shot img{
+  width:100%;height:100%;object-fit:cover;object-position:top left;
+  /* Some project screenshots are near-black UI. At thumbnail size they read
+     as an empty rectangle, so they get lifted rather than dimmed. */
+  filter:brightness(1.18) saturate(1.08);
+  opacity:.95;transition:opacity .35s var(--ease),transform .5s var(--ease),filter .35s var(--ease)
+}
+.legend-list button:hover .legend-shot img{filter:brightness(1.15);opacity:1}
+/* The index badge matches the numbered chips the map uses when a sign has no
+   room for its full name, so a phone visitor can always decode the map. */
+.legend-index{
+  position:absolute;top:8px;left:8px;
+  font-family:var(--mono);font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;color:var(--cyan);
+  background:var(--void);padding:.18rem .4rem;border-radius:3px;
+  border:1px solid color-mix(in srgb, var(--cyan) 40%, transparent)
+}
+.legend-shot{position:relative}
+/* The caption sits BELOW the screenshot, in normal flow. It used to be an
+   overlay on the image with the proof badge pinned to the top-right corner —
+   and the badge painted straight over the project name (measured 19–54px of
+   overlap on every card) while the tech-stack line was hard-clipped by the
+   card's own height. A card that hides its own name is worse than a taller
+   card. */
+.legend-text{
+  display:flex;flex-direction:column;gap:.18rem;
+  padding:.5rem .55rem .6rem;
+  flex:1;min-width:0
+}
+/* The index and the proof badge share one row so neither can land on the
+   other. This is the CARD's inner head - it used to be called .legend-head,
+   the same class the section heading uses, and the two rules have different
+   alignment and gaps, so whichever came last quietly restyled the other. */
+.legend-card-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:.4rem;min-width:0
+}
+/* The hard number, on the card. A recruiter sees the proof without opening
+   the drawer, which is what makes the manifest evidence and not decoration. */
+.legend-proof{
+  padding:.12rem .38rem;border-radius:var(--r-chip);
+  /* 14% accent over the card tint left the badge text at 4.39:1 — just
+     under the 4.5:1 floor. 10% lifts the background and clears it. */
+  background:color-mix(in srgb, var(--accent) 10%, var(--panel));
+  border:1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  /* This badge used to be 10.2px - the smallest type on the page, sitting
+     on the stat the whole site asks you to verify. Raised to 11.5px. */
+  font-family:var(--mono);font-size:.72rem;font-weight:600;
+  letter-spacing:.03em;color:var(--cyan);
+  white-space:nowrap;flex:none
+}
+/* The badge showed a bare value — "WS", "OS", "58.77%" — with no label, so
+   it decoded to nothing. The label rides along in a quieter weight. */
+.legend-proof-label{
+  margin-left:.4rem;font-weight:400;
+  color:var(--muted);letter-spacing:.02em
+}
+.legend-name{
+  font-family:var(--pixel);font-size:.76rem;letter-spacing:.03em;line-height:1.25;
+  text-transform:uppercase;
+  /* Two lines rather than an ellipsis: a truncated project name is useless. */
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  overflow:hidden;overflow-wrap:anywhere
+}
+.legend-tag{
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.01em;
+  text-transform:none;color:var(--muted);
+  line-height:1.45;overflow-wrap:anywhere;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  overflow:hidden
+}
+/* The stack, on the card. "Who / what / with what" should be answerable from
+   the first screen without opening a drawer or scrolling to section 02.
+   Three lines: OsSecurity's stack is a three-item sentence and was clipped
+   mid-word at two. */
+.legend-stack{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--faint);
+  line-height:1.4;overflow:hidden;
+  /* A long token with no space ("POSTGRESQL") was clipped mid-word by the
+     overflow rather than wrapping, so the card read "POSTGRES" on narrow
+     columns. anywhere lets it break. */
+  overflow-wrap:anywhere;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;
+  overflow-wrap:anywhere
+}
+
+/* When the seven systems were last touched. Seven repos with no dates read
+   as a folder of coursework; the dates and commit counts make "shipped"
+   checkable. */
+.legend-shipped{
+  /* .64rem put the commit line at 10.2px - the smallest type on the page,
+     sitting on the number the whole site asks you to check. Raised to
+     12.5px so the provenance is readable without zooming. */
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.03em;
+  text-transform:uppercase;color:var(--faint);
+  padding-top:.45rem;margin-top:.1rem;
+  border-top:1px solid var(--hair-soft)
+}
+
+.noscript-list{
+  grid-column:1 / -1;
+  display:grid;gap:.4rem;
+  font-family:var(--mono);font-size:.72rem
+}
+.noscript-list a{color:var(--cyan);text-decoration:underline}
+
+/* ---------- sections ---------- */
+.section{
+  padding:clamp(4rem,8.5vh,7rem) var(--pad);
+  border-bottom:1px solid var(--hair-soft);
+  position:relative;
+  /* Anchor jumps must clear the fixed HUD, and a heading must never scroll
+     up underneath it. */
+  scroll-margin-top:5.5rem}
+.section-head{
+  display:grid;grid-template-columns:auto minmax(0,1fr);
+  gap:.4rem 1.4rem;align-items:end;
+  margin-bottom:clamp(2.4rem,5vw,4rem);
+  max-width:78rem
+}
+/* Typographic hierarchy: pixel type marks the ATLAS interface (the map, the
+   HUD and the manifest). Sora marks the EDITORIAL layer — the
+   section headings and the prose a recruiter actually reads. Without this
+   split the whole page reads as one texture and the hero loses its impact. */
+.section-head h2{
+  font-family:var(--sans);font-weight:600;
+  font-size:clamp(1.9rem,3.9vw,3.2rem);line-height:1.02;
+  letter-spacing:-.025em;text-transform:none;
+  color:var(--ink)
+}
+/* The reading tier. .72rem (11.5px) mono read as fine print against an
+   80px headline — the scale ratio was dramatic but the body floor was
+   timid. Section intros and hint lines are sentences, not labels, so they
+   get a real reading size. Labels and codes stay small. */
+.section-note{
+  font-family:var(--mono);font-size:.86rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint);
+  line-height:1.6
+}
+
+/* ---------- stack racks ---------- */
+.rack-grid{
+  display:grid;
+  /* Five across, one row. PriceHawk got its own rack so all seven systems
+     reconcile, and auto-fit left that fifth card stranded alone on a second
+     row. 230px floor → 5 × 230 + gaps fits the 78rem max-width. */
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:clamp(1rem,2vw,1.6rem);
+  max-width:78rem
+}
+/* Five racks only stay readable on a wide screen. Below that they wrap to
+   three, then two, then one — a five-across row of 57px cards on a phone
+   is unreadable. */
+@media (max-width:1180px){
+  .rack-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  .rack-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:460px){
+  .rack-grid{grid-template-columns:1fr}
+}
+.rack{
+  position:relative;
+  /* Cards stretch to the tallest sibling, so the proof row is pushed to the
+     bottom — otherwise the shortest cards end with up to 124px of dead
+     space and the row reads as unfinished. */
+  display:flex;flex-direction:column;
+  padding:1.1rem 1.2rem 1.4rem;
+  border-radius:var(--radius);
+  background:var(--panel);
+  border:2px solid var(--line);
+
+  transition:transform .5s var(--ease),border-color .4s var(--ease);
+  box-shadow:var(--shadow)}
+.rack:hover{border-color:color-mix(in srgb, var(--accent) 45%, var(--line))}
+.rack h3{
+  font-family:var(--sans);font-weight:600;
+  font-size:1.3rem;letter-spacing:-.015em;
+  margin-bottom:.9rem;color:var(--ink)
+}
+.tag-list{display:flex;flex-wrap:wrap;gap:.45rem}
+.tag-list li{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
+  padding:.32rem .7rem;border-radius:var(--r-chip);
+  border:1px solid var(--hair);color:var(--muted);
+  background:color-mix(in srgb, var(--bg) 50.0%, transparent)
+}
+
+/* Which shipped systems each workbench actually produced — proof, not a skills widget. */
+.rack-proof{
+  display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;
+  margin-top:auto;padding-top:.9rem;
+  border-top:1px solid var(--hair-soft)}
+.rack-proof span{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--faint);margin-right:.15rem
+}
+.rack-proof b{
+  font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.04em;
+  color:var(--cyan);padding:.22rem .5rem;border-radius:var(--r-chip);
+  background:color-mix(in srgb, var(--accent) 12%, transparent);border:1px solid color-mix(in srgb, var(--accent) 22%, transparent)
+}
+
+/* ---------- lab ---------- */
+/* Three service cards plus a live monitor readout. The section used to be a
+   third card grid, which made the middle of the page read as one long
+   template. The monitor is the thing that makes a home lab concrete: one
+   always-on node, three services, real numbers. */
+.lab-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr)) minmax(340px,1.3fr);
+  gap:clamp(1rem,2vw,1.6rem);
+  max-width:78rem
+}
+.lab-unit{
+  position:relative;overflow:hidden;
+  /* The grid stretches every card to the height of the monitor panel, which
+     left 146px of dead space under the last line. Making the card a flex
+     column and pushing the value line to the bottom turns that gap into a
+     deliberate anchor — the value sits on the card's baseline. */
+  display:flex;flex-direction:column;
+  padding:1.5rem 1.4rem 1.6rem;
+  border-radius:var(--radius);
+  background:var(--panel);
+  border:2px solid var(--line);
+  transition:transform .5s var(--ease),border-color .4s var(--ease);
+  box-shadow:var(--shadow)}
+.lab-unit::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:3px;
+  background:var(--cyan);
+  opacity:.5;transition:opacity .4s var(--ease)
+}
+.lab-unit:hover{border-color:rgba(124,242,155,.32)}
+.lab-unit:hover::after{opacity:.9}
+.lab-unit header{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;margin-bottom:.9rem
+}
+.lab-unit h3{
+  font-family:var(--sans);font-weight:600;
+  font-size:1.45rem;letter-spacing:-.015em;color:var(--ink)
+}
+.status{
+  display:inline-flex;align-items:center;gap:.45rem;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--cyan)
+}
+.status i{width:6px;height:6px;border-radius:1px;background:var(--cyan)}
+.lab-unit p{color:var(--muted);font-size:.9rem;line-height:1.75}
+.lab-value{
+  margin-top:auto;padding-top:.7rem;
+  border-top:1px solid var(--hair-soft);
+  font-family:var(--sans);font-size:.9rem!important;font-weight:600;color:var(--ink)!important
+}
+.lab-value span{
+  display:block;margin-bottom:.15rem;
+  font-family:var(--mono);font-size:.68rem;font-weight:400;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--faint)
+}
+
+/* The service monitor. It is the one readout on the site that looks like a
+   machine reporting on itself, which is exactly what a home lab is. */
+.lab-panel{
+  display:flex;flex-direction:column;
+  border-radius:var(--radius);
+  border:2px solid var(--line);
+  background:var(--panel);
+  overflow:hidden;
+  box-shadow:var(--shadow)}
+.lab-panel-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:.7rem 1rem;
+  border-bottom:1px solid var(--hair-soft);
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--faint)
+}
+.lab-panel-stat{display:inline-flex;align-items:center;gap:.45rem;color:var(--cyan)}
+.lab-panel-stat i{
+  width:6px;height:6px;border-radius:1px;background:var(--cyan)}
+.lab-readout{
+  margin:0;padding:.9rem 1rem;
+  display:grid;grid-template-columns:1fr;
+  gap:.5rem
+}
+.lab-readout>div{
+  display:grid;grid-template-columns:5.2rem minmax(0,1fr);
+  gap:.6rem;align-items:baseline;min-width:0
+}
+.lab-readout dt{
+  font-family:var(--mono);font-size:.76rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--faint)
+}
+.lab-readout dd{
+  margin:0;font-family:var(--mono);font-size:.74rem;
+  color:var(--ink);overflow-wrap:anywhere
+}
+.lab-panel-note{
+  margin:0;padding:.9rem 1rem 1rem;
+  border-top:1px solid var(--hair-soft);
+  font-size:.82rem;line-height:1.7;color:var(--muted)
+}
+
+/* ---------- profile ---------- */
+.profile-grid{
+  display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,.8fr);
+  gap:clamp(1.5rem,4vw,4rem);
+  align-items:start;
+  max-width:78rem
+}
+/* The copy column ran short against the timeline card, leaving a hole in
+   the lower-left. Let the facts list stretch to meet the card. */
+.profile-copy{display:flex;flex-direction:column}
+.profile-facts{flex:1 1 auto}
+/* The bio was the one place on the site that read like an unstyled <p>.
+   A pixel marker and a hanging indent give it the same language as the
+   rest of the page without changing the words. */
+.profile-lede{
+  position:relative;
+  font-size:clamp(1.05rem,1.6vw,1.32rem);
+  line-height:1.75;color:var(--ink);max-width:58ch;
+  text-wrap:pretty;
+  padding-left:2.2rem;
+  border-left:1px solid var(--hair)}
+.profile-lede::before{
+  content:'◆';
+  position:absolute;left:-.42em;top:.08em;
+  font-size:.62em;color:var(--cyan)}
+.profile-lede strong{color:var(--cyan);font-weight:600}
+.profile-facts{
+  margin-top:2.2rem;display:grid;gap:.1rem;
+  border-top:1px solid var(--hair)
+}
+.profile-facts li{
+  display:grid;grid-template-columns:8rem minmax(0,1fr);
+  gap:1rem;padding:.95rem 0;
+  border-bottom:1px solid var(--hair-soft)
+}
+.profile-facts span{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--faint);padding-top:.2rem
+}
+.profile-facts b{font-weight:400;font-size:.94rem;color:var(--muted)}
+.profile-facts b.accent{color:var(--cyan)}
+
+/* "Looking for" — the recruiter's actual question, answered from facts
+   already on the page. It also balances the copy column against the
+   timeline card. */
+.profile-focus{
+  margin-top:1.8rem;padding:1.1rem 1.2rem;
+  border-radius:var(--r-soft);
+  /* 10% over the panel, not 8% over transparent — the label sat at 4.4:1. */
+  background:color-mix(in srgb, var(--accent) 10%, var(--panel));
+  border:1px solid color-mix(in srgb, var(--accent) 22%, transparent)
+}
+.profile-focus-label{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:.8rem
+}
+.profile-focus ul{list-style:none;margin:0;padding:0;display:grid;gap:.65rem}
+.profile-focus li{
+  display:grid;grid-template-columns:9rem minmax(0,1fr);
+  gap:.4rem 1rem;align-items:baseline
+}
+.profile-focus b{
+  font-family:var(--pixel);font-size:.74rem;font-weight:700;
+  letter-spacing:.03em;text-transform:uppercase;color:var(--ink)
+}
+.profile-focus span{
+  font-size:.84rem;line-height:1.55;color:var(--muted)
+}
+
+.profile-card{
+  position:relative;
+  padding:1.6rem 1.5rem;
+  border-radius:var(--radius);
+  border:2px solid var(--line);
+  background:var(--panel);
+  box-shadow:var(--shadow)}
+
+/* The operator ID line. The card opened straight into the award, which read
+   as a résumé row; the ID makes the person — name, callsign, status — the
+   first thing in the section, using only facts already verified. */
+.profile-id{
+  display:flex;align-items:center;gap:.85rem;
+  padding-bottom:1.1rem;margin-bottom:1.1rem;
+  border-bottom:1px dashed var(--hair)
+}
+.profile-id-glyph{
+  width:44px;height:44px;flex:none;
+  display:grid;place-items:center;
+  border-radius:var(--r-soft);
+  background:color-mix(in srgb, var(--accent) 12%, transparent);
+  border:1px solid color-mix(in srgb, var(--accent) 30%, transparent)
+}
+.profile-id-glyph svg{width:26px;height:26px}
+.profile-id-text{display:flex;flex-direction:column;min-width:0}
+.profile-id-text b{
+  font-family:var(--pixel);font-weight:700;
+  font-size:1.15rem;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--ink);line-height:1.15
+}
+.profile-id-text span{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--cyan);margin-top:.25rem
+}
+/* A run of four milestones down the card. The section had a visible hole in
+   its lower-right quadrant; a timeline fills it with something worth reading
+   instead of padding. */
+.profile-track{
+  list-style:none;margin:1.4rem 0 0;padding:0;
+  position:relative;
+  display:grid;gap:.9rem
+}
+.profile-track::before{
+  content:'';position:absolute;left:4px;top:6px;bottom:6px;width:1px;
+  background:var(--hair)
+}
+.profile-track li{
+  position:relative;padding-left:1.4rem
+}
+.track-node{
+  position:absolute;left:0;top:.42em;
+  width:9px;height:9px;border-radius:2px;
+  background:var(--void);border:1.5px solid var(--cyan)}
+.profile-track b{
+  display:block;
+  font-family:var(--pixel);font-size:.78rem;font-weight:700;
+  letter-spacing:.03em;text-transform:uppercase;color:var(--ink);
+  line-height:1.35
+}
+.profile-track em{
+  display:block;margin-top:.2rem;
+  font-style:normal;font-family:var(--sans);font-size:.82rem;
+  line-height:1.6;color:var(--muted)
+}
+.profile-badge{
+  display:flex;align-items:center;gap:1rem;
+  padding:1.1rem;border-radius:var(--r-soft);
+  background:color-mix(in srgb, var(--bg) 60.0%, transparent);border:1px solid var(--hair-soft);
+  margin-bottom:1.1rem
+}
+.badge-pixel{
+  width:42px;height:42px;flex:none;
+  filter:drop-shadow(0 0 12px rgba(255,182,92,.45))
+}
+/* The availability dot. Its size and colour used to hang off
+   `.profile-status .status-dot`, and when the profile card was rebuilt
+   without that wrapper the contact section's dot silently became a 0x0
+   transparent box - the "Available" indicator was an invisible nothing.
+   Unscoped now, so it applies wherever the dot is used. */
+.status-dot{
+  width:8px;height:8px;flex:none;margin-top:.4rem;border-radius:50%;
+  background:var(--cyan)}
+.profile-badge p{
+  font-family:var(--pixel);font-weight:700;font-size:.95rem;
+  line-height:1.3;letter-spacing:.04em;color:var(--cyan);
+  /* One credential line, not three broken fragments. */
+  text-transform:uppercase
+}
+/* Credentials at a glance — the recruiter's shortlist of who this person is. */
+.profile-credentials{
+  margin:0 0 1.1rem;
+  border-top:1px solid var(--hair-soft)
+}
+.profile-credentials>div{
+  display:grid;grid-template-columns:7.5rem minmax(0,1fr);
+  gap:.8rem;padding:.7rem 0;
+  border-bottom:1px solid var(--hair-soft)
+}
+.profile-credentials dt{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--faint)
+}
+.profile-credentials dd{
+  margin:0;font-family:var(--sans);font-weight:600;font-size:.95rem;
+  color:var(--ink)
+}
+.profile-card-note{
+  font-family:var(--mono);font-size:.84rem;line-height:1.75;
+  letter-spacing:.02em;color:var(--faint)
+}
+
+/* ---------- contact ---------- */
+.section-contact{padding-bottom:clamp(4rem,8vh,7rem)}
+.contact-payoff{
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  gap:clamp(2rem,5vw,5rem);
+  align-items:start;
+  max-width:78rem}
+.contact-copy{max-width:40rem}
+.contact-position{
+  font-size:clamp(1.05rem,1.6vw,1.35rem);
+  line-height:1.6;color:var(--ink);font-weight:400;
+  letter-spacing:-.01em;text-wrap:pretty}
+.contact-position::first-line{color:var(--ink)}
+.contact-status{
+  display:flex;align-items:flex-start;gap:.7rem;
+  margin-top:1.4rem;
+  font-family:var(--mono);font-size:.84rem;line-height:1.7;
+  letter-spacing:.02em;color:var(--muted)}
+.contact-status b{color:var(--ink);font-weight:600}
+.contact-status .status-dot{margin-top:.5rem;flex:none}
+.contact-mail{
+  display:grid;
+  grid-template-columns:1fr auto;
+  grid-template-areas:"label arrow" "addr arrow";
+  align-items:center;
+  column-gap:1rem;row-gap:.35rem;
+  margin-top:2rem;padding:1.15rem 1.15rem 1.15rem 1.4rem;
+  border:2px solid var(--line);border-radius:var(--radius);
+  /* 10% over the panel — 8% over transparent put the email address at
+     4.4:1, and this is the string a recruiter most needs to read. */
+  background:color-mix(in srgb, var(--accent) 10%, var(--panel));
+  transition:transform .45s var(--ease),border-color .35s var(--ease);
+  box-shadow:var(--shadow)}
+.contact-mail:hover{
+  transform:translateY(-4px);
+  border-color:color-mix(in srgb, var(--accent) 65%, var(--line));
+}
+.contact-mail-label{
+  grid-area:label;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--faint)}
+/* The arrow chips here inherited `color:--void` (the cream paper token)
+   while `.btn-arrow` paints them `--line` (near-black), so the glyph was
+   dark-on-dark and rendered as a solid black square. Pin the glyph to the
+   paper colour; the chip itself stays the ink square. */
+.contact-mail .btn-arrow{grid-area:arrow;color:var(--bg)}
+/* A recruiter asks for the CV before they ask anything else, so the download
+   sits directly under the email — not buried in the footer. */
+.contact-resume{
+  display:grid;
+  grid-template-columns:1fr auto;
+  grid-template-areas:"label arrow" "note arrow";
+  align-items:center;
+  column-gap:1rem;row-gap:.3rem;
+  margin-top:.7rem;padding:.95rem 1.15rem .95rem 1.4rem;
+  border:2px solid var(--line);border-radius:var(--radius);
+  background:color-mix(in srgb, var(--panel) 55.00000000000001%, transparent);
+  transition:transform .4s var(--ease),border-color .35s var(--ease),background .35s var(--ease);
+  box-shadow:var(--shadow)}
+.contact-resume:hover{
+  transform:translateY(-3px);
+  border-color:color-mix(in srgb, var(--accent) 55%, var(--line));
+  background:color-mix(in srgb, var(--accent) 9%, transparent)
+}
+.contact-resume-label{
+  grid-area:label;
+  font-family:var(--sans);font-weight:600;font-size:1.05rem;
+  letter-spacing:-.01em;color:var(--ink)
+}
+.contact-resume-note{
+  grid-area:note;
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;color:var(--faint)
+}
+.contact-resume .btn-arrow{grid-area:arrow;color:var(--bg)}
+.contact-mail-addr{
+  grid-area:addr;
+  /* A mono face, not the pixel display font: at 17px Pixelify renders the `@`
+     as an unreadable circled mark, and this is the most important string here. */
+  font-family:var(--mono);font-weight:600;
+  font-size:clamp(1rem,1.9vw,1.35rem);line-height:1.3;
+  letter-spacing:.01em;color:var(--cyan);
+  overflow-wrap:anywhere}
+.contact-payoff .channel-list{border-top:1px solid var(--hair)}
+.channel-list{max-width:78rem;border-top:1px solid var(--hair)}
+.channel-list a,
+.channel-list .channel-static{
+  display:grid;
+  grid-template-columns:minmax(8rem,.8fr) minmax(0,1.6fr) auto;
+  gap:1rem;align-items:center;
+  padding:1.35rem .4rem;
+  border-bottom:1px solid var(--hair-soft);
+  transition:background .4s var(--ease),padding .4s var(--ease);
+  box-shadow:var(--shadow)}
+/* A channel with no reachable URL (see index.html) keeps the row rhythm but
+   is not a link, so it gets no hover affordance. */
+.channel-list .channel-static{cursor:default}
+.channel-list .channel-static i{opacity:.5}
+.channel-list a:hover{
+  background:color-mix(in srgb, var(--accent) 8%, transparent);
+  padding-left:1.1rem;padding-right:1.1rem
+}
+.channel-list span{
+  font-family:var(--sans);font-weight:600;
+  font-size:clamp(1.15rem,2.3vw,1.75rem);letter-spacing:-.02em;color:var(--ink)
+}
+.channel-list em{
+  font-style:normal;font-family:var(--mono);font-size:.72rem;
+  letter-spacing:.06em;color:var(--faint);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.channel-list i{
+  font-style:normal;font-size:1.1rem;color:var(--faint);
+  transition:transform .4s var(--ease),color .3s var(--ease)
+}
+.channel-list a:hover i{transform:translate(4px,-4px);color:var(--cyan)}
+
+/* ---------- footer ---------- */
+.footer{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:1rem;
+  padding:1.5rem var(--pad);
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--faint)
+}
+.footer a{color:var(--muted);transition:color .3s var(--ease)}
+.footer a:hover{color:var(--cyan)}
+
+/* ---------- dossier panel ---------- */
+/* A scrim so the drawer reads as a modal. Without it the page behind stayed
+   fully lit and interactive, and the panel looked detached from any logic. */
+.dossier-scrim{
+  position:fixed;inset:0;z-index:1250;
+  background:rgba(3,5,10,.6);
+  animation:scrim-in .4s var(--ease)
+}
+.dossier-scrim[hidden]{display:none}
+@keyframes scrim-in{from{opacity:0}to{opacity:1}}
+.dossier{
+  position:fixed;top:0;right:0;bottom:0;z-index:1300;
+  width:min(480px,100vw);
+  padding:clamp(1.6rem,3vw,2.4rem);
+  overflow-y:auto;
+  background:var(--panel);
+  border-left:2px solid var(--line);
+  transform:translateX(102%);
+  /* 280ms, not 600ms. The drawer is a panel the visitor is waiting to read;
+     a slow slide made a tap feel like nothing happened. */
+  transition:transform .28s var(--ease);
+  visibility:hidden;
+  will-change:transform;
+  box-shadow:var(--shadow)}
+.dossier.open{transform:none;visibility:visible}
+.dossier-close{
+  position:absolute;top:1rem;right:1rem;
+  width:44px;height:44px;border-radius:var(--r-soft);
+  border:1px solid var(--hair);color:var(--muted);
+  font-size:.9rem;line-height:1;
+  transition:background .3s var(--ease),color .3s var(--ease),transform .4s var(--ease)
+}
+.dossier-close:hover{background:var(--line);color:var(--ink)}
+.dossier-title{
+  font-family:var(--pixel);font-weight:700;
+  font-size:clamp(1.7rem,4vw,2.6rem);line-height:1;letter-spacing:.02em;
+  text-transform:uppercase;margin:.5rem 0 .4rem;padding-right:3rem
+}
+.dossier-tag{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--faint);margin-bottom:.5rem
+}
+/* The provenance line: when the repo last moved and how much work went in.
+   It answers "is this maintained?" before the reader opens GitHub. */
+.dossier-shipped{
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;
+  color:var(--muted);margin-bottom:1.4rem;
+  padding-bottom:.9rem;border-bottom:1px solid var(--hair-soft)
+}
+/* Shown only for a project that was not built alone. It sits directly under
+   the commit line because that line is what makes the claim checkable. */
+.dossier-credit{
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;
+  color:var(--cyan);margin:-1.1rem 0 1.4rem;
+  padding-bottom:.9rem;border-bottom:1px solid var(--hair-soft)
+}
+.dossier-credit[hidden]{display:none}
+/* The depth line: the one thing the numbers cannot say - why a commit count
+   is low, or what an accuracy figure cost to get. It reads as a remark
+   beside the evidence rather than part of the spec list. */
+.dossier-depth{
+  margin:-1.1rem 0 1.4rem;
+  padding:.5rem .75rem .5rem .8rem;
+  border-left:2px solid var(--cyan);
+  background:color-mix(in srgb, var(--cyan) 7%, transparent);
+  font-size:.82rem;line-height:1.5;color:var(--muted)
+}
+.dossier-depth[hidden]{display:none}
+.dossier-shot{
+  position:relative;border-radius:var(--r-soft);overflow:hidden;
+  border:1px solid var(--hair);background:#000;
+  aspect-ratio:16/10}
+.dossier-shot img{width:100%;height:100%;object-fit:cover;object-position:top left}
+.dossier-caption{
+  margin-top:.6rem;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint)}
+.dossier-scan{
+  position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,color-mix(in srgb, var(--bg) 14.000000000000002%, transparent) 0 1px,transparent 1px 4px);
+  opacity:.4
+}
+.dossier-thumbs{display:flex;gap:.5rem;margin-top:.6rem;flex-wrap:wrap}
+.dossier-thumbs button{
+  width:74px;height:46px;border-radius:var(--r-chip);overflow:hidden;
+  border:1px solid var(--hair);opacity:.55;
+  transition:opacity .3s var(--ease),border-color .3s var(--ease)
+}
+.dossier-thumbs button img{width:100%;height:100%;object-fit:cover}
+.dossier-thumbs button:hover{opacity:1}
+/* aria-pressed, matching what the picker actually sets. When the JS moved
+   off aria-current this selector kept the old attribute, so the displayed
+   thumbnail sat at the same 55% opacity as the other six. */
+.dossier-thumbs button[aria-pressed="true"]{opacity:1;border-color:var(--cyan)}
+.dossier-desc{
+  margin-top:1.5rem;color:var(--muted);
+  font-size:.92rem;line-height:1.8;text-wrap:pretty
+}
+.dossier-desc strong{color:var(--ink);font-weight:600}
+/* What the system does, broken out. */
+.dossier-features{
+  margin-top:1.2rem;display:grid;gap:.55rem;
+  padding:1rem 1.1rem;border-radius:var(--r-soft);
+  border:1px solid var(--hair-soft);background:color-mix(in srgb, var(--panel) 55.00000000000001%, transparent)
+}
+.dossier-features li{
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:.7rem;
+  align-items:start;
+  font-family:var(--sans);font-size:.92rem;line-height:1.5;color:var(--muted)
+}
+.dossier-features i{
+  width:6px;height:6px;margin-top:.55rem;flex:none;
+  background:var(--cyan);border-radius:1px}
+.dossier-stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:.6rem;margin-top:1.4rem
+}
+.dossier-stats li{
+  padding:.8rem .9rem;border-radius:var(--r-soft);
+  border:1px solid var(--hair);background:color-mix(in srgb, var(--panel) 70.0%, transparent)
+}
+.dossier-stats b{
+  display:block;font-family:var(--sans);font-weight:600;
+  font-size:1.3rem;line-height:1;color:var(--cyan);
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums
+}
+.dossier-stats span{
+  display:block;margin-top:.35rem;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint)
+}
+.dossier-stack{margin-top:1.2rem}
+.dossier-links{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.8rem}
+.dossier-links a{
+  display:inline-flex;align-items:center;gap:.55rem;
+  font-family:var(--pixel);font-size:.78rem;letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:.65rem 1rem;border-radius:var(--r-chip);
+  border:1px solid var(--hair);background:color-mix(in srgb, var(--panel) 70.0%, transparent);
+  transition:border-color .3s var(--ease),background .3s var(--ease),transform .4s var(--ease)
+}
+.dossier-links a:hover{border-color:color-mix(in srgb, var(--accent) 55%, var(--line));background:color-mix(in srgb, var(--accent) 12%, transparent)}
+.dossier-links a.primary{background:var(--cyan);color:var(--void);border-color:transparent}
+
+/* ---------- atlas labels ---------- */
+.atlas-labels{
+  position:absolute;inset:0;pointer-events:none;
+  /* Above the canvas, or a plaque sitting over a dark screen gets swallowed
+     by it and the name renders as a mangled overlap. */
+  z-index:3}
+/* Diegetic signage, not a browser tooltip. A cream chip with a hairline
+   border read as DOM pasted over the render — the clearest sign the island
+   was a demo. These are dark plaques on a stem, like a signpost standing
+   on the deck: dark ground, ink type, a pin below and a cast shadow, so
+   they sit in the scene instead of floating on the glass. */
+.atlas-label{
+  position:absolute;top:0;left:0;
+  display:inline-flex;flex-direction:column;align-items:center;
+  padding:0;background:none;border:0;
+  /* .72rem put the landmark names at 11.5px, which is small for the one
+     thing on the map a visitor has to read before deciding to click. The
+     declutter pass measures the painted plaque, so bigger labels simply
+     push more of them to the numbered fallback - the map stays uncluttered
+     and the names that survive are legible. */
+  font-family:var(--pixel);font-size:.82rem;letter-spacing:.04em;
+  text-transform:uppercase;
+  white-space:nowrap;pointer-events:auto;
+  /* No transform transition: the transform is rewritten every frame to follow
+     the orbiting camera, so transitioning it leaves the labels permanently
+     trailing their target and visibly overlapping each other. */
+  transition:filter .2s var(--ease)}
+.atlas-label-plaque{
+  order:1;
+  display:block;padding:.34rem .6rem;border-radius:3px;
+  background:#1A2540;
+  color:#F2E9D8;
+  box-shadow:0 2px 0 rgba(0,0,0,.35),0 6px 14px rgba(0,0,0,.28);
+  border-bottom:2px solid var(--cyan);
+  font-family:var(--pixel);font-size:.72rem;letter-spacing:.05em;
+  text-transform:uppercase
+}
+.atlas-label::after{
+  /* the pin that plants the sign on the deck */
+  content:'';order:2;
+  width:2px;height:14px;margin-top:0;
+  background:linear-gradient(#1A2540,rgba(26,37,64,.25));
+}
+.atlas-label:hover{
+  filter:brightness(1.12) drop-shadow(0 8px 18px rgba(0,0,0,.3));
+  z-index:5
+}
+.atlas-label-key{
+  order:0;
+  font-family:var(--mono);font-size:.66rem;color:var(--cyan-on-dark);letter-spacing:.03em;
+  background:#1A2540;padding:.14rem .34rem;border-radius:3px 3px 0 0;
+  margin-bottom:2px
+}
+.atlas-label-name{
+  order:0;display:none;color:var(--muted);
+  font-family:var(--pixel);font-size:.72rem;text-transform:uppercase;
+  color:#F2E9D8
+}
+.atlas-label:hover .atlas-label-name{
+  display:inline;order:0;color:#F2E9D8;
+  background:#1A2540;padding:.14rem .34rem;border-radius:3px 3px 0 0;
+  margin-bottom:2px
+}
+.atlas-label.compact .atlas-label-name{display:none}
+.atlas-label.compact{padding:.3rem .45rem}
+/* Demoted to a number: the plaque itself carries the index, and the full
+   name comes back on hover or focus so no sign becomes unidentifiable. */
+.atlas-label.compact .atlas-label-plaque{
+  font-weight:700;color:var(--cyan-on-dark);
+  padding:.3rem .5rem;letter-spacing:.06em
+}
+.atlas-label.compact:hover .atlas-label-plaque,
+.atlas-label.compact:focus-visible .atlas-label-plaque{color:#F2E9D8}
+.atlas-label.compact .atlas-label-key{font-size:.72rem;font-weight:700;color:var(--cyan-on-dark)}
+/* Phones keep the project name, just smaller. 9.9px was unreadable on a
+   phone; 11.5px was still too small to scan, so the tight size is now
+   12.2px with a taller tap target. */
+.atlas-label.tight{
+  padding:.42rem .6rem;gap:.35rem;
+  font-size:.88rem;letter-spacing:.02em
+}
+.atlas-label.tight .atlas-label-key{font-size:.88rem}
+.atlas-label.tight .atlas-label-plaque{font-size:.88rem;letter-spacing:.02em}
+
+/* ---------- scroll reveal ---------- */
+.rv{
+  opacity:0;transform:translateY(28px);
+  transition:opacity .9s var(--ease),transform .9s var(--ease)
+}
+.rv.in{opacity:1;transform:none}
+.no-js .rv{opacity:1;transform:none}
+
+/* ---------- responsive ---------- */
+@media (max-width:1080px){
+  .stage{
+    /* minmax(0,1fr), not 1fr: a bare 1fr has a min-content floor, and the
+       pixel headline's longest word ("CYBERSECURITY") pushed the column
+       22px past the viewport, clipping the right edge of the hero. */
+    grid-template-columns:minmax(0,1fr);
+    /* Auto rows, not a fixed three-row template: display:contents below turns
+       the copy into a dozen grid items, and they need rows to land in. */
+    grid-template-rows:none;
+    grid-auto-rows:auto;
+    align-items:start;
+    row-gap:.85rem;
+    padding-top:clamp(5.5rem,10vh,7rem)
+  }
+  /* Phones used to stack copy -> canvas -> manifest, which put the diorama
+     at y=730 on an 844px screen: a visitor saw a sliver of the map's top
+     edge, and the thing that makes this portfolio memorable sat a full
+     scroll below the fold. display:contents dissolves the copy wrapper so
+     its children become grid items and can be interleaved with the canvas:
+     identity first (name, headline), then the map, then the supporting copy.
+     The headline and the whole diorama now land in the first screen. */
+  .stage-copy{display:contents}
+  /* Every item needs an explicit grid-column AND grid-row:auto for `order`
+     to decide placement. Grid auto-placement runs in passes, and items with
+     a definite column or row are positioned before fully-auto ones — so the
+     base rules that pin the canvas to row 1 and the manifest to row 2 made
+     both of them jump the queue, and the copy children landed underneath
+     regardless of what order said. With both axes cleared they sort by
+     order, which is the whole point of the reflow. */
+  .stage-copy>*{min-width:0;grid-column:1;grid-row:auto}
+  .stage-copy>.eyebrow{order:1}
+  .stage-copy>.stage-role-line{order:2}
+  .stage-copy>.display{order:3}
+  .stage-copy>.display-byline{order:4}
+  /* The map used to sit fifth, right after the byline. That made it the
+     whole first screen on a phone - two reviewers reported reaching the
+     bottom of the hero without seeing a CTA, a stat or a system name. The
+     identity, the lede, the two buttons and the strip now come first, and
+     the diorama follows them: still no scroll needed to reach it, but the
+     recruiter's four questions are answered before it. */
+  .stage-copy>.stage-lede{order:5}
+  .stage-copy>.stage-role{order:6}
+  .stage-copy>.stage-actions{order:7}
+  .stage-copy>.stage-strip{order:8}
+  .stage-canvas{order:9;grid-column:1;grid-row:auto;height:min(46vh,420px);min-height:320px}
+  .stage-legend{order:10;grid-column:1;grid-row:auto;grid-template-columns:1fr;align-self:start}
+  /* The floor was 158px, which at 390px produced two columns of 168px cards
+     - inside the width this file already calls unreadable for the desktop
+     layout, on the device where the cards are the only readable view of the
+     work. 200px forces a single column below ~415px and three across at
+     tablet width, so no card is ever narrower than the desktop cards. */
+  .legend-list{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .profile-grid{grid-template-columns:1fr}
+  .contact-payoff{grid-template-columns:1fr;gap:2.4rem}
+    /* The monitor spans the full width below the three service cards. */
+  .lab-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .lab-panel{grid-column:1 / -1}
+}
+
+
+@media (max-width:860px){
+        /* `.hud` has backdrop-filter, which makes it the containing block for any
+     fixed-position descendant — so the nav must NOT live inside `.hud` to
+     cover the viewport. Move it to the body and keep the toggle in the header. */
+  .hud{
+    /* Fully opaque all the way down: a translucent bottom edge let section
+       headings show through the bar on a phone. */
+    background:var(--bg);
+    border-bottom:1px solid var(--hair-soft)
+  }
+  .hud-nav{
+    position:fixed;inset:0;
+    flex-direction:column;justify-content:center;align-items:flex-start;
+    gap:1.4rem;padding:0 var(--pad);
+    background:color-mix(in srgb, var(--bg) 96%, transparent);
+    opacity:0;visibility:hidden;
+    /* Visibility flips instantly on open so the links are focusable right
+       away, and only after the fade on close. */
+    transition:opacity .3s var(--ease),visibility 0s .3s;
+    /* Below the brand and the toggle: the panel used to paint over the
+       hamburger, so the only way out of the menu was a link or Escape. */
+    z-index:1
+  }
+  .hud-nav.open{
+    opacity:1;visibility:visible;
+    transition:opacity .3s var(--ease),visibility 0s 0s
+  }
+  .hud-nav a{
+    font-size:clamp(1.6rem,7vw,2.6rem);
+    opacity:0;transform:translateY(24px);
+    transition:opacity .35s var(--ease),transform .35s var(--ease)
+  }
+  .hud-nav.open a{opacity:1;transform:none}
+  /* The stagger has to finish inside the panel fade. At .5s with .06s
+     increments the last link arrived a full second late, so the menu looked
+     empty when it opened. */
+  .hud-nav.open a:nth-child(1){transition-delay:.04s}
+  .hud-nav.open a:nth-child(2){transition-delay:.09s}
+  .hud-nav.open a:nth-child(3){transition-delay:.14s}
+  .hud-nav.open a:nth-child(4){transition-delay:.19s}
+  .hud-nav.open a:nth-child(5){transition-delay:.24s}
+  .hud-nav.open a:nth-child(6){transition-delay:.29s}
+  .hud-nav a em{font-size:.7rem}
+  /* keep the brand on top of the full-screen menu so identity stays visible */
+  .hud .brand{position:relative;z-index:3}
+  .menu-toggle{display:block;z-index:4}
+  .hud-readout .hud-place{display:none}
+  /* On a phone the drawer is the whole screen. It used to slide in from
+     translateX(102%), which parked it at x=398 in a 390px viewport for over
+     a second while the page was already scroll-locked — the user saw a dim
+     scrim and nothing else. It fades in place instead. */
+  .dossier{
+    width:100%;
+    transform:none;
+    transition:opacity .22s var(--ease);
+    opacity:0
+  }
+  .dossier.open{transform:none;visibility:visible;opacity:1}
+  /* The drawer is a full-screen scrolling sheet on a phone. The close
+     button was absolutely positioned at the top of the content, so after a
+     screen of reading it had scrolled away and the only exit was flinging
+     back to the top. Sticky keeps it in reach at any depth. */
+  .dossier-close{
+    position:sticky;top:.6rem;
+    margin-left:auto;
+    z-index:5;
+    background:color-mix(in srgb, var(--panel) 92%, transparent)}
+  .profile-facts li{grid-template-columns:1fr;gap:.2rem}
+  .profile-focus li{grid-template-columns:1fr;gap:.2rem}
+  .profile-credentials>div{grid-template-columns:6.5rem minmax(0,1fr);gap:.6rem}
+}
+
+@media (max-width:640px){
+  .display{font-size:clamp(2.2rem,10.5vw,3.4rem)}
+  /* Three stats in one row instead of two-plus-one. The ragged third row
+     left an awkward gap and read as an unresolved layout. */
+  .stage-chips{
+    gap:.5rem;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))
+  }
+  .stage-chips li{gap:.1rem}
+  .stage-chips b{font-size:1.35rem}
+  /* .stage-chips is display:none at this width (see the phone block below),
+     so the span sizing that used to live here was dead. */
+  .stage-corner{font-size:.72rem;gap:1rem}
+  /* The channel list was five 100px bands — 1140px of scroll for five links.
+     Compact rows keep the whole thing scannable in one glance. */
+  .channel-list a{
+    grid-template-columns:minmax(0,1fr) auto;
+    padding:.85rem .4rem;gap:.2rem .8rem
+  }
+  .channel-list span{font-size:1.05rem}
+  .channel-list em{
+    grid-column:1;order:3;
+    font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  }
+  .channel-list i{grid-column:2;grid-row:1 / span 2}
+  .contact-payoff{gap:1.8rem}
+  /* Metadata is supporting text on desktop but becomes the primary content
+     on a phone, where there is no second column to lean on. */
+    .profile-card-note{font-size:.76rem}
+  .profile-badge p{font-size:.82rem}
+  .section{padding-left:20px;padding-right:20px}
+  .stage{padding-left:20px;padding-right:20px}
+}
+
+/* ---------- phone legibility ----------
+   Measured on a 390px viewport: section notes rendered at 11.5px, the
+   footer link at 16px tall.
+   Below ~13px a phone screen stops being readable at a glance. These are
+   the smallest text and tap targets on the page. */
+@media (max-width:640px){
+  .section-note{font-size:.82rem;letter-spacing:.08em;line-height:1.5}
+  .eyebrow{font-size:.78rem}
+  .stage-role-line{font-size:.76rem}
+  /* The heading and its note are one thought. On a phone the two-column
+     grid squeezed the note into a 98px gutter — the heading took the wide
+     column and the note wrapped one word per line. Stack them instead. */
+  .section-head{
+    grid-template-columns:minmax(0,1fr);
+    gap:.5rem;align-items:start
+  }
+  /* (dead .stage-chips span sizing removed - the chips are hidden here) */
+  .stage-corner{font-size:.78rem}
+  .footer{font-size:.8rem}
+  .footer a{padding:.6rem 0;display:inline-block}
+  .atlas-label{font-size:.74rem;padding:.5rem .75rem}
+  .atlas-label-key{font-size:.78rem}
+  .stage-proof b{font-size:.8rem}
+  .stage-proof a{font-size:.8rem;padding:.5rem .7rem}
+  .legend-list .legend-shot{height:72px}
+  .hud-nav a{font-size:clamp(1.8rem,8vw,2.6rem)}
+  .contact-mail-addr{font-size:.98rem}
+
+  /* WCAG 2.5.5 wants 44px. */
+  .menu-toggle{width:44px;height:44px}
+  .dossier-close{width:44px;height:44px}
+  .footer a{min-height:44px;display:inline-flex;align-items:center}
+  .atlas-label{min-height:40px;align-items:center}
+  .stage-proof a{min-height:40px;display:inline-flex;align-items:center}
+  .channel-list a{min-height:44px}
+  .dossier-thumbs button{width:84px;height:52px}
+}
+
+/* Phones: the atlas is the signature element, so it has to be reachable
+   without a long scroll. The copy compresses, the buttons sit on one row, and
+   the map starts high enough to be seen while the hero is still on screen. */
+@media (max-width:860px){
+  .stage{
+    padding-top:clamp(4.6rem,8vh,5.6rem);
+    gap:1.1rem
+  }
+  .display{margin:.85rem 0 .9rem}
+  .stage-lede{line-height:1.55}
+  .stage-actions{margin-top:.85rem;gap:.55rem}
+  /* Keep both actions on one row on a phone: the atlas should start higher,
+     and two stacked full-width buttons push it below the fold. */
+  .stage-actions .btn{
+    flex:1 1 0;min-width:0;padding:.72rem .75rem;
+    font-size:.72rem;gap:.45rem;justify-content:center;
+    white-space:nowrap
+  }
+  .stage-chips{margin-top:.8rem;padding-top:.6rem;gap:.7rem 1rem}
+  .stage-canvas{height:min(52vh,430px);min-height:320px}
+  /* The caption above the cards is dropped here to save a line; the seven
+     names now live in the hero band, where a phone visitor reads them
+     without dragging the map. */
+  .legend-head p{display:none}
+  .legend-index-line{line-height:1.45;font-size:.8rem}
+  .legend-source{font-size:.66rem;margin-top:.05rem}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important
+  }
+  html{scroll-behavior:auto}
+  .display-line>span{transform:none}
+  .rv{opacity:1;transform:none}
+}
+
+/* ---------- short desktop windows ----------
+   A laptop at 1280x800 or 1440x700 cannot fit the full-size hero in one
+   screen, so the copy shrinks to fit rather than sliding under the fixed
+   HUD. The hero still grows if it has to: the grid rows are content-sized,
+   so the manifest never overlaps the copy. (An earlier version pinned the
+   hero to exactly 100dvh here, which made the two collide at 1280x800.) */
+/* 940px, not 860px. 1440x900 is one of the most common laptop viewports
+   there is, and it fell in the gap between the full-size hero and this
+   tightened one - so the exact size most reviewers were using got the
+   roomiest hero and the least of the manifest. */
+@media (min-width:1081px) and (max-height:940px){
+  .stage{
+    padding-top:clamp(4.2rem,6.2vh,4.9rem);
+    padding-bottom:1rem;
+    row-gap:.7rem
+  }
+  .display{font-size:clamp(2rem,min(4.3vw,7.8vh),3.4rem);margin:.55rem 0 .65rem}
+  .stage-lede{font-size:.82rem;line-height:1.5;max-width:52ch}
+  .stage-role-line{font-size:.7rem;margin-top:.5rem}
+  .stage-role{margin-top:.45rem;line-height:1.45}
+  .stage-actions{margin-top:.7rem}
+  .stage-chips{margin-top:.7rem;padding-top:.55rem;gap:1.4rem}
+  .stage-chips b{font-size:1.05rem}
+  .stage-proof{margin-top:.55rem;gap:.3rem}
+  .stage-proof a{padding:.3rem .55rem}
+  /* Smaller, not hidden. Hiding these turned "Live store" into a bare noun
+     in a row whose whole job is to say what is behind each link; the
+     earlier fix that restored them should not be undone by a breakpoint. */
+  .stage-proof span{font-size:.76rem}
+  .stage-legend{max-height:26vh;padding-top:.5rem;gap:.45rem}
+  .legend-head h2{font-size:.85rem}
+}
+
+/* ---------- phone hero rhythm ----------
+   A phone visitor scrolled two full screens before the first project
+   screenshot. These come last so they win over the 860px block. */
+@media (max-width:640px){
+  .stage{
+    padding-top:clamp(4.4rem,8vh,5.2rem);
+    gap:.9rem
+  }
+  /* At 320-360px the hard 4px offset shadows on full-width cards paint
+     past the viewport edge and inflate the scroll width. Clip the paint. */
+  html,body{overflow-x:clip}
+  .eyebrow{padding:.32rem .7rem;font-size:.76rem}
+  .stage-role-line{font-size:.7rem;margin-top:.35rem}
+  /* The headline is the first screen's whole statement on a phone. 37px read
+     as a caption; ~54px fills the 350px column and makes it a headline.
+     Line-height ≥ 1 so the pixel face is never clipped.
+     12vw, not 13.5: the longest word is 12 glyphs of "CYBERSECURITY" and at
+     13.5vw it was 392px wide in a 350px column — the last glyphs fell off
+     the right edge of every phone. */
+  .display{font-size:clamp(2.3rem,12vw,3.4rem);line-height:1.02;margin:.6rem 0 .55rem}
+  .stage-lede{font-size:.86rem;line-height:1.45;margin-top:.45rem}
+  .stage-role{font-size:.78rem;margin-top:.4rem}
+  .stage-actions{margin-top:.62rem;gap:.5rem}
+  /* The 7/3/3 counts stay. They used to be display:none here to pull the
+     diorama up the page, which left a phone visitor with no stat counts
+     anywhere outside the dossiers - and the map now follows the whole band
+     anyway, so nothing was gained by hiding them. Three chips in one row. */
+  .stage-proof{margin-top:.42rem;gap:.3rem;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0}
+  .stage-proof a{flex-direction:column;align-items:flex-start;gap:.1rem;padding:.42rem .5rem;min-height:44px}
+  /* The qualifiers used to be hidden here to fit three chips in a row, which
+     left "Live store" with no "Orders open" and "GitHub" with no "All 7
+     sources" - three bare nouns where the row's whole job is to say what is
+     behind each link. They fit; they just needed to be shown. */
+  .stage-proof span{font-size:.74rem;letter-spacing:.02em;line-height:1.25}
+  .stage-canvas{height:min(50vh,420px);min-height:320px}
+}
+
+/* Below 360px the two buttons stop sharing a row. They are nowrap with
+   min-width:0, so at 320px "Explore the atlas" overflowed its own box by
+   3px and painted outside the pill. Stacking full-width is worse for the
+   fold but better than clipping a label - and there is no room left to
+   shrink into at this width. */
+@media (max-width:360px){
+  .stage-actions{flex-direction:column;align-items:stretch}
+  .stage-actions .btn{width:100%;white-space:normal;font-size:.78rem}
+}
