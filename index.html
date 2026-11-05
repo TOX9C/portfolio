@@ -180,6 +180,12 @@
     <div class="stage-legend" id="manifest">
       <div class="legend-head">
         <h2>System manifest</h2>
+        <!-- Rides the heading row on a phone, where the caption below is
+             hidden. Without it a phone visitor saw seven cards and no
+             statement that they open anything - the affordance existed only
+             at desktop width. Inline with the h2 so it costs no height, since
+             the hero band above it is fitted to the fold to the pixel. -->
+        <span class="legend-tap">tap a card to open its dossier</span>
         <p>Seven landmarks · select one to open its dossier</p>
         <!-- Says where the commit counts came from. It reads "live from
              GitHub" only when the fetch actually answered, and names the

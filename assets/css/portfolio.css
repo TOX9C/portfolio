@@ -550,6 +550,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 /* The whole set, in one line. It is set in ink, not faint, because it is the
    answer to "what are the seven?" rather than a caption above the cards. */
+/* Desktop shows the caption under the heading; phones show this inline
+   version beside it, because the caption is hidden there and the cards
+   would otherwise have no stated affordance. */
+.legend-tap{display:none}
 /* Provenance for the commit counts. It reads "live from GitHub" only when
    the fetch actually answered, and names the date of the stored values when
    it did not - the one thing this page must not do is show a static number
@@ -1710,6 +1714,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      names now live in the hero band, where a phone visitor reads them
      without dragging the map. */
   .legend-head p{display:none}
+  .legend-tap{display:inline;font-family:var(--mono);font-size:.68rem;letter-spacing:.03em;color:var(--faint)}
   .legend-index-line{line-height:1.35;font-size:.76rem}
   .legend-source{font-size:.66rem;margin-top:.05rem}
 }
