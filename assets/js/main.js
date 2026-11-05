@@ -21,6 +21,9 @@ function clocks() {
   const tick = () => {
     if (clock) {
       const now = new Date();
+      // textContent, not innerHTML: the <time> element now contains only the
+      // clock value, so this cannot wipe surrounding markup the way it did
+      // when <em>local</em> lived inside it.
       clock.textContent = now.toLocaleTimeString('en-GB', {
         timeZone: 'Asia/Baghdad',
         hour: '2-digit',

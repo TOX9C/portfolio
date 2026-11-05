@@ -42,7 +42,10 @@
   <div class="hud-readout">
     <span class="led" aria-hidden="true"></span>
     <span class="hud-place">Baghdad</span>
-    <time id="clock" datetime=""><em>local</em> --:--:--</time>
+    <!-- "local" sits outside the <time>: its content has to be a valid time
+         string, and an empty datetime attribute is invalid HTML. The script
+         fills both the text and the datetime on the first tick. -->
+    <span class="hud-clock"><em>local</em> <time id="clock">00:00:00</time></span>
   </div>
   <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="hud-nav" aria-label="Open menu">
     <span aria-hidden="true"></span><span aria-hidden="true"></span>
@@ -302,7 +305,7 @@
         </div>
       </div>
       <aside class="profile-card">
-        <div class="profile-id" aria-label="Operator identity">
+        <div class="profile-id" role="group" aria-label="Operator identity">
           <span class="profile-id-glyph" aria-hidden="true">
             <svg viewBox="0 0 12 12" shape-rendering="crispEdges">
               <rect x="2" y="0" width="8" height="1" fill="#54E1FF"/>
