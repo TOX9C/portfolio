@@ -346,6 +346,32 @@ card was right and the deploy was overclaiming. Deploy now lists the five
 its code handles and reads the count from that list; the unpaid pricing
 tiers are labelled illustrative.
 
+**Re-verified 2026-11-05 (rounds 29–31, scores 8 / 8 / 8):** three more
+findings, all precision rather than polish:
+
+- **"914 tests in CI" was not quite true.** `ci.yml` runs
+  `cargo test --workspace --exclude athena-terminal` — that crate's tests
+  need a real terminal and are skipped on GitHub-hosted runners, which the
+  workflow explains. 45 of the 914 never run in CI. The card says "914
+  rust tests" and the feature line states the exclusion.
+- **The ownership line had a seam.** "OsSecurity was a team build; the rest
+  are mine" — Athenas Core's contributor list carries a `claude` account
+  (6 commits) and TESTPERSONAL (1). The copy now says solo work with a few
+  commits authored by a tooling or test account.
+- **`aria-label` on a roleless `div`** (`.profile-id`) — prohibited and
+  ignored. `role="group"` now.
+- **The HUD clock was invalid and self-erasing.** `<time datetime="">` is
+  not a valid value, and its content has to be a valid time string when the
+  attribute is absent; and because the script assigned `textContent`, the
+  `<em>local</em>` inside it was wiped on the first tick — the readout lost
+  its own label after one second. The label sits outside the `<time>` now
+  and the script fills in a real ISO timestamp.
+- **A card stack line was clipped mid-word** ("POSTGRES" for PostgreSQL) by
+  the overflow rather than wrapping. `overflow-wrap:anywhere`, four lines.
+- **The "Live store" proof link said "Orders open"**, which does not tell a
+  stranger whose store it is. "Built by TOX9C" now, and the store's own
+  footer carries an authorship line linking back to GitHub.
+
 ## Regenerating the résumé PDF
 
 ```bash
