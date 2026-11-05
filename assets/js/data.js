@@ -31,7 +31,7 @@ export const PROJECTS = [
     // repeating it here would drift the moment the count changes.
     depth: 'The oldest commit is an import of a working tree rather than the first step of a build — and CI runs 914 tests before anything ships, which is the part a commit count cannot show.',
     repo: 'TOX9C/athenas-core',
-    shipped: { last: 'Nov 2026', commits: 486 },
+    shipped: { last: 'Nov 2026', commits: 487 },
     stack: ['Rust', 'Tauri 2', 'Dioxus', 'MCP', 'multi-agent'],
     images: [
       { src: 'assets/projects/athenas-workspace.webp', alt: 'Athenas Core multi-agent workspace' },
@@ -90,8 +90,11 @@ export const PROJECTS = [
       'Notifications and direct messages',
       'Real-time transport over WebSockets'
     ],
+    // The card chip was "WS" - not a number, sitting in a row that also holds
+    // "914 tests in CI", which made the real counts read as padding. Seven
+    // Prisma models is a countable fact about the schema.
     stats: [
-      { value: 'WS', label: 'websocket DMs' },
+      { value: '7', label: 'data models' },
       { value: '5', label: 'core surfaces' }
     ],
     depth: 'Follows are request-based rather than instant, and likes, comments, follows and messages all push notifications over the same Socket.io channel — one connection per client, not one per feature.',
@@ -191,8 +194,9 @@ export const PROJECTS = [
       'Encryption behaviour detection',
       'Real-time alerts the moment files change'
     ],
+    // "OS" was not a number either. The repo is seven Python modules.
     stats: [
-      { value: 'OS', label: 'file monitoring' },
+      { value: '7', label: 'python modules' },
       { value: 'REAL-TIME', label: 'encryption alerts' }
     ],
     repo: 'TOX9C/OsSecurity',
@@ -201,7 +205,10 @@ export const PROJECTS = [
     images: [
       { src: 'assets/projects/ossecurity-terminal.webp', alt: 'OsSecurity terminal output' }
     ],
-    links: [{ label: 'Source', href: 'https://github.com/TOX9C/OsSecurity', primary: true }],
+    links: [
+      { label: 'Source', href: 'https://github.com/TOX9C/OsSecurity', primary: true },
+      { label: 'Contributors', href: 'https://github.com/TOX9C/OsSecurity/graphs/contributors' }
+    ],
     hue: '#7CF2E0',
     landmark: 'shield'
   },
