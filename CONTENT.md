@@ -428,6 +428,30 @@ deploy target; the old page is what needs replacing. **Merging this branch
 is the fix.** Until then, a crawler sent to the canonical lands on the less
 honest version.
 
+**Re-verified 2026-11-05 (rounds 36–37, scores 8 / 8 / 8):** all claims
+PASS, including the 472-vs-487 reconciliation ("my 472 reproduces the
+documented gap rather than contradicting the card").
+
+- **The headline renamed the degree.** It read "CYBERSECURITY & CLOUD
+  ENGINEERING"; six lines elsewhere and the résumé say "Cybersecurity &
+  Cloud Computing". It got there in two steps — "ENGINEER" was a job title
+  he does not hold, the fix made it "ENGINEERING", which was accurate as a
+  field but invented a second name for the degree. It says "COMPUTING." now.
+- **The mobile first screen now fits.** The proof row had been landing at
+  y=831 against an 844 fold with its third link clipped. Four changes: the
+  lede lost its opening sentence (the role line above already says it); the
+  stat chips run side by side (45px instead of 62); the names sit after the
+  proof links, since at that width they wrap to two lines and were pushing
+  the links off; and the small margins tightened. Now actions 550, chips
+  655, proof 714–782, names 795–845 — nothing clipped at 320/360/390/430.
+- **The phone had no stated card affordance.** `.legend-head p{display:none}`
+  hid the only sentence saying the cards open dossiers. A short version
+  rides the heading row now, hidden at desktop width.
+
+**Process note:** one commit message in this round claimed a fix that was
+never made. Caught on review and corrected in the next commit. The lesson
+worth keeping: verify the claim against the file, not against the intent.
+
 ## Regenerating the résumé PDF
 
 ```bash
