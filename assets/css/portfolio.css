@@ -1786,6 +1786,13 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   .stage-lede{font-size:.86rem;line-height:1.45;margin-top:.45rem}
   .stage-role{font-size:.78rem;margin-top:.4rem}
   .stage-actions{margin-top:.62rem;gap:.5rem}
+  /* The eyebrow is the least informative line in the hero - "Personal
+     Systems Atlas", which the <title>, the manifest heading and the whole
+     conceit already say - and on a phone it was the ~35px standing between
+     the seven-name roster and clear space above the fold. It ends at y=845
+     against an 844 viewport with it; without it the roster lands with room
+     to spare. */
+  .eyebrow{display:none}
   /* The 7/3/3 counts stay. They used to be display:none here to pull the
      diorama up the page, which left a phone visitor with no stat counts
      anywhere outside the dossiers - and the map now follows the whole band
