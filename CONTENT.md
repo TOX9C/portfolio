@@ -307,6 +307,21 @@ the hero CTA leads to that list. This is the standard split for a canvas
 visualisation with equivalent content alongside it; it is a choice, not an
 oversight.
 
+## Regenerating the résumé PDF
+
+```bash
+/usr/bin/python3 -m http.server 8151 &
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless \
+  --disable-gpu --no-sandbox --run-all-compositor-stages-before-draw \
+  --print-to-pdf=Abdurrahman-Resume.pdf --no-pdf-header-footer \
+  --virtual-time-budget=25000 http://127.0.0.1:8151/resume.html
+```
+
+The `--run-all-compositor-stages-before-draw` flag is not optional: without
+it the capture sometimes lands before the local fonts load, the fallback
+metrics reflow the page and the résumé comes out at two pages instead of
+one. `--virtual-time-budget` needs to be generous for the same reason.
+
 ## Personality signals worth keeping
 - ~~Interactive terminal with commands (help, whoami, projects, …)~~ — the
   old site had one; this design replaced it with the atlas + dossier, and
