@@ -1540,9 +1540,15 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 
 
 @media (max-width:860px){
-        /* `.hud` has backdrop-filter, which makes it the containing block for any
-     fixed-position descendant — so the nav must NOT live inside `.hud` to
-     cover the viewport. Move it to the body and keep the toggle in the header. */
+  /* The nav below is position:fixed inside `.hud`, which works because `.hud`
+     establishes no containing block — it has no filter, transform, perspective,
+     will-change or backdrop-filter. Adding any of those (a frosted header is
+     the likely one) would make `.hud` the containing block and clip this
+     full-screen panel to the header's own box. If that happens, move the nav
+     out of `.hud` rather than removing the frosted effect.
+     This comment previously asserted that `.hud` already had backdrop-filter
+     and that the script moved the nav to the body. Neither was true: the
+     property appears nowhere in this file, and main.js never reparents. */
   .hud{
     /* Fully opaque all the way down: a translucent bottom edge let section
        headings show through the bar on a phone. */
