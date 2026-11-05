@@ -15,12 +15,16 @@ export const PROJECTS = [
     features: [
       'Parallel agents in dedicated workspaces',
       'Multi-provider LLM support over MCP',
-      '914 Rust tests and 48 end-to-end specs, run in CI on every push',
+      '914 Rust tests and 48 end-to-end specs in the repo; CI runs the suite with one crate excluded',
       '166 IPC commands across 163 Dioxus components',
       '9 tagged releases, signed macOS build, Homebrew cask'
     ],
+    // "in CI" was not quite true: ci.yml runs `cargo test --workspace
+    // --exclude athena-terminal`, because that crate's tests need a real
+    // terminal and are skipped on GitHub-hosted runners. 914 is every test
+    // in the repo, which is what the grep below counts.
     stats: [
-      { value: '914', label: 'tests in CI' },
+      { value: '914', label: 'rust tests' },
       { value: '9', label: 'tagged releases' }
     ],
     // The counts above are the only headline numbers on this site that
@@ -29,7 +33,7 @@ export const PROJECTS = [
     evidence: "grep -rhoE '#\\[(tokio::)?test\\]' --include=*.rs . | wc -l → 914 · grep -rhoE '#\\[tauri::command\\]' src-tauri/src | wc -l → 166",
     // Deliberately number-free: the commit count above is fetched live, so
     // repeating it here would drift the moment the count changes.
-    depth: 'The oldest commit is an import of a working tree rather than the first step of a build — and CI runs 914 tests before anything ships, which is the part a commit count cannot show.',
+    depth: 'The oldest commit is an import of a working tree rather than the first step of a build. The suite is real: 914 Rust tests and 48 end-to-end specs, nine tagged releases with a signed macOS build, and a CI job that gates every push.',
     repo: 'TOX9C/athenas-core',
     shipped: { last: 'Nov 2026', commits: 487 },
     stack: ['Rust', 'Tauri 2', 'Dioxus', 'MCP', 'multi-agent'],

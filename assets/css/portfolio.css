@@ -695,7 +695,11 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
   font-family:var(--mono);font-size:.72rem;letter-spacing:.02em;
   text-transform:uppercase;color:var(--faint);
   line-height:1.4;overflow:hidden;
-  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;
+  /* A long token with no space ("POSTGRESQL") was clipped mid-word by the
+     overflow rather than wrapping, so the card read "POSTGRES" on narrow
+     columns. anywhere lets it break. */
+  overflow-wrap:anywhere;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;
   overflow-wrap:anywhere
 }
 
