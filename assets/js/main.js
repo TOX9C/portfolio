@@ -13,7 +13,9 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 
 function clocks() {
   const clock = $('#clock');
-  const uptimeEls = [$('#uptime'), $('#uptime-footer')];
+  // Only #uptime-footer exists; #uptime was left over from a copy of the
+  // site that showed a session timer in two places.
+  const uptimeEls = [$('#uptime-footer')];
   const start = Date.now();
 
   const tick = () => {
@@ -65,7 +67,7 @@ function manifest({ onOpen, onHover }) {
         <span class="legend-index" aria-hidden="true">${p.index}</span>
       </span>
       <span class="legend-text">
-        <span class="legend-head">
+        <span class="legend-card-head">
           <span class="legend-proof">${p.stats[0].value}<span class="legend-proof-label">${p.stats[0].label}</span></span>
         </span>
         <span class="legend-name">${p.name}</span>
