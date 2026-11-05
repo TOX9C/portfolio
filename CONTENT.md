@@ -10,7 +10,12 @@ distort the facts below. No lorem ipsum, no placeholder stats, no fake claims.
 - Location: Iraq (Asia/Baghdad, UTC+3) — "based in Iraq, working worldwide"
 - Tagline: "Builds systems that think."
 - Status: **Open to internships & junior roles**
-- Awarded by the university president
+- **University President Award, 2025** — awarded by Prof. Dr. Aliaa Abbas
+  Ali Al-Attar (Arabic: علياء عباس علي العطار), President of Northern
+  Technical University, for academic work. Confirmed against NTU's own site,
+  which names her as President across multiple official pages. **The year is
+  the user's "last year" (2025) — correct it if the award was in a different
+  cycle.**
 
 ## Credentials
 - 3rd-year B.Eng, Cybersecurity & Cloud Computing, NTU (Iraq)
