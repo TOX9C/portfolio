@@ -307,6 +307,45 @@ the hero CTA leads to that list. This is the standard split for a canvas
 visualisation with equivalent content alongside it; it is a choice, not an
 oversight.
 
+**Re-verified 2026-11-05 (rounds 24–28, scores 8 / 8 / 9 / 8 / 8):** the
+first 9. A hiring-manager reviewer reproduced all seven commit counts
+exactly (including 487 by fetching the last page and landing on the
+root commit), the 17-of-24 split, and the 52.8% figure. Defects found and
+fixed:
+
+- **The dossier's image picker lost its selected state** — the JS moved
+  from `aria-current` to `aria-pressed` but the CSS still matched the old
+  attribute, so all seven thumbnails sat at the same opacity and nothing
+  showed which image was on screen. A regression this branch introduced.
+- **`role="dialog"` was on an `<aside>`.** axe flags it only while the
+  panel is open (closed, the element is `aria-hidden` and the rule does not
+  apply), so it sat in "incomplete" for several rounds. It is a `<div>` now.
+- **The seven-name line was 11.8px on phones**, under this file's own 13px
+  floor, on the one line naming the whole set. 12.8px.
+- **Card stats that were not numbers** — "24/7 ALERTS", "1 DASHBOARD",
+  "REAL-TIME", "ELO" — replaced with counts from the repos or dropped.
+- **The atlas fallback blamed JavaScript** when the WebGL context was what
+  failed. It says the 3D atlas could not start, which is true either way.
+- **The contact section's availability dot was invisible**: 0×0 and
+  transparent, because its geometry lived under `.profile-status`, a class
+  the profile card no longer uses. Found by auditing the stylesheet for
+  selectors that match nothing — every class selector in the file now
+  matches something.
+- **The résumé PDF build was racy** — sometimes two pages, when the capture
+  beat the local fonts. `--run-all-compositor-stages-before-draw`; see the
+  command below.
+- **"Awarded by the university president" is out of the profile prose.** It
+  has no object, year or competition, so it read as padding in a paragraph
+  of specific claims. It stays in the profile card and the résumé.
+  **The user can make this a real credential** by supplying what it was
+  awarded for, when, and by whom.
+
+**Fixed outside this repo:** the PriceHawk deploy claimed "9+ major
+retailers" and listed nine stores while its scraper supports five — the
+card was right and the deploy was overclaiming. Deploy now lists the five
+its code handles and reads the count from that list; the unpaid pricing
+tiers are labelled illustrative.
+
 ## Regenerating the résumé PDF
 
 ```bash
