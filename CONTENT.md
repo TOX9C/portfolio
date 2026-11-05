@@ -372,6 +372,35 @@ findings, all precision rather than polish:
   stranger whose store it is. "Built by TOX9C" now, and the store's own
   footer carries an authorship line linking back to GitHub.
 
+**Re-verified 2026-11-05 (rounds 32–33, score 8):** one finding worth the
+effort — the commit counts were the only claim on the page a visitor could
+watch go wrong, and three of the stored values had already drifted (my own
+commits moved E-Commerce to 20, PriceHawk to 14, Football Predictor to 19).
+Fixed on both sides:
+
+- The stored values are current.
+- A line under the manifest head states provenance: **"commit counts
+  fetched live from GitHub"** in accent when every repo answered, or
+  **"commit counts as of 5 Nov 2026 — GitHub did not answer"** in faint
+  otherwise. A partial answer counts as stored, because that is what the
+  visitor would be reading. `STATS_AS_OF` in `data.js` is the one date to
+  update.
+- Verified by aborting `api.github.com`: blocked, the as-of line shows and
+  the stored counts render; restored, the line reads live and every count
+  matches the API exactly.
+
+Also: the seven names are now written into the markup as well as into
+`data.js`, so a module that throws before it runs cannot leave the page's
+central claim blank (a JS-enabled browser never shows the `<noscript>`
+list). The tooling-account nuance moved from the contact paragraph to the
+Athenas dossier, beside the count it qualifies — in the contact line it
+read as a pre-emptive excuse.
+
+**Checked and dismissed:** a reviewer reported a second email address on
+the athenas-core deploy. It does not appear there, or in the app UI — the
+string survives only in an internal audit document describing where it
+used to be.
+
 ## Regenerating the résumé PDF
 
 ```bash
