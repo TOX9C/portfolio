@@ -430,7 +430,11 @@
 </footer>
 
 <div class="dossier-scrim" id="dossier-scrim" hidden></div>
-<aside class="dossier" id="dossier" role="dialog" aria-modal="true" aria-labelledby="dossier-title" aria-hidden="true">
+<!-- A div, not an aside. role="dialog" is not permitted on <aside> (it maps
+     to complementary), and axe flags it the moment the panel is visible and
+     the role is actually in force. A div carries no implicit role, so the
+     dialog role is allowed. -->
+<div class="dossier" id="dossier" role="dialog" aria-modal="true" aria-labelledby="dossier-title" aria-hidden="true">
   <button class="dossier-close" id="dossier-close" type="button" aria-label="Close dossier">✕</button>
   <h2 id="dossier-title" class="dossier-title">Athenas Core</h2>
   <p class="dossier-tag" id="dossier-tag"></p>
@@ -448,7 +452,7 @@
   <ul class="dossier-stats" id="dossier-stats"></ul>
   <ul class="tag-list dossier-stack" id="dossier-stack"></ul>
   <div class="dossier-links" id="dossier-links"></div>
-</aside>
+</div>
 
 <script type="module" src="assets/js/main.js"></script>
 </body>
