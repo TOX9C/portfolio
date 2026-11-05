@@ -133,7 +133,12 @@
            systems - is felt before it is read. It sat in the manifest head,
            which on a phone is two screens down; here it rides the same band
            as the counts and the proof links. -->
-      <p class="legend-index-line" id="legend-index-line"></p>
+      <!-- Populated from data.js on load. The names are ALSO written here in
+           the markup: a module that fails before it runs would otherwise leave
+           this line empty, and a browser with JS enabled never shows the
+           <noscript> list, so the page's central claim would vanish silently.
+           The script overwrites this from data.js, so the two cannot drift
+           for long. --><p class="legend-index-line" id="legend-index-line">Athenas Core · E-Commerce · Social · CashPilot · PriceHawk · OsSecurity · Football Predictor</p>
     </div>
     </div>
 
@@ -396,8 +401,7 @@
         <p class="contact-position">
           Third-year Cybersecurity & Cloud Computing student at NTU, Iraq —
           and the person behind every system on this map (OsSecurity was a
-          team build; the rest are solo — a few commits carry a tooling or
-          test account as the author rather than my own name). The full dossier for each one is
+          team build; the rest are mine). The full dossier for each one is
           above, with its source link.
         </p>
         <p class="contact-status">

@@ -34,6 +34,11 @@ export const PROJECTS = [
     // Deliberately number-free: the commit count above is fetched live, so
     // repeating it here would drift the moment the count changes.
     depth: 'The oldest commit is an import of a working tree rather than the first step of a build. The suite is real: 914 Rust tests and 48 end-to-end specs, nine tagged releases with a signed macOS build, and a CI job that gates every push.',
+    // 7 of the 487 commits are attributed to a `claude` and a test account
+    // rather than the account name - AI-assisted and throwaway commits. The
+    // contact paragraph used to carry this and read as defensive there; it
+    // belongs next to the count it qualifies.
+    credit: 'A few of the commits are attributed to a tooling account rather than the account name — AI-assisted work and a test identity.',
     repo: 'TOX9C/athenas-core',
     shipped: { last: 'Nov 2026', commits: 487 },
     stack: ['Rust', 'Tauri 2', 'Dioxus', 'MCP', 'multi-agent'],
