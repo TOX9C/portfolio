@@ -401,6 +401,33 @@ the athenas-core deploy. It does not appear there, or in the app UI — the
 string survives only in an internal audit document describing where it
 used to be.
 
+**Re-verified 2026-11-05 (rounds 34–36, scores 8.5 / 8 / 8):** three
+defects, one of them a keyboard trap that had been there for rounds.
+
+- **The mobile menu locked its own close button out of the tab cycle.**
+  `trapFocus` was wired to `.hud-nav`; the 44px toggle — whose label flips to
+  "Close menu" — is a sibling of the nav inside the header, so a keyboard
+  visitor could open the menu and then not Tab to the control that closes it.
+  The trap covers the header now; tabbing the open menu cycles Stack / Lab /
+  Profile / Contact / menu-toggle / brand / Projects.
+- **`role="dialog"` was set on the `<nav>` while the menu was open.**
+  `<nav>` maps to the navigation landmark, so overriding it is invalid — and
+  axe only reports it while the menu is open, which is why it survived
+  several audits. It is the disclosure pattern now: `aria-expanded` +
+  `aria-controls` on the toggle, inert background, focus trap, Escape, and
+  the navigation landmark intact.
+- **The seven names now lead the hero band** instead of trailing it. They sat
+  last, under the counts and the proof links, at y=660 desktop / y=844 mobile
+  — flush with the fold edge, which is why reviewers kept reading the first
+  screen as not carrying them. Now y=540 / y=672.
+
+**Known and deliberate:** `<link rel="canonical">` points at
+`tox9c.github.io/portfolio/`, which currently serves the *older* build —
+including the 58.77% figure this branch corrected. The tag is right for the
+deploy target; the old page is what needs replacing. **Merging this branch
+is the fix.** Until then, a crawler sent to the canonical lands on the less
+honest version.
+
 ## Regenerating the résumé PDF
 
 ```bash
