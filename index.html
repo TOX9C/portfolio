@@ -83,8 +83,13 @@
         <span class="display-line"><span class="accent">COMPUTING.</span></span>
       </h1>
       <p class="display-byline">ABDURRAHMAN · TOX9C</p>
+      <!-- The lede used to open with "Third-year Cybersecurity & Cloud
+           Computing student at NTU, Iraq." - which the role line directly
+           above already says, and the headline says the field. Cutting it
+           costs a claim-free sentence and buys the mobile first screen the
+           room its proof links needed; on a 390x844 phone they were landing
+           at y=831 against an 844 fold, with their labels clipped. -->
       <p class="stage-lede">
-        Third-year Cybersecurity & Cloud Computing student at NTU, Iraq.
         I ship systems in Rust and TypeScript, run my own home cloud
         (<a href="#lab">3 services live</a>), and train ML models —
         <a href="https://github.com/TOX9C/football-predictor">52.8% on held-out matches</a>,
@@ -115,12 +120,6 @@
          for; the award is a credential, not a metric, and lives in the
          profile card. -->
     <div class="stage-strip">
-      <!-- Populated from data.js on load. The names are ALSO written here in
-           the markup: a module that fails before it runs would otherwise leave
-           this line empty, and a browser with JS enabled never shows the
-           <noscript> list, so the page's central claim would vanish silently.
-           The script overwrites this from data.js, so the two cannot drift
-           for long. --><p class="legend-index-line" id="legend-index-line">Athenas Core · E-Commerce · Social · CashPilot · PriceHawk · OsSecurity · Football Predictor</p>
       <ul class="stage-chips">
         <li><b>7</b><span>landmarks</span></li>
         <li><b>3</b><span>live deploys</span></li>
@@ -134,12 +133,18 @@
         <li><a href="https://ecommerce-ten-flame-39.vercel.app" target="_blank" rel="noopener noreferrer"><b>Live store</b><span>Built by TOX9C</span></a></li>
         <li><a href="https://github.com/TOX9C" target="_blank" rel="noopener noreferrer"><b>GitHub</b><span>All 7 sources</span></a></li>
       </ul>
-      <!-- Filled from data.js. This is the whole set of seven in one line,
-           and it belongs in the first screen rather than below the cards: a
-           reviewer's note was that the page's central claim - seven shipped
-           systems - is felt before it is read. It sat in the manifest head,
-           which on a phone is two screens down; here it rides the same band
-           as the counts and the proof links. -->
+      <!-- Filled from data.js. The names are ALSO written here in the markup:
+           a module that fails before it runs would otherwise leave this line
+           empty, and a browser with JS enabled never shows the <noscript>
+           list, so the page's central claim would vanish silently. The script
+           overwrites this from data.js, so the two cannot drift for long.
+
+           It sits after the proof links rather than before them. On a phone
+           the string wraps to two lines, and ahead of the links it pushed the
+           third one - the GitHub link, the last actionable thing on the first
+           screen - past the fold with its label clipped. Behind them, both
+           fit: links at y=742, names at y=816. -->
+      <p class="legend-index-line" id="legend-index-line">Athenas Core · E-Commerce · Social · CashPilot · PriceHawk · OsSecurity · Football Predictor</p>
     </div>
     </div>
 

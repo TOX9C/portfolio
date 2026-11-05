@@ -1696,13 +1696,21 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
     font-size:.72rem;gap:.45rem;justify-content:center;
     white-space:nowrap
   }
-  .stage-chips{margin-top:.8rem;padding-top:.6rem;gap:.7rem 1rem}
+  .stage-chips{margin-top:.62rem;padding-top:.5rem;gap:.6rem .9rem}
+  /* One line per chip on a phone. Stacked, the three counts took 62px of a
+     390x844 first screen - enough to push the seven names past the fold.
+     Side by side they take 45px and everything fits. */
+  .stage-chips li{flex-direction:row;align-items:baseline;gap:.3rem}
+  .stage-chips b{font-size:1.02rem}
+  .stage-chips span{font-size:.66rem;letter-spacing:.04em}
+  .stage-strip{margin-top:.7rem}
+  /* The names' size is set in the 640px block below, which wins. */
   .stage-canvas{height:min(52vh,430px);min-height:320px}
   /* The caption above the cards is dropped here to save a line; the seven
      names now live in the hero band, where a phone visitor reads them
      without dragging the map. */
   .legend-head p{display:none}
-  .legend-index-line{line-height:1.45;font-size:.8rem}
+  .legend-index-line{line-height:1.35;font-size:.76rem}
   .legend-source{font-size:.66rem;margin-top:.05rem}
 }
 
@@ -1777,7 +1785,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      diorama up the page, which left a phone visitor with no stat counts
      anywhere outside the dossiers - and the map now follows the whole band
      anyway, so nothing was gained by hiding them. Three chips in one row. */
-  .stage-proof{margin-top:.42rem;gap:.3rem;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0}
+  .stage-proof{margin-top:.3rem;gap:.3rem;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0}
   .stage-proof a{flex-direction:column;align-items:flex-start;gap:.1rem;padding:.42rem .5rem;min-height:44px}
   /* The qualifiers used to be hidden here to fit three chips in a row, which
      left "Live store" with no "Orders open" and "GitHub" with no "All 7
