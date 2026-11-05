@@ -368,21 +368,24 @@ function mobileNav() {
 
   const isOpen = () => toggle.getAttribute('aria-expanded') === 'true';
 
-  // On desktop this is a plain navigation landmark. On a phone it becomes a
-  // full-screen modal menu — and only then. It used to carry
-  // role="dialog" aria-modal="true" permanently, so assistive tech was told
-  // the whole page was inert even while the nav was a visible inline list.
-  const setModal = (on) => {
-    if (on) {
-      nav.setAttribute('role', 'dialog');
-      nav.setAttribute('aria-modal', 'true');
-      nav.setAttribute('aria-label', 'Menu');
-    } else {
-      nav.removeAttribute('role');
-      nav.removeAttribute('aria-modal');
-      nav.setAttribute('aria-label', 'Primary');
-    }
-  };
+  // On desktop this is a plain navigation landmark; on a phone it opens as a
+  // full-screen panel. It used to carry role="dialog" aria-modal="true"
+  // permanently, so assistive tech was told the whole page was inert even
+  // while the nav was a visible inline list — that was fixed by toggling the
+  // role, which is what this does now, minus the role.
+  //
+  // The role is gone entirely because role="dialog" is not permitted on
+  // <nav>: nav maps to the navigation landmark, and overriding it is
+  // invalid, which axe reports the moment the menu is open. Wrapping the nav
+  // in a dialog element would keep both, but the nav is a flex child of the
+  // header on desktop and a fixed full-screen panel on mobile, so a wrapper
+  // would have to re-create both layouts.
+  //
+  // This is the disclosure pattern instead, which is what the markup already
+  // describes: the toggle carries aria-expanded and aria-controls, the
+  // background is inert, focus is trapped, and Escape closes. The nav
+  // landmark survives, so a screen reader can still navigate by it, and its
+  // aria-label stays "Primary" whether the panel is open or not.
 
   const close = () => {
     if (!isOpen()) return;
@@ -391,7 +394,6 @@ function mobileNav() {
     nav.classList.remove('open');
     document.body.classList.remove('is-locked');
     setBackgroundInert(false, { keepHeader: true });
-    setModal(false);
     toggle.focus();
   };
 
@@ -402,7 +404,6 @@ function mobileNav() {
     nav.classList.toggle('open', !open);
     document.body.classList.toggle('is-locked', !open);
     setBackgroundInert(!open, { keepHeader: true });
-    setModal(!open);
     // The panel flips to `visible` on the next frame, so focus has to wait for it.
     if (!open) requestAnimationFrame(() => $$('a', nav)[0]?.focus());
   });
@@ -419,7 +420,13 @@ function mobileNav() {
   document.addEventListener('keydown', (e) => {
     if (!isOpen()) return;
     if (e.key === 'Escape') close();
-    else trapFocus(nav, e);
+    // The header, not the nav. The toggle that opened this menu - and whose
+    // label flips to "Close menu" - is a sibling of the nav inside `.hud`,
+    // so trapping on the nav alone locked it out of the tab cycle: a keyboard
+    // visitor could open the menu and then not Tab to the control that closes
+    // it. The header is exempt from the background inert when the menu is the
+    // modal, so everything inside it is legitimately reachable.
+    else trapFocus($('.hud'), e);
   });
 }
 
