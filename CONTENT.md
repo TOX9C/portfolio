@@ -313,7 +313,12 @@ oversight.
   the command table had no consumer left. Removed 2026-11-05 as dead code
   (`TERMINAL_COMMANDS`, `resolveProject`, 95 lines).
 - Live Baghdad clock + page session uptime
-- Marquee voice: "systems that think / security first / self-hosted / real-time / rust on the desktop"
+- ~~Marquee: "systems that think / security first / self-hosted / …"~~ — the
+  old site ran this as a scrolling strip; this design has no marquee, and the
+  wording now lives in the lede and the résumé tagline ("Builds systems that
+  think.") rather than in a ticker.
 - Git-flavored project presentation (commit/staging metaphors)
-- Fonts shipped locally: Archivo Variable, JetBrainsMono Variable (assets/fonts/)
+- Fonts shipped locally (assets/fonts/, no network fetch): **Pixelify Sans**
+  (display), **Sora** (body), **JetBrains Mono** (labels). The old site used
+  Archivo Variable; this design does not.
 - 12 project screenshots in assets/projects/ — real shots, use them or better real ones, never stock
