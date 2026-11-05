@@ -120,9 +120,10 @@ export const PROJECTS = [
       'Budgets and savings goals',
       'Four finance modules in one dashboard'
     ],
+    // One stat, not two. "1 dashboard" filled the second slot without adding
+    // anything the tagline had not already said.
     stats: [
-      { value: '4', label: 'finance modules' },
-      { value: '1', label: 'dashboard' }
+      { value: '4', label: 'finance modules' }
     ],
     depth: 'Four modules share one dashboard: income against expenses as a stacked time series, a per-category spending breakdown, and savings goals measured against real account balances rather than a typed-in target.',
     repo: 'TOX9C/cashPilot',
@@ -154,7 +155,7 @@ export const PROJECTS = [
     ],
     stats: [
       { value: '5', label: 'stores tracked' },
-      { value: '24/7', label: 'alerts' }
+      { value: '8', label: 'API routes' }
     ],
     // Amazon hides its buy-box price from datacenter IPs, so that one scraper
     // goes out through a residential proxy; the rest are direct. The schema
@@ -196,8 +197,7 @@ export const PROJECTS = [
     ],
     // "OS" was not a number either. The repo is seven Python modules.
     stats: [
-      { value: '7', label: 'python modules' },
-      { value: 'REAL-TIME', label: 'encryption alerts' }
+      { value: '7', label: 'python modules' }
     ],
     repo: 'TOX9C/OsSecurity',
     shipped: { last: 'Apr 2026', commits: 24 },
@@ -225,7 +225,7 @@ export const PROJECTS = [
     ],
     stats: [
       { value: '52.8%', label: 'held-out accuracy' },
-      { value: 'ELO', label: 'live rankings' }
+      { value: '2,892', label: 'held-out matches' }
     ],
     // The number is 18 commits, which reads thin next to a headline accuracy.
     // What it does not show is the work behind it: the first pipeline scored

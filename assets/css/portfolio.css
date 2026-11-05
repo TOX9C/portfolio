@@ -1314,7 +1314,10 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
 }
 .dossier-thumbs button img{width:100%;height:100%;object-fit:cover}
 .dossier-thumbs button:hover{opacity:1}
-.dossier-thumbs button[aria-current="true"]{opacity:1;border-color:var(--cyan)}
+/* aria-pressed, matching what the picker actually sets. When the JS moved
+   off aria-current this selector kept the old attribute, so the displayed
+   thumbnail sat at the same 55% opacity as the other six. */
+.dossier-thumbs button[aria-pressed="true"]{opacity:1;border-color:var(--cyan)}
 .dossier-desc{
   margin-top:1.5rem;color:var(--muted);
   font-size:.92rem;line-height:1.8;text-wrap:pretty
@@ -1685,7 +1688,7 @@ code{font-family:var(--mono);font-size:.9em;color:var(--cyan)}
      names now live in the hero band, where a phone visitor reads them
      without dragging the map. */
   .legend-head p{display:none}
-  .legend-index-line{line-height:1.45;font-size:.74rem}
+  .legend-index-line{line-height:1.5;font-size:.8rem}
 }
 
 @media (prefers-reduced-motion:reduce){

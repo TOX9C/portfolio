@@ -150,7 +150,11 @@
         </svg>
       </div>
       <canvas id="atlas-canvas" aria-hidden="true"></canvas>
-      <p class="stage-fallback">The atlas needs JavaScript. Every project is listed below with links.</p>
+      <!-- Covers both cases. This used to say only "needs JavaScript", which
+           was wrong when the script ran fine and the WebGL context or the
+           Three.js import was what failed - the visitor was told the wrong
+           reason, on a site whose whole pitch is checkable statements. -->
+      <p class="stage-fallback">The 3D atlas could not start in this browser. Every project is listed below with links.</p>
       <div class="stage-corner" aria-hidden="true">
         <p class="hint" id="atlas-hint"><span class="hint-pulse" aria-hidden="true"></span>drag the map · tap a landmark</p>
       </div>
@@ -278,7 +282,7 @@
     </div>
     <div class="profile-grid">
       <div class="profile-copy">
-        <p class="profile-lede">I've trained machine learning models, built a <strong>ransomware detector from scratch</strong>, and shipped a <strong>multi-agent IDE written in Rust</strong>. I also work part-time in IT at TAQA. Away from the editor I run a home server with Jellyfin, Pi-hole, and Tailscale: <strong>my own little cloud</strong>. Awarded by the university president.</p>
+        <p class="profile-lede">I've trained machine learning models, built a <strong>ransomware detector from scratch</strong>, and shipped a <strong>multi-agent IDE written in Rust</strong>. I also work part-time in IT at TAQA. Away from the editor I run a home server with Jellyfin, Pi-hole, and Tailscale: <strong>my own little cloud</strong>.</p>
         <ul class="profile-facts">
           <li><span>Base</span><b>Iraq · working worldwide</b></li>
           <li><span>Study</span><b>3rd-year B.Eng — Cybersecurity & Cloud Computing, NTU</b></li>
